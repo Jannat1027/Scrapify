@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Price rates · Scrapify admin</title>
+  <link rel="icon" href="../assets/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script src="../js/tailwind.components.js"></script>
+  <script src="../js/tailwind.config.js"></script>
+</head>
+<body data-role="admin">
+  <main>
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Price rates</h1>
+        <p class="muted">৳ per kg by plastic type and condition. Every estimate on the platform uses this table.</p>
+      </div>
+      <button id="addCategory" class="btn btn-primary"><i data-lucide="plus"></i> Add category</button>
+    </div>
+
+    <div id="staleNotice"></div>
+
+    <section class="panel">
+      <div id="rates"></div>
+      <p class="mt-4 text-xs muted">
+        Rates older than 14 days are flagged to operators so they know an estimate may be off.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2 class="card-title">Collection locations</h2>
+      <p class="text-sm muted">Shown in sign-up, listings and recycler filters.</p>
+      <ul id="locations" class="mt-5 flex flex-wrap gap-2"></ul>
+      <form id="locationForm" class="mt-5 flex max-w-md gap-2">
+        <input name="place" class="input" placeholder="e.g. Tongi, Gazipur" required minlength="3">
+        <button class="btn">Add</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="../js/app.js" data-page="price-rates"></script>
+</body>
+</html>

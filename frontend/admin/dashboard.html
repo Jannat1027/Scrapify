@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin overview · Scrapify</title>
+  <link rel="icon" href="../assets/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script src="../js/tailwind.components.js"></script>
+  <script src="../js/tailwind.config.js"></script>
+</head>
+<body data-role="admin">
+  <main>
+    <div class="px-1">
+      <h1 class="page-title">Platform overview</h1>
+      <p class="muted">Scans, trading activity and anything waiting on you.</p>
+    </div>
+
+    <div id="stats" class="stats"></div>
+
+    <div class="grid gap-5 xl:grid-cols-3">
+      <section class="panel xl:col-span-2">
+        <h2 class="card-title">Scan volume</h2>
+        <p class="text-sm muted">Scans per day, last 14 days</p>
+        <div class="mt-4 h-64"><canvas id="volumeChart"></canvas></div>
+      </section>
+      <section class="panel">
+        <h2 class="card-title">Category mix</h2>
+        <p class="text-sm muted">Share of graded weight</p>
+        <div class="mt-4 h-64"><canvas id="mixChart"></canvas></div>
+      </section>
+    </div>
+
+    <div class="grid gap-5 xl:grid-cols-3">
+      <section class="panel xl:col-span-2">
+        <h2 class="card-title">Price trend</h2>
+        <p class="text-sm muted">Average estimated ৳ per kg by scan date</p>
+        <div class="mt-4 h-64"><canvas id="trendChart"></canvas></div>
+      </section>
+      <section class="panel">
+        <div class="flex items-center justify-between">
+          <h2 class="card-title">Pending approvals</h2>
+          <a href="manage-users.html" class="btn btn-ghost btn-sm">All users <i data-lucide="arrow-right"></i></a>
+        </div>
+        <div id="pending" class="mt-4 grid gap-3"></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2 class="card-title">Low-confidence and corrected scans</h2>
+      <p class="text-sm muted">
+        Patterns here show where the AI needs better prompts or where operators need photo help.
+      </p>
+      <div id="lowScans" class="mt-5"></div>
+    </section>
+  </main>
+
+  <script src="../js/app.js" data-page="admin-dashboard" data-libs="chart"></script>
+</body>
+</html>

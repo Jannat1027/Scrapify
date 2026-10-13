@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Browse listings · Scrapify</title>
+  <link rel="icon" href="../assets/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script src="../js/tailwind.components.js"></script>
+  <script src="../js/tailwind.config.js"></script>
+</head>
+<body data-role="recycler">
+  <main>
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Browse listings</h1>
+        <p class="muted">Graded batches from verified collection points. Fixed prices, first to claim wins.</p>
+      </div>
+      <p id="resultCount" class="badge tone-green"></p>
+    </div>
+
+    <form id="filters" class="glass grid gap-3 p-4 md:grid-cols-2 xl:grid-cols-[1.4fr_1fr_1fr_1fr_140px]">
+      <div class="search">
+        <i data-lucide="search"></i>
+        <input name="q" type="search" class="input" placeholder="Search ID or location">
+      </div>
+      <select name="type" class="input"><option value="">All plastic types</option></select>
+      <select name="condition" class="input"><option value="">Any condition</option></select>
+      <select name="place" class="input"><option value="">All locations</option></select>
+      <input name="minKg" type="number" min="0" class="input" placeholder="Min kg">
+    </form>
+
+    <div id="grid" class="cards"></div>
+  </main>
+
+  <script src="../js/app.js" data-page="browse-listings"></script>
+</body>
+</html>

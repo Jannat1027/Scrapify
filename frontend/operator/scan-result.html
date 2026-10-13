@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scan result · Scrapify</title>
+  <link rel="icon" href="../assets/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script src="../js/tailwind.components.js"></script>
+  <script src="../js/tailwind.config.js"></script>
+</head>
+
+<body data-role="operator">
+  <main>
+    <div class="flex flex-wrap items-end justify-between gap-3 px-1">
+      <div>
+        <a href="scan-history.html" class="text-sm muted hover:text-ink">← Scan history</a>
+        <h1 id="title" class="text-3xl font-bold tracking-tight">Scan result</h1>
+      </div>
+      <div id="headBadges" class="flex gap-2"></div>
+    </div>
+
+    <section id="lowConfidence" class="glass hidden border-amber-400/30 bg-amber-400/5 p-6">
+      <div class="flex items-center gap-3">
+        <span class="icon-tile border-amber-400/30 bg-amber-400/10 text-amber-700"><i
+            data-lucide="circle-help"></i></span>
+        <div>
+          <h2 class="text-lg font-semibold">We're not sure about this batch</h2>
+          <p id="lowReason" class="text-sm muted"></p>
+        </div>
+      </div>
+      <div class="mt-5 grid gap-3 sm:grid-cols-3">
+        <button data-review="confirm" class="btn btn-lg !h-20 flex-col gap-1 !rounded-2xl"><i
+            data-lucide="thumbs-up"></i><span data-i18n="scan.confirm">Looks right</span></button>
+        <a href="new-scan.html" class="btn btn-lg !h-20 flex-col gap-1 !rounded-2xl"><i data-lucide="camera"></i><span
+            data-i18n="scan.retake">Retake photo</span></a>
+        <button data-review="manual" class="btn btn-lg !h-20 flex-col gap-1 !rounded-2xl"><i
+            data-lucide="hand"></i><span data-i18n="scan.manual">Choose manually</span></button>
+      </div>
+    </section>
+
+    <section id="manual" class="glass hidden p-6">
+      <h2 class="text-lg font-semibold">Choose the plastic yourself</h2>
+      <p class="text-sm muted">Your choice replaces the AI estimate and is logged for accuracy review.</p>
+      <p class="label mt-5">Main plastic type</p>
+      <div id="manualCats" class="grid grid-cols-2 gap-3 sm:grid-cols-5"></div>
+      <p class="label mt-5">Condition</p>
+      <div id="manualConds" class="grid grid-cols-3 gap-3"></div>
+      <button id="applyManual" class="btn btn-primary mt-6">Use my selection</button>
+    </section>
+
+    <div class="grid gap-5 xl:grid-cols-[1.25fr_1fr]">
+      <section class="glass p-6">
+        <div id="photo"></div>
+        <h2 class="mt-6 text-lg font-semibold">What the AI sees</h2>
+        <div id="bars" class="mt-4 grid gap-4"></div>
+        <dl id="facts" class="mt-6 grid grid-cols-2 gap-3 text-sm"></dl>
+        <p class="mt-6 flex gap-2 rounded-xl border border-ink/10 bg-white/60 p-3 text-xs muted">
+          <i data-lucide="info" class="mt-0.5"></i> AI grading is an estimate. Check the result before you list the
+          batch.
+        </p>
+      </section>
+
+      <div class="grid content-start gap-5">
+        <section id="weightCard" class="glass p-6">
+          <h2 class="text-lg font-semibold" data-i18n="scan.weight">Weight (kg)</h2>
+          <p id="weightDisplay"
+            class="mt-3 rounded-2xl border border-ink/10 bg-white/60 px-5 py-3 text-right text-4xl font-bold tabular-nums">
+            0</p>
+          <div id="numpad" class="mt-4 grid grid-cols-3 gap-2"></div>
+        </section>
+
+        <section class="glass p-6">
+          <p class="text-sm muted">Estimated price</p>
+          <p id="range" class="text-4xl font-extrabold tracking-tight text-gradient">৳0</p>
+          <div id="breakdown" class="mt-5"></div>
+          <button id="listBtn" class="btn btn-primary btn-lg mt-6 w-full" disabled><i data-lucide="tag"></i><span
+              data-i18n="scan.list">List for sale</span></button>
+          <p id="listedNote" class="mt-4 hidden text-center text-sm muted"></p>
+        </section>
+      </div>
+    </div>
+
+    <dialog id="listModal" class="modal">
+      <form method="dialog" id="listForm" class="grid gap-4">
+        <h2 class="text-xl font-bold">List this batch</h2>
+        <p id="listSummary" class="text-sm muted"></p>
+        <div><label class="label" for="fixedPrice">Fixed price (৳)</label><input id="fixedPrice" class="input"
+            type="number" min="1" required></div>
+        <p class="text-xs muted">Recyclers claim at this exact price. You can cancel while it's still available.</p>
+        <div class="flex justify-end gap-2"><button value="cancel" formnovalidate class="btn">Cancel</button><button
+            value="ok" class="btn btn-primary">Publish listing</button></div>
+      </form>
+    </dialog>
+  </main>
+
+  <script src="../js/app.js" data-page="scan-result"></script>
+</body>
+
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plastic guide · Scrapify</title>
+  <link rel="icon" href="assets/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script src="js/tailwind.config.js"></script>
+</head>
+
+<body>
+  <header data-nav></header>
+
+  <main class="mx-auto w-[min(1180px,calc(100%-2rem))]">
+    <section class="mx-auto max-w-2xl animate-rise pb-16 pt-20 text-center">
+      <p class="eyebrow">Plastic guide</p>
+      <h1 class="mt-4 text-5xl font-extrabold tracking-tighter">Know what you're <span
+          class="text-gradient">selling.</span></h1>
+      <p class="mt-5 text-lg muted">The five categories Scrapify grades, and how to sort a batch so the AI and the buyer
+        both see it clearly.</p>
+    </section>
+
+    <section aria-labelledby="cat-title">
+      <h2 id="cat-title" class="mb-6 text-2xl font-bold">Plastic categories</h2>
+      <div id="categories" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-5"></div>
+    </section>
+
+    <section class="mt-20 grid gap-5 lg:grid-cols-[1fr_1.4fr]" aria-labelledby="tips-title">
+      <div class="glass p-8">
+        <p class="eyebrow">Better photos, better prices</p>
+        <h2 id="tips-title" class="mt-3 text-2xl font-bold">Sorting and photo tips</h2>
+        <p class="mt-3 muted">Clean, sorted batches get higher rates and higher AI confidence. A few habits make a big
+          difference.</p>
+      </div>
+      <ul id="tips" class="grid gap-4 sm:grid-cols-2"></ul>
+    </section>
+
+    <section class="mt-20 grid gap-5 md:grid-cols-2" id="pages"></section>
+  </main>
+
+  <footer data-footer></footer>
+
+  <script src="js/app.js" data-page="info"></script>
+</body>
+
+</html>
