@@ -6,16 +6,12 @@
 // changes later (new pages, dialogs, toasts), so components need no changes.
 // ---------------------------------------------------------------------------
 import { loadFromStorage, saveToStorage, STORAGE_KEYS } from "../services/storage.js";
-import admin from "../data/bangla/admin.js";
-import auth from "../data/bangla/auth.js";
 import common from "../data/bangla/common.js";
-import home from "../data/bangla/home.js";
 import market from "../data/bangla/market.js";
 import operator from "../data/bangla/operator.js";
 import rules from "../data/bangla/rules.js";
-import site from "../data/bangla/site.js";
 
-const PHRASES = { ...common, ...home, ...site, ...auth, ...operator, ...market, ...admin };
+const PHRASES = { ...common, ...operator, ...market };
 const WORD_PATTERN = new RegExp(`\\b(${Object.keys(rules.WORDS).join("|")})\\b`, "g");
 const BANGLA_DIGITS = "০১২৩৪৫৬৭৮৯";
 const TRANSLATED_ATTRIBUTES = ["placeholder", "title", "aria-label"];

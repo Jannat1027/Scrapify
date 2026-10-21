@@ -1,4 +1,4 @@
-// Bangla phrases: listings, recycler pages and demo data.
+// Bangla phrases: listings and demo data.
 const phrases = {
   // Scan history and listings
   "Every batch graded at your collection point.": "আপনার সংগ্রহকেন্দ্রে গ্রেড করা সব ব্যাচ।",
