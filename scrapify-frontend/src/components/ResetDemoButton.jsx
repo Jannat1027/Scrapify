@@ -23,7 +23,7 @@ export default function ResetDemoButton({ className = "" }) {
       {asking && (
         <ConfirmDialog
           title="Reset the demo data?"
-          text="Every scan, listing, claim, user and rate change made in this browser goes back to the original sample data."
+          text="Every scan and listing change made in this browser goes back to the original sample data."
           confirmLabel="Reset data"
           danger
           onConfirm={handleConfirm}

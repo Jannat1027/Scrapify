@@ -2,7 +2,7 @@
 // DEMO DATA
 // Everything the app shows comes from this file the first time it runs.
 // After that, changes are saved in the browser's localStorage, so a page
-// refresh keeps them. Use "Reset demo data" in the footer or sidebar to
+// refresh keeps them. Use "Reset demo data" in the sidebar to
 // go back to exactly what is written here.
 // ---------------------------------------------------------------------------
 import { ONE_DAY_MS } from "../utils/format.js";
@@ -36,7 +36,7 @@ const locations = [
   "Shaheb Bazar, Rajshahi",
 ];
 
-// ---------- Price rates (৳ per kg) set by the admin ----------
+// ---------- Price rates (৳ per kg) ----------
 // Each plastic type has one rate per condition.
 
 const rates = [
@@ -48,8 +48,7 @@ const rates = [
 ];
 
 // ---------- Users ----------
-// status: "approved" can log in, "pending" waits for an admin,
-// "flagged" can log in but is marked for review, "suspended" cannot log in.
+// u1 is the demo operator using the app. u5 is the recycler who buys from them.
 
 const users = [
   {
@@ -57,32 +56,8 @@ const users = [
     location: "Mirpur, Dhaka", email: "rahima@greenbin.bd", status: "approved", joined: daysAgo(120),
   },
   {
-    id: "u2", role: "operator", name: "Karim Uddin", org: "BRAC Collection Point 4",
-    location: "Bayezid, Chattogram", email: "karim@cp4.org", status: "approved", joined: daysAgo(90),
-  },
-  {
-    id: "u3", role: "operator", name: "Shapla Akter", org: "Sonadanga Bhangari",
-    location: "Sonadanga, Khulna", email: "shapla@bhangari.bd", status: "pending", joined: daysAgo(2),
-  },
-  {
-    id: "u4", role: "operator", name: "Jamal Hossain", org: "City Scrap House",
-    location: "Shaheb Bazar, Rajshahi", email: "jamal@cityscrap.bd", status: "flagged", joined: daysAgo(60),
-  },
-  {
     id: "u5", role: "recycler", name: "Tanvir Ahmed", org: "Polymer Loop Ltd.",
     location: "Kamrangirchar, Dhaka", email: "tanvir@polymerloop.com", status: "approved", joined: daysAgo(150),
-  },
-  {
-    id: "u6", role: "recycler", name: "Nusrat Jahan", org: "ReForm Plastics",
-    location: "Bayezid, Chattogram", email: "nusrat@reform.com.bd", status: "pending", joined: daysAgo(1),
-  },
-  {
-    id: "u7", role: "recycler", name: "Arif Chowdhury", org: "EcoPellet BD",
-    location: "Sonadanga, Khulna", email: "arif@ecopellet.bd", status: "suspended", joined: daysAgo(200),
-  },
-  {
-    id: "u9", role: "admin", name: "Farhana Islam", org: "Scrapify",
-    location: "Dhaka", email: "admin@scrapify.app", status: "approved", joined: daysAgo(300),
   },
 ];
 
@@ -115,15 +90,6 @@ const scans = [
     condition: "heavy", confidence: 0.67, quality: "blurry", composition: { pp: 50, mixed: 50 }, corrected: true,
     aiResult: { composition: { mixed: 70, pp: 30 }, condition: "heavy" },
   },
-  {
-    id: "SC-1011", operatorId: "u2", location: "Bayezid, Chattogram", date: daysAgo(3), weight: 210,
-    condition: "clean", confidence: 0.93, quality: "good", composition: { pet: 100 }, corrected: false,
-  },
-  {
-    id: "SC-1008", operatorId: "u2", location: "Bayezid, Chattogram", date: daysAgo(11), weight: 95,
-    condition: "light", confidence: 0.58, quality: "good", composition: { hdpe: 40, film: 60 }, corrected: true,
-    aiResult: { composition: { pp: 55, film: 45 }, condition: "light" },
-  },
 ];
 
 // ---------- Listings (a scanned batch put on the market at a fixed price) ----------
@@ -148,40 +114,11 @@ const listings = [
     location: "Mirpur, Dhaka", price: 950, status: "cancelled", recyclerId: "u5",
     cancelReason: "Batch was wetter than shown", created: daysAgo(14),
   },
-  {
-    id: "LS-2209", scanId: "SC-1011", operatorId: "u2", category: "pet", condition: "clean", weight: 210,
-    location: "Bayezid, Chattogram", price: 8650, status: "available", created: daysAgo(3),
-  },
-  {
-    id: "LS-2203", scanId: "SC-1008", operatorId: "u2", category: "film", condition: "light", weight: 95,
-    location: "Bayezid, Chattogram", price: 1150, status: "available", created: daysAgo(11),
-  },
 ];
 
-// ---------- Reported problems (sent to the admin) ----------
+// ---------- Reported problems (filled by "Report a problem" on My listings) ----------
 
-const reports = [
-  {
-    id: "RP-31", listingId: "LS-2196", by: "u5", status: "open", date: daysAgo(13),
-    reason: "Weight on pickup was about 15 kg less than listed.",
-  },
-  {
-    id: "RP-29", listingId: "LS-2207", by: "u1", status: "open", date: daysAgo(1),
-    reason: "Recycler has not collected the batch for 2 days.",
-  },
-  {
-    id: "RP-24", listingId: "LS-2201", by: "u5", status: "resolved", date: daysAgo(8),
-    reason: "Photo did not match the colour of the bottles.",
-  },
-];
-
-// Demo accounts shown on the login page. Any password with 6+ characters works.
-export const DEMO_ACCOUNTS = [
-  { role: "operator", email: "rahima@greenbin.bd", icon: "store" },
-  { role: "recycler", email: "tanvir@polymerloop.com", icon: "factory" },
-  { role: "admin", email: "admin@scrapify.app", icon: "shield-check" },
-];
-export const DEMO_PASSWORD = "demo1234";
+const reports = [];
 
 // A fresh copy of all the demo data, used on first run and after a reset.
 export function createSeedData() {

@@ -7,7 +7,7 @@ import PlasticThumb from "./PlasticThumb.jsx";
 import StatusBadge from "./StatusBadge.jsx";
 
 // One batch for sale. Pages pass their own buttons as children,
-// so the same card works for operators, recyclers and the claims page.
+// so the same card can show different buttons for each listing.
 export default function ListingCard({ listing, children }) {
   const { data } = useData();
   const category = findCategory(data, listing.category);

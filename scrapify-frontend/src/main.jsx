@@ -10,7 +10,7 @@ import { startGlassSpotlight } from "./utils/glassSpotlight.js";
 import { isBanglaMode, startBanglaMode } from "./utils/translate.js";
 import "./index.css";
 
-// The providers wrap the whole app, so every page can use the data, the login session and toasts.
+// The providers wrap the whole app, so every page can use the data, the current user and toasts.
 // DataProvider comes first because AuthProvider reads the users from it.
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

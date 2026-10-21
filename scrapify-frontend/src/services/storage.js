@@ -35,8 +35,7 @@ export function removeFromStorage(key) {
 
 // The storage keys used by the app, in one place.
 export const STORAGE_KEYS = {
-  data: "db.v3", // change the version when seed.js changes shape, so old saved data is ignored
-  session: "session",
+  data: "db.v4", // change the version when seed.js changes shape, so old saved data is ignored
   draftScan: "draftScan",
   language: "lang",
 };

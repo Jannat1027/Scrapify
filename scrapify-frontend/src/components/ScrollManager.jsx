@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 // React Router changes pages without reloading, so the browser no longer scrolls for us.
-// This scrolls to the top on every new page, or to the #section named in the link (like /guide#contact).
+// This scrolls to the top on every new page, or to the #section named in the link (like /operator#top).
 export default function ScrollManager() {
   const { pathname, hash } = useLocation();
 

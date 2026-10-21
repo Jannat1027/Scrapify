@@ -1,30 +1,21 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { ROLE_LABELS } from "../services/marketplace.js";
 import Brand from "./Brand.jsx";
-import Button from "./Button.jsx";
 import Icon from "./Icon.jsx";
 import ResetDemoButton from "./ResetDemoButton.jsx";
 
-// The menu for each role. This is what makes the workspace look different for operator, recycler and admin.
-const MENUS = {
-  operator: [
-    { to: "/operator", label: "Dashboard", icon: "layout-dashboard" },
-    { to: "/operator/new-scan", label: "New scan", icon: "scan-line" },
-    { to: "/operator/history", label: "Scan history", icon: "history" },
-    { to: "/operator/listings", label: "My listings", icon: "tags" },
-  ],
-};
+// The operator's menu: one link for each of the five operator pages (Scan result opens from a scan).
+const MENU = [
+  { to: "/operator", label: "Dashboard", icon: "layout-dashboard" },
+  { to: "/operator/new-scan", label: "New scan", icon: "scan-line" },
+  { to: "/operator/history", label: "Scan history", icon: "history" },
+  { to: "/operator/listings", label: "My listings", icon: "tags" },
+];
 
 // isOpen only matters on phones, where the sidebar slides in from the left.
 export default function Sidebar({ isOpen, onNavigate }) {
-  const { user, logOut } = useAuth();
-  const navigate = useNavigate();
-
-  function handleLogOut() {
-    logOut();
-    navigate("/operator");
-  }
+  const { user } = useAuth();
 
   // NavLink tells us whether a link points at the page we are on, so it can be highlighted.
   // "end" means /operator is only active on exactly /operator, not on /operator/history.
@@ -44,7 +35,7 @@ export default function Sidebar({ isOpen, onNavigate }) {
         <Brand />
       </div>
       <p className="px-3 pb-2 text-[11px] uppercase tracking-widest text-ink/45">Workspace</p>
-      {MENUS[user.role].map((item) => (
+      {MENU.map((item) => (
         <NavLink key={item.to} to={item.to} end className={linkClass} onClick={onNavigate}>
           <Icon name={item.icon} />
           {item.label}
@@ -54,9 +45,6 @@ export default function Sidebar({ isOpen, onNavigate }) {
       <div className="rounded-xl border border-ink/10 bg-white/60 p-3 mt-auto grid gap-2">
         <p className="truncate font-semibold text-sm">{user.org}</p>
         <p className="truncate text-xs text-ink/60">{`${ROLE_LABELS[user.role]} · ${user.location}`}</p>
-        <Button size="sm" icon="log-out" className="w-full" onClick={handleLogOut}>
-          Log out
-        </Button>
         <ResetDemoButton className="w-full btn-ghost" />
       </div>
     </aside>
