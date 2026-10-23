@@ -1,22 +1,59 @@
 // ---------------------------------------------------------------------------
-// AuthContext: who is using the app.
-// SIMULATED: there is no server and no login page. The demo operator (u1 in
-// src/data/seed.js) is always the current user. A real app would check the
-// email and password on a backend and keep a secure session token instead.
+// AuthContext: who is logged in.
+// Logging in sends the email and password to the backend, which checks the
+// password and answers with a JWT. The token is kept in localStorage and
+// sent with every request (see services/api.js). When the app opens, the
+// saved token is checked with /auth/me, so a refresh keeps the user logged in.
 // ---------------------------------------------------------------------------
-import { createContext, useContext } from "react";
-import { useData } from "./DataContext.jsx";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import api, { apiErrorMessage, clearToken, getToken, saveToken } from "../services/api.js";
 
 const AuthContext = createContext(null);
-const DEMO_OPERATOR_ID = "u1";
 
 export function AuthProvider({ children }) {
-  const { data } = useData();
+  const [user, setUser] = useState(null);
+  // True while a saved token is being checked, so pages don't send the user to /login too early.
+  const [checking, setChecking] = useState(() => Boolean(getToken()));
+  // Set when the server couldn't be reached to check the token. The token is kept for a retry.
+  const [sessionError, setSessionError] = useState(null);
 
-  // We look the user up each time, so changes to their details show at once.
-  const user = data.users.find((person) => person.id === DEMO_OPERATOR_ID);
+  const restoreSession = useCallback(async () => {
+    if (!getToken()) return;
+    setChecking(true);
+    setSessionError(null);
+    try {
+      const response = await api.get("/auth/me");
+      setUser(response.data.user);
+    } catch (error) {
+      // Only a 401 means the token is bad (expired, or the account was blocked): start logged out.
+      // Anything else (server down, no internet) keeps the token, so "Try again" can log back in.
+      if (error.response?.status === 401) clearToken();
+      else setSessionError(apiErrorMessage(error));
+    } finally {
+      setChecking(false);
+    }
+  }, []);
 
-  const value = { user };
+  useEffect(() => {
+    restoreSession();
+  }, [restoreSession]);
+
+  // Returns the user. Throws the Axios error when the backend refuses (401 wrong password, 403 blocked).
+  async function logIn(email, password) {
+    const response = await api.post("/auth/login", { email, password });
+    saveToken(response.data.token);
+    setSessionError(null);
+    setUser(response.data.user);
+    return response.data.user;
+  }
+
+  function logOut() {
+    clearToken();
+    setUser(null);
+    setSessionError(null);
+  }
+
+  const value = { user, checking, sessionError, restoreSession, logIn, logOut };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

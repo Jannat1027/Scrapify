@@ -1,9 +1,9 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { ROLE_LABELS } from "../services/marketplace.js";
 import Brand from "./Brand.jsx";
+import Button from "./Button.jsx";
 import Icon from "./Icon.jsx";
-import ResetDemoButton from "./ResetDemoButton.jsx";
 
 // The operator's menu: one link for each of the five operator pages (Scan result opens from a scan).
 const MENU = [
@@ -15,7 +15,13 @@ const MENU = [
 
 // isOpen only matters on phones, where the sidebar slides in from the left.
 export default function Sidebar({ isOpen, onNavigate }) {
-  const { user } = useAuth();
+  const { user, logOut } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogOut() {
+    logOut();
+    navigate("/login");
+  }
 
   // NavLink tells us whether a link points at the page we are on, so it can be highlighted.
   // "end" means /operator is only active on exactly /operator, not on /operator/history.
@@ -45,7 +51,9 @@ export default function Sidebar({ isOpen, onNavigate }) {
       <div className="rounded-xl border border-ink/10 bg-white/60 p-3 mt-auto grid gap-2">
         <p className="truncate font-semibold text-sm">{user.org}</p>
         <p className="truncate text-xs text-ink/60">{`${ROLE_LABELS[user.role]} · ${user.location}`}</p>
-        <ResetDemoButton className="w-full btn-ghost" />
+        <Button size="sm" icon="log-out" className="w-full" onClick={handleLogOut}>
+          Log out
+        </Button>
       </div>
     </aside>
   );

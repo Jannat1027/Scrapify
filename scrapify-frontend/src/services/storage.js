@@ -34,8 +34,9 @@ export function removeFromStorage(key) {
 }
 
 // The storage keys used by the app, in one place.
+// All app data lives on the backend now; the browser only keeps these few things.
 export const STORAGE_KEYS = {
-  data: "db.v4", // change the version when seed.js changes shape, so old saved data is ignored
-  draftScan: "draftScan",
+  token: "token", // the JWT from logging in
+  draftScan: "draftScan", // a graded scan not saved yet, so a refresh of the result page keeps it
   language: "lang",
 };

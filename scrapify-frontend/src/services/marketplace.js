@@ -2,6 +2,11 @@
 import { makeId, nowIso } from "../utils/format.js";
 import { mainCategoryOf } from "./pricing.js";
 
+// Where each role lands after logging in.
+export const HOME_PAGE_FOR_ROLE = {
+  operator: "/operator",
+};
+
 export const ROLE_LABELS = {
   operator: "Operator",
 };

@@ -10,18 +10,19 @@ import { startGlassSpotlight } from "./utils/glassSpotlight.js";
 import { isBanglaMode, startBanglaMode } from "./utils/translate.js";
 import "./index.css";
 
-// The providers wrap the whole app, so every page can use the data, the current user and toasts.
-// DataProvider comes first because AuthProvider reads the users from it.
+// The providers wrap the whole app, so every page can use the data, the login session and toasts.
+// AuthProvider comes before DataProvider because the data loaded depends on who is logged in,
+// and ToastProvider comes first so DataProvider can show an error toast when a request fails.
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <DataProvider>
+      <ToastProvider>
         <AuthProvider>
-          <ToastProvider>
+          <DataProvider>
             <App />
-          </ToastProvider>
+          </DataProvider>
         </AuthProvider>
-      </DataProvider>
+      </ToastProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );

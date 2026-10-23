@@ -29,9 +29,8 @@ export default function MyListingsPage() {
   const tabs = STATUSES.map((status) => ({ value: status, label: STATUS_LABELS[status], count: withStatus(status).length }));
   const shownListings = withStatus(currentTab);
 
-  function cancelListing(listingId, reason) {
-    updateRow("listings", listingId, { status: "cancelled", cancelReason: reason });
-    showToast("Listing cancelled.");
+  async function cancelListing(listingId, reason) {
+    if (await updateRow("listings", listingId, { status: "cancelled", cancelReason: reason })) showToast("Listing cancelled.");
   }
 
   return (

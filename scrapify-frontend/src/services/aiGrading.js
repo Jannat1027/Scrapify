@@ -1,39 +1,25 @@
 // ---------------------------------------------------------------------------
-// SIMULATED AI GRADING
-// There is no real AI model in this demo. gradePhoto() waits 1.6 seconds and
-// then makes up a believable result from the photo's file size, so the same
-// photo always gets the same result. A real version would upload the photo to
-// a backend that runs an image model and returns the same shape of data.
+// AI GRADING
+// gradePhoto() uploads the photo to the backend (POST /api/scans/grade) and
+// returns its grading: { gradingId, composition, condition, quality, confidence }.
+// The server keeps the grading (and the photo), and the scan is later saved from its gradingId.
+// The server grades it with a real AI model (CLIP), so a photo with no plastic
+// in it (a cat, a person) is rejected with a 422 error.
+// The other helpers below prepare photos in the browser before upload.
 // ---------------------------------------------------------------------------
+import api from "./api.js";
 
-const FAKE_THINKING_TIME_MS = 1600;
-
-export function gradePhoto(photoBlob) {
-  // A number from 0 to 99 taken from the file size. It decides every "AI" value below.
-  const seed = photoBlob.size % 100;
-
-  const pet = 40 + (seed % 40);
-  const hdpe = Math.min(100 - pet, 15 + (seed % 20));
-  const film = 100 - pet - hdpe;
-
-  const composition = { pet, hdpe };
-  if (film > 0) composition.film = film;
-
-  const isBlurry = seed < 15;
-  const result = {
-    composition,
-    condition: seed > 60 ? "light" : "clean",
-    quality: isBlurry ? "blurry" : "good",
-    confidence: isBlurry ? 0.55 : 0.78 + (seed % 20) / 100,
-  };
-
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(result), FAKE_THINKING_TIME_MS);
-  });
+// Sends the photo as multipart form data in the "photo" field.
+// Throws the Axios error if the upload fails (use apiErrorMessage() to show it).
+export async function gradePhoto(photoBlob) {
+  const form = new FormData();
+  form.append("photo", photoBlob, "batch.jpg");
+  const response = await api.post("/scans/grade", form);
+  return response.data.grading;
 }
 
 // Shrinks a photo to at most 1280px on its longest side and re-saves it as JPEG,
-// so the image stays small enough to keep in localStorage.
+// so uploads and the copy saved with the scan stay small.
 export function compressImage(file, maxSide = 1280, quality = 0.75) {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -52,7 +38,7 @@ export function compressImage(file, maxSide = 1280, quality = 0.75) {
 }
 
 // Draws a simple picture of plastic bottles, jugs and bags, for demos without a real photo at hand.
-// `variant` changes the picture (and so the file size), which gives a different simulated AI result.
+// `variant` changes the picture. The AI may reject these drawings, since they only look a little like plastic.
 export function createSamplePhoto(variant = 0) {
   const canvas = document.createElement("canvas");
   canvas.width = 960;

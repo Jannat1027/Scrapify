@@ -46,18 +46,11 @@ const phrases = {
   // New scan
   "Take one clear photo of the batch. We'll grade it and estimate a price.":
     "ব্যাচের একটি পরিষ্কার ছবি তুলুন। আমরা গ্রেড করে দাম অনুমান করব।",
-  "Upload photo": "ছবি আপলোড",
-  "Use phone (QR)": "ফোন ব্যবহার (QR)",
   "Drop a photo here or tap to take one": "এখানে ছবি ছাড়ুন বা ট্যাপ করে ছবি তুলুন",
   "JPG or PNG. We shrink it on this device before uploading.": "JPG বা PNG। আপলোডের আগে এই ডিভাইসেই ছোট করা হয়।",
   "No photo selected": "কোনো ছবি বাছাই করা হয়নি",
   "Retake": "আবার তুলুন",
   "Analyse batch": "বিশ্লেষণ করুন",
-  "Scan with your phone camera": "ফোনের ক্যামেরা দিয়ে স্ক্যান করুন",
-  "Open the camera app and point it at the code.": "ক্যামেরা অ্যাপ খুলে কোডের দিকে ধরুন।",
-  "Take the photo on your phone.": "ফোনে ছবি তুলুন।",
-  "It appears here automatically. No login needed on the phone.": "ছবি নিজে থেকেই এখানে চলে আসবে। ফোনে লগইন লাগবে না।",
-  "Waiting for photo · session": "ছবির অপেক্ষায় · সেশন",
   "Photo checklist": "ছবির চেকলিস্ট",
   "Good photos mean higher confidence and a tighter price range.":
     "ভালো ছবি মানে বেশি নিশ্চয়তা আর আরও সঠিক দামের সীমা।",
@@ -87,6 +80,10 @@ const phrases = {
   "Blurry": "ঝাপসা",
   "AI grading is an estimate. Check the result before you list the batch.":
     "এআই গ্রেড একটি অনুমান। তালিকাভুক্তির আগে ফলাফল যাচাই করুন।",
+  "The percentages are how closely the photo matches each plastic type, not measured amounts.":
+    "শতাংশগুলো দেখায় ছবিটি প্রতিটি প্লাস্টিকের ধরনের সাথে কতটা মেলে, মেপে পাওয়া পরিমাণ নয়।",
+  "The photo is graded by a free AI model (CLIP) on the Scrapify server. Photos with no plastic in them are rejected.":
+    "ছবিটি Scrapify সার্ভারে একটি ফ্রি এআই মডেল (CLIP) দিয়ে গ্রেড করা হয়। প্লাস্টিক নেই এমন ছবি বাতিল করা হয়।",
   "Weight (kg)": "ওজন (কেজি)",
   "Estimated price": "আনুমানিক দাম",
   "Enter weight": "ওজন লিখুন",

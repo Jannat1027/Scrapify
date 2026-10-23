@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import Button from "../../components/Button.jsx";
 import ChoiceTile from "../../components/ChoiceTile.jsx";
@@ -70,6 +70,11 @@ export default function ScanResultPage() {
   const needsReview = isDraft && unsure && !scan.corrected && !reviewed;
   const canSaveDraft = weight > 0 && !needsReview;
 
+  // The review box is at the top of the page, so the hint under the buttons scrolls back to it.
+  function scrollToReview() {
+    document.getElementById("check-ai")?.scrollIntoView({ behavior: "smooth" });
+  }
+
   // The operator's choice replaces the AI's. The AI's first answer is kept in aiResult (the correction log).
   function applyManualChoice(categoryId, condition) {
     const aiResult = draft.aiResult || { composition: draft.composition, condition: draft.condition };
@@ -77,23 +82,30 @@ export default function ScanResultPage() {
     setShowManualPicker(false);
   }
 
-  // Saves the draft to the scan history and returns the saved scan.
-  function saveDraftScan() {
-    const newScan = createScan(draft, user, weight);
-    insertRow("scans", newScan);
-    removeFromStorage(STORAGE_KEYS.draftScan);
+  // Saves the draft to the scan history and returns the saved scan (with the id the server gave it),
+  // or null if saving failed (the reason is already shown in a toast).
+  async function saveDraftScan() {
+    const newScan = await insertRow("scans", createScan(draft, user, weight));
+    if (newScan) removeFromStorage(STORAGE_KEYS.draftScan);
     return newScan;
   }
 
-  function saveWithoutListing() {
-    const newScan = saveDraftScan();
+  async function saveWithoutListing() {
+    const newScan = await saveDraftScan();
+    if (!newScan) return;
     showToast("Scan saved to your history. You can list it later.");
     navigate(`/operator/scans/${newScan.id}`, { replace: true });
   }
 
-  function publishListing(fixedPrice) {
-    const scanToList = isDraft ? saveDraftScan() : scan;
-    insertRow("listings", createListing(scanToList, fixedPrice));
+  async function publishListing(fixedPrice) {
+    const scanToList = isDraft ? await saveDraftScan() : scan;
+    if (!scanToList) return;
+    const listing = await insertRow("listings", createListing(scanToList, fixedPrice));
+    if (!listing) {
+      // The scan is saved even though listing it failed, so show the saved scan instead of the old draft.
+      if (isDraft) navigate(`/operator/scans/${scanToList.id}`, { replace: true });
+      return;
+    }
     showToast("Batch listed. Verified recyclers can see it now.");
     navigate("/operator/listings");
   }
@@ -150,8 +162,10 @@ export default function ScanResultPage() {
           )}
           <p className="rounded-xl border border-ink/10 bg-white/60 p-3 mt-6 flex gap-2 text-xs text-ink/60">
             <Icon name="info" />
-            AI grading is an estimate. Check the result before you list the batch. (In this demo the grading is
-            simulated, not a real AI model.)
+            <span>
+              <span>AI grading is an estimate. Check the result before you list the batch.</span>{" "}
+              <span>The percentages are how closely the photo matches each plastic type, not measured amounts.</span>
+            </span>
           </p>
         </section>
 
@@ -199,7 +213,13 @@ export default function ScanResultPage() {
                     Save to history without listing
                   </Button>
                 )}
-                {needsReview && <p className="text-xs text-ink/60 text-center mt-2">Check the AI result above first.</p>}
+                {needsReview && (
+                  <p className="text-xs text-ink/60 text-center mt-2">
+                    <button type="button" className="link text-[length:inherit]" onClick={scrollToReview}>
+                      Check the AI result above first.
+                    </button>
+                  </p>
+                )}
               </>
             )}
           </section>
@@ -227,7 +247,7 @@ function LowConfidencePanel({ scan, onConfirm, onChooseManually }) {
       : `Confidence is only ${Math.round(scan.confidence * 100)}%. Confirm or pick the plastic yourself.`;
 
   return (
-    <section className="glass border-amber-400/30 bg-amber-400/5 p-6">
+    <section id="check-ai" className="glass scroll-mt-4 border-amber-400/30 bg-amber-400/5 p-6">
       <div className="flex flex-wrap items-center gap-3">
         <span className="icon-tile border-amber-400/30 bg-amber-400/10 text-amber-700">
           <Icon name="circle-help" />
@@ -261,6 +281,12 @@ function ManualPicker({ onApply }) {
   const showToast = useToast();
   const [categoryId, setCategoryId] = useState("");
   const [condition, setCondition] = useState("");
+  const sectionRef = useRef(null);
+
+  // It opens below the "not sure" box, so bring it into view in case it lands off-screen.
+  useEffect(() => {
+    sectionRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, []);
 
   function handleApply() {
     if (!categoryId || !condition) {
@@ -271,7 +297,7 @@ function ManualPicker({ onApply }) {
   }
 
   return (
-    <section className="panel">
+    <section ref={sectionRef} className="panel">
       <h2 className="text-lg font-semibold">Choose the plastic yourself</h2>
       <p className="text-sm text-ink/60">Your choice replaces the AI estimate and is logged for accuracy review.</p>
 
