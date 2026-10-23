@@ -1,10 +1,9 @@
-import Category, { CONDITIONS } from "../models/Category.js";
+import * as catalogService from "../services/catalogService.js";
 
 export async function listCategories(req, res) {
-  const categories = await Category.find().sort({ _id: 1 });
-  res.json({ categories });
+  res.json({ categories: await catalogService.listCategories() });
 }
 
 export function listConditions(req, res) {
-  res.json({ conditions: CONDITIONS });
+  res.json({ conditions: catalogService.listConditions() });
 }

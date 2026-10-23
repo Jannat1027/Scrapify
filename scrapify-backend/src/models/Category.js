@@ -20,6 +20,11 @@ const categorySchema = new mongoose.Schema({
   updated: { type: Date, default: Date.now },
 });
 
+categorySchema.statics.allExist = async function (ids) {
+  const found = await this.countDocuments({ id: { $in: ids } });
+  return found === ids.length;
+};
+
 categorySchema.plugin(toJSONPlugin);
 
 export default mongoose.model("Category", categorySchema);

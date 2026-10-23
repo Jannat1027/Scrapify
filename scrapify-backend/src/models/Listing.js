@@ -22,6 +22,10 @@ const listingSchema = new mongoose.Schema({
   completedAt: { type: Date },
 });
 
+listingSchema.statics.activeForScan = function (scanId) {
+  return this.findOne({ scanId, status: { $ne: "cancelled" } });
+};
+
 listingSchema.plugin(toJSONPlugin);
 
 export default mongoose.model("Listing", listingSchema);
