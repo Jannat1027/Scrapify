@@ -1,24 +1,16 @@
 {
   "info": {
     "name": "Scrapify API",
-    "description": "Every Scrapify endpoint. Run `npm run seed` first, then run the four requests in \"0. Log in\" — they save a token for each role into collection variables, which the other folders use.",
+    "description": "The operator endpoints. Run `npm run seed` first, then run \"Login as operator\" in \"0. Log in\" — it saves the token into a collection variable, which the other folders use.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:5000/api"
+      "value": "http://localhost:5050/api"
     },
     {
       "key": "operatorToken",
-      "value": ""
-    },
-    {
-      "key": "recyclerToken",
-      "value": ""
-    },
-    {
-      "key": "adminToken",
       "value": ""
     },
     {
@@ -27,7 +19,11 @@
     },
     {
       "key": "listingId",
-      "value": "LS-2209"
+      "value": "LS-2210"
+    },
+    {
+      "key": "gradingId",
+      "value": ""
     }
   ],
   "item": [
@@ -74,152 +70,12 @@
               }
             }
           ]
-        },
-        {
-          "name": "Login as recycler",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            },
-            "auth": {
-              "type": "noauth"
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"tanvir@polymerloop.com\",\n  \"password\": \"demo1234\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Logged in\", () => pm.response.to.have.status(200));",
-                  "pm.collectionVariables.set(\"recyclerToken\", pm.response.json().token);"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "Login as admin",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            },
-            "auth": {
-              "type": "noauth"
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@scrapify.app\",\n  \"password\": \"demo1234\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Logged in\", () => pm.response.to.have.status(200));",
-                  "pm.collectionVariables.set(\"adminToken\", pm.response.json().token);"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "Login pending user (rejected 403)",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            },
-            "auth": {
-              "type": "noauth"
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"shapla@bhangari.bd\",\n  \"password\": \"demo1234\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
         }
       ]
     },
     {
       "name": "1. Auth",
       "item": [
-        {
-          "name": "Register",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/register",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "register"
-              ]
-            },
-            "auth": {
-              "type": "noauth"
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"role\": \"operator\",\n  \"name\": \"Test Operator\",\n  \"org\": \"Test Scrap Shop\",\n  \"location\": \"Mirpur, Dhaka\",\n  \"email\": \"test@shop.com\",\n  \"password\": \"greenbin24\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
         {
           "name": "Me",
           "request": {
@@ -253,25 +109,6 @@
       "name": "2. Shared",
       "item": [
         {
-          "name": "Locations (public)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/locations",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "locations"
-              ]
-            },
-            "auth": {
-              "type": "noauth"
-            }
-          }
-        },
-        {
           "name": "Categories with rates",
           "request": {
             "method": "GET",
@@ -290,7 +127,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{recyclerToken}}",
+                  "value": "{{operatorToken}}",
                   "type": "string"
                 }
               ]
@@ -316,7 +153,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{recyclerToken}}",
+                  "value": "{{operatorToken}}",
                   "type": "string"
                 }
               ]
@@ -342,7 +179,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{recyclerToken}}",
+                  "value": "{{operatorToken}}",
                   "type": "string"
                 }
               ]
@@ -398,8 +235,20 @@
                   "description": "Choose any image file"
                 }
               ]
+            },
+            "description": "Upload a photo in the \"photo\" field. The answer includes gradingId, which \"Save scan\" uses."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"gradingId\", pm.response.json().grading.gradingId);"
+                ]
+              }
             }
-          }
+          ]
         },
         {
           "name": "Save scan",
@@ -427,13 +276,14 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"weight\": 50,\n  \"composition\": {\n    \"pet\": 70,\n    \"hdpe\": 30\n  },\n  \"condition\": \"clean\",\n  \"confidence\": 0.9,\n  \"quality\": \"good\",\n  \"corrected\": false\n}",
+              "raw": "{\n  \"gradingId\": \"{{gradingId}}\",\n  \"weight\": 50\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            }
+            },
+            "description": "Saves the grading from \"Grade photo\" as a scan. The AI's answer, confidence and photo come from the server. To correct an unsure AI result, also send \"composition\" (shares adding up to 100) and \"condition\"."
           },
           "event": [
             {
@@ -602,598 +452,6 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"reason\": \"Sold at the shop\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "4. Recycler",
-      "item": [
-        {
-          "name": "Browse available",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/listings?status=available",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings"
-              ],
-              "query": [
-                {
-                  "key": "status",
-                  "value": "available"
-                }
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{recyclerToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Claim listing",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/listings/{{listingId}}/claim",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings",
-                "{{listingId}}",
-                "claim"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{recyclerToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "My claims",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/listings/claims",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings",
-                "claims"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{recyclerToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Complete claim",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/listings/{{listingId}}/complete",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings",
-                "{{listingId}}",
-                "complete"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{recyclerToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Rate operator",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/listings/{{listingId}}/rate",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings",
-                "{{listingId}}",
-                "rate"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{recyclerToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"rating\": 5\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Cancel claim",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/listings/{{listingId}}/cancel",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "listings",
-                "{{listingId}}",
-                "cancel"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{recyclerToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"reason\": \"Truck broke down\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "5. Admin",
-      "item": [
-        {
-          "name": "Dashboard stats",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/stats",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "stats"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "All users",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/users",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "users"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Pending users",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/users?status=pending",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "users"
-              ],
-              "query": [
-                {
-                  "key": "status",
-                  "value": "pending"
-                }
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Approve user",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/users/u3/status",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "users",
-                "u3",
-                "status"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"approved\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Flag user",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/users/u4/status",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "users",
-                "u4",
-                "status"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"flagged\",\n  \"note\": \"Weights look too high\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Add category",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/categories",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "categories"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"PVC pipes\",\n  \"note\": \"Pipes and fittings\",\n  \"clean\": 20,\n  \"light\": 14,\n  \"heavy\": 8,\n  \"source\": \"Admin estimate\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Update rates",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/categories/pvc-pipes",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "categories",
-                "pvc-pipes"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"clean\": 22,\n  \"light\": 15\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Delete category",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/categories/pvc-pipes",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "categories",
-                "pvc-pipes"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Add location",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/locations",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "locations"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Uttara, Dhaka\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Delete location",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/locations/Uttara%2C%20Dhaka",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "locations",
-                "Uttara%2C%20Dhaka"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Reported issues",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/reports",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "reports"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Resolve report",
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/admin/reports/RP-31/resolve",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "admin",
-                "reports",
-                "RP-31",
-                "resolve"
-              ]
-            },
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{adminToken}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"resolution\": \"Operator refunded 15 kg.\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

@@ -1,16 +1,15 @@
 import mongoose from "mongoose";
 import { toJSONPlugin } from "./toJSON.js";
 
-export const REPORT_STATUSES = ["open", "resolved"];
+const REPORT_STATUSES = ["open", "resolved"];
 
-// A problem with a listing, sent to the admin by the operator or recycler on it.
 const reportSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true }, // "RP-31"
+  id: { type: String, required: true, unique: true },
   listingId: { type: String, required: true },
-  by: { type: String, required: true }, // id of the user who reported it
+  by: { type: String, required: true },
   reason: { type: String, required: true, trim: true },
   status: { type: String, enum: REPORT_STATUSES, default: "open" },
-  resolution: { type: String }, // the admin's note when resolving
+  resolution: { type: String },
   date: { type: Date, default: Date.now },
 });
 

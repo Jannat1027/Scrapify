@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
 import { toJSONPlugin } from "./toJSON.js";
 
-export const ROLES = ["operator", "recycler", "admin"];
+const ROLES = ["operator", "recycler", "admin"];
 
-// status: "approved" can log in, "pending" waits for an admin,
-// "flagged" can log in but is marked for review, "suspended" cannot log in.
-export const USER_STATUSES = ["pending", "approved", "flagged", "suspended"];
+const USER_STATUSES = ["pending", "approved", "flagged", "suspended"];
 export const CAN_LOG_IN = ["approved", "flagged"];
 
 const userSchema = new mongoose.Schema({
@@ -17,11 +15,10 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   passwordHash: { type: String, required: true },
   status: { type: String, enum: USER_STATUSES, default: "pending" },
-  note: { type: String, default: "" }, // why an admin flagged or suspended the account
+  note: { type: String, default: "" },
   joined: { type: Date, default: Date.now },
 });
 
-// The password hash never leaves the server.
 userSchema.plugin(toJSONPlugin, { hide: ["passwordHash"] });
 
 export default mongoose.model("User", userSchema);

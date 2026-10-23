@@ -1,15 +1,12 @@
-// Reporting a problem with a listing. Used by operators (My listings) and recyclers (My claims).
 import Listing from "../models/Listing.js";
 import Report from "../models/Report.js";
 import { HttpError } from "../utils/httpError.js";
 import { makeId } from "../utils/ids.js";
 
-// POST /api/reports   { listingId, reason }
-// Only someone on the trade (its operator or its recycler) can report it.
 export async function createReport(req, res) {
   const listing = await Listing.findOne({ id: req.body.listingId });
   if (!listing) throw new HttpError(404, `No listing called ${req.body.listingId}.`);
-  if (![listing.operatorId, listing.recyclerId].includes(req.user.id)) {
+  if (listing.operatorId !== req.user.id) {
     throw new HttpError(403, "You can only report listings you are trading on.");
   }
 

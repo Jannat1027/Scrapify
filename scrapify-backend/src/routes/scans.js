@@ -1,4 +1,3 @@
-// /api/scans: operators only.
 import { Router } from "express";
 import { createScan, getScan, grade, listMyScans } from "../controllers/scanController.js";
 import { requireAuth } from "../middleware/auth.js";

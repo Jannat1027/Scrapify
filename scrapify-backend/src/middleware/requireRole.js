@@ -1,4 +1,3 @@
-// Role guard. Use after requireAuth, e.g. router.use(requireAuth, requireRole("admin")).
 import { HttpError } from "../utils/httpError.js";
 
 export function requireRole(...roles) {

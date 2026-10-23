@@ -2,16 +2,14 @@ import mongoose from "mongoose";
 import { CONDITION_IDS } from "./Category.js";
 import { toJSONPlugin } from "./toJSON.js";
 
-// Listing lifecycle: available -> claimed -> completed, or cancelled.
-export const LISTING_STATUSES = ["available", "claimed", "completed", "cancelled"];
+const LISTING_STATUSES = ["available", "claimed", "completed", "cancelled"];
 
-// A scanned batch put on the market at a fixed price. It points back to its scan (scanId).
 const listingSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true }, // "LS-2210"
+  id: { type: String, required: true, unique: true },
   scanId: { type: String, required: true, index: true },
   operatorId: { type: String, required: true, index: true },
   recyclerId: { type: String, index: true },
-  category: { type: String, required: true }, // the plastic type with the biggest share in the scan
+  category: { type: String, required: true },
   condition: { type: String, enum: CONDITION_IDS, required: true },
   weight: { type: Number, required: true, min: 0 },
   location: { type: String, required: true },
