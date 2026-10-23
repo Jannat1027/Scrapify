@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scrapify · Fair prices for plastic</title>
+  <meta name="description" content="AI-assisted plastic grading and a fair-price recycling marketplace for Bangladesh.">
+  <link rel="icon" href="assets/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script src="js/tailwind.components.js"></script>
+  <script src="js/tailwind.config.js"></script>
+</head>
+<body>
+  <header data-nav></header>
+
+  <section class="wrap grid items-center gap-14 py-16 lg:grid-cols-[1.05fr_1fr] lg:pt-24">
+    <div class="animate-rise">
+      <span class="badge tone-green">For scrap shops, NGO collection points and recyclers</span>
+      <h1 class="mt-6 text-5xl font-extrabold leading-[1.02] tracking-tighter sm:text-6xl lg:text-[4.6rem]">
+        <span>Every kilo of plastic,</span>
+        <span class="text-gradient">priced fairly.</span>
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed muted">
+        Take one photo. Scrapify reads the mix, prices it against today's rates and puts it in front of
+        verified recyclers. No guessing, no haggling.
+      </p>
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href="register.html" class="btn btn-primary btn-lg">
+          Start selling smarter <i data-lucide="arrow-right"></i>
+        </a>
+        <a href="#how" class="btn btn-lg"><i data-lucide="play"></i> Watch how it works</a>
+      </div>
+      <div id="trust" class="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-sm muted"></div>
+    </div>
+
+    <div class="relative animate-rise">
+      <div class="blob -left-10 top-6 h-56 w-56 bg-mint/60"></div>
+      <div class="blob -right-8 bottom-0 h-64 w-64 bg-sky-300/60 [animation-delay:-9s]"></div>
+      <div class="blob bottom-24 left-1/3 h-40 w-40 bg-amber-200/70 [animation-delay:-4s]"></div>
+      <div id="explainer" class="[perspective:1600px]" aria-label="How Scrapify works, animated"></div>
+    </div>
+  </section>
+
+  <section id="how" class="wrap scroll-mt-28 py-20">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">How it works</p>
+      <h2 class="headline mt-3">From the scale to a buyer in under a minute</h2>
+      <p class="mt-4 muted">
+        No forms to fill and no app to install. The operator takes a photo, and Scrapify handles the rest.
+      </p>
+    </div>
+    <div class="relative mt-16">
+      <div class="absolute inset-x-[12.5%] top-8 hidden h-0.5 rounded-full bg-ink/10 lg:block">
+        <i id="howLine" class="block h-full w-0 rounded-full bg-gradient-to-r from-mint via-sky-400 to-violet-400
+          transition-[width] duration-[1800ms] ease-out"></i>
+      </div>
+      <ol id="steps" class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4"></ol>
+    </div>
+  </section>
+
+  <section id="why" class="wrap scroll-mt-28 py-20">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">Why Scrapify</p>
+      <h2 class="headline mt-3">What changes on day one</h2>
+      <p class="mt-4 muted">The same pile of plastic, the same shop counter. A very different sale.</p>
+    </div>
+    <div id="compare" class="mt-14 grid gap-5 lg:grid-cols-2"></div>
+    <div id="numbers" class="glass mt-5 grid gap-6 p-8 sm:grid-cols-2 lg:grid-cols-4"></div>
+  </section>
+
+  <section class="wrap py-10">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">Built for the counter</p>
+      <h2 class="headline mt-3">Small details that protect every trade</h2>
+    </div>
+    <div id="features" class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"></div>
+  </section>
+
+  <section id="roles" class="wrap scroll-mt-28 py-20">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">Who it's for</p>
+      <h2 class="headline mt-3">One marketplace, three sides</h2>
+    </div>
+    <div id="roleCards" class="mt-14 grid gap-5 md:grid-cols-3"></div>
+  </section>
+
+  <section class="wrap" data-reveal="zoom">
+    <div class="glass relative overflow-hidden px-6 py-16 text-center sm:py-20">
+      <div class="blob -top-32 left-1/2 h-72 w-[36rem] -translate-x-1/2 bg-mint/40 blur-3xl"></div>
+      <h2 class="headline mx-auto max-w-2xl">
+        Your next batch could be <span class="text-gradient">sold before lunch.</span>
+      </h2>
+      <p class="mx-auto mt-4 max-w-lg muted">
+        Register your shop or recycling business. We verify it within a day, and you're ready to trade.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="register.html" class="btn btn-primary btn-lg">Create a free account</a>
+        <a href="info.html" class="btn btn-lg">Read the plastic guide</a>
+      </div>
+    </div>
+  </section>
+
+  <footer data-footer></footer>
+
+  <script src="js/app.js"
+    data-page="plastic-art explainer-view explainer-back explainer landing-content landing"></script>
+</body>
+</html>
