@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { toJSONPlugin } from "./toJSON.js";
 
@@ -18,6 +19,14 @@ const userSchema = new mongoose.Schema({
   note: { type: String, default: "" },
   joined: { type: Date, default: Date.now },
 });
+
+userSchema.methods.checkPassword = function (password) {
+  return bcrypt.compare(password, this.passwordHash);
+};
+
+userSchema.methods.canLogIn = function () {
+  return CAN_LOG_IN.includes(this.status);
+};
 
 userSchema.plugin(toJSONPlugin, { hide: ["passwordHash"] });
 
