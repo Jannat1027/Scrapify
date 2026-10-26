@@ -8,10 +8,6 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { apiErrorMessage } from "../../services/api.js";
 import { HOME_PAGE_FOR_ROLE } from "../../services/marketplace.js";
 
-// The seeded demo operator (see the backend's src/data/seed.js).
-const DEMO_EMAIL = "rahima@greenbin.bd";
-const DEMO_PASSWORD = "demo1234";
-
 // Operator login. The backend checks the password and answers with a token.
 export default function LoginPage() {
   const { user, logIn } = useAuth();
@@ -44,12 +40,6 @@ export default function LoginPage() {
       return;
     }
     tryLogIn(email, password);
-  }
-
-  function logInAsDemo() {
-    setEmail(DEMO_EMAIL);
-    setPassword(DEMO_PASSWORD);
-    tryLogIn(DEMO_EMAIL, DEMO_PASSWORD);
   }
 
   return (
@@ -93,15 +83,7 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <div className="mt-7 rounded-2xl border border-dashed border-ink/15 p-4">
-          <p className="kicker">Demo · one click, no password</p>
-          <Button icon="store" className="mt-3 w-full" disabled={submitting} onClick={logInAsDemo}>
-            Log in as the demo operator
-          </Button>
-          <p className="text-xs text-ink/60 mt-3">
-            Logs in as <b>{DEMO_EMAIL}</b> with the password <b>{DEMO_PASSWORD}</b>.
-          </p>
-        </div>
+
       </div>
     </div>
   );

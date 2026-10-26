@@ -17,9 +17,6 @@ export default function Topbar({ onMenuClick }) {
         <p className="text-sm text-ink/60 max-sm:!hidden">{today}</p>
       </div>
       <div className="inline-flex flex-wrap items-center gap-2">
-        <span className="badge tone-amber" title="Demo accounts and sample data. Photos are graded by a real AI model on the server.">
-          Demo mode
-        </span>
         <LanguageButton />
         <span className="grid h-10 w-10 place-items-center rounded-full bg-mint/15 text-[0.875rem] font-bold text-forest" title={user.name}>
           {initialsOf(user.name)}

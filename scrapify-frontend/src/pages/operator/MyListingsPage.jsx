@@ -8,6 +8,7 @@ import ListingCard from "../../components/ListingCard.jsx";
 import PillTabs from "../../components/PillTabs.jsx";
 import ReportProblemDialog from "../../components/ReportProblemDialog.jsx";
 import Stars from "../../components/Stars.jsx";
+import PaymentDialog from "../../components/PaymentDialog.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useData } from "../../context/DataContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
@@ -21,7 +22,7 @@ export default function MyListingsPage() {
   const { data, updateRow } = useData();
   const showToast = useToast();
   const [currentTab, setCurrentTab] = useState("all");
-  // Which dialog is open: null, { type: "cancel", listingId } or { type: "report", listingId }
+  // Which dialog is open: null, { type: "cancel", listingId } or { type: "report", listingId } or { type: "payment", listing }
   const [dialog, setDialog] = useState(null);
 
   const myListings = data.listings.filter((listing) => listing.operatorId === user.id);
@@ -53,11 +54,17 @@ export default function MyListingsPage() {
         {shownListings.map((listing) => (
           <ListingCard key={listing.id} listing={listing}>
             <ListingNote listing={listing} />
-            {listing.status === "available" ? (
+            {listing.status === "available" && (
               <Button size="sm" variant="danger" icon="x" onClick={() => setDialog({ type: "cancel", listingId: listing.id })}>
                 Cancel
               </Button>
-            ) : (
+            )}
+            {listing.status === "claimed" && (
+              <Button size="sm" variant="primary" icon="BadgeDollarSign" onClick={() => setDialog({ type: "payment", listing })}>
+                Pay
+              </Button>
+            )}
+            {(listing.status === "completed" || listing.status === "cancelled") && (
               <Button size="sm" icon="flag" onClick={() => setDialog({ type: "report", listingId: listing.id })}>
                 Report a problem
               </Button>
@@ -78,6 +85,7 @@ export default function MyListingsPage() {
         />
       )}
       {dialog?.type === "report" && <ReportProblemDialog listingId={dialog.listingId} onClose={() => setDialog(null)} />}
+      {dialog?.type === "payment" && <PaymentDialog listing={dialog.listing} onClose={() => setDialog(null)} onSuccess={() => setDialog(null)} />}
     </>
   );
 }

@@ -12,6 +12,7 @@ import NewScanPage from "./pages/operator/NewScanPage.jsx";
 import OperatorDashboardPage from "./pages/operator/OperatorDashboardPage.jsx";
 import ScanHistoryPage from "./pages/operator/ScanHistoryPage.jsx";
 import ScanResultPage from "./pages/operator/ScanResultPage.jsx";
+import PaymentsPage from "./pages/operator/PaymentsPage.jsx";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/operator/scans/:scanId" element={<ScanResultPage />} />
             <Route path="/operator/history" element={<ScanHistoryPage />} />
             <Route path="/operator/listings" element={<MyListingsPage />} />
+            <Route path="/operator/payments" element={<PaymentsPage />} />
           </Route>
         </Route>
 

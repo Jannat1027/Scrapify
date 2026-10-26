@@ -11,6 +11,7 @@ const MENU = [
   { to: "/operator/new-scan", label: "New scan", icon: "scan-line" },
   { to: "/operator/history", label: "Scan history", icon: "history" },
   { to: "/operator/listings", label: "My listings", icon: "tags" },
+  { to: "/operator/payments", label: "Payments", icon: "badge-dollar-sign" },
 ];
 
 // isOpen only matters on phones, where the sidebar slides in from the left.
