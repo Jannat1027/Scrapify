@@ -1,3 +1,4 @@
+
 export function toJSONPlugin(schema, { hide = [] } = {}) {
   schema.set("toJSON", {
     versionKey: false,

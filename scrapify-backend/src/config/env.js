@@ -1,3 +1,5 @@
+
+
 import dotenv from "dotenv";
 
 dotenv.config({ quiet: true });
@@ -9,16 +11,18 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
+
 if (/[<>]/.test(process.env.MONGO_URI)) {
   console.error("MONGO_URI in .env still has the <user>, <password> or <cluster> placeholders. Paste your real connection string.");
   process.exit(1);
 }
 
 export const env = {
-  port: Number(process.env.PORT) || 5050,
+  port: Number(process.env.PORT) || 5000,
   mongoUri: process.env.MONGO_URI,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
+  // "http://localhost:5173, https://scrapify.vercel.app" -> ["http://localhost:5173", "https://scrapify.vercel.app"]
   clientUrls: (process.env.CLIENT_URL || "http://localhost:5173").split(",").map((url) => url.trim()),
   isProduction: process.env.NODE_ENV === "production",
 };

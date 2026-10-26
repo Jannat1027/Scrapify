@@ -1,11 +1,13 @@
+// /api/auth: public sign-up and login, plus "who am I?" for a logged-in user.
 import { Router } from "express";
-import { login, me } from "../controllers/authController.js";
+import { login, me, register } from "../controllers/authController.js";
 import { requireAuth } from "../middleware/auth.js";
 import { validate } from "../middleware/validate.js";
-import { loginSchema } from "../utils/validation.js";
+import { loginSchema, registerSchema } from "../utils/validation.js";
 
 const router = Router();
 
+router.post("/register", validate(registerSchema), register);
 router.post("/login", validate(loginSchema), login);
 router.get("/me", requireAuth, me);
 

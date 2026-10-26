@@ -1,3 +1,4 @@
+
 import multer from "multer";
 import { ZodError } from "zod";
 import { env } from "../config/env.js";
@@ -5,6 +6,7 @@ import { env } from "../config/env.js";
 export function notFound(req, res) {
   res.status(404).json({ message: `No route for ${req.method} ${req.originalUrl}` });
 }
+
 
 export function errorHandler(error, req, res, next) {
   if (error instanceof ZodError) {

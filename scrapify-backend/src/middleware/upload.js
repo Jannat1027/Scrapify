@@ -1,7 +1,8 @@
+
 import multer from "multer";
 import { HttpError } from "../utils/httpError.js";
 
-const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5 MB
 
 export const uploadPhoto = multer({
   storage: multer.memoryStorage(),

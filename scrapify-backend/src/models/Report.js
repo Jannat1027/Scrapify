@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import { toJSONPlugin } from "./toJSON.js";
 
-const REPORT_STATUSES = ["open", "resolved"];
+export const REPORT_STATUSES = ["open", "resolved"];
+
 
 const reportSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },

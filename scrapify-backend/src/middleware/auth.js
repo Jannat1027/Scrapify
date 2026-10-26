@@ -1,6 +1,7 @@
+
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
-import User from "../models/User.js";
+import User, { CAN_LOG_IN } from "../models/User.js";
 import { HttpError } from "../utils/httpError.js";
 
 export function signToken(user) {
@@ -20,7 +21,7 @@ export async function requireAuth(req, res, next) {
 
   const user = await User.findOne({ id: payload.sub });
   if (!user) throw new HttpError(401, "This account no longer exists.");
-  if (!user.canLogIn()) throw new HttpError(401, "This account can't be used right now.");
+  if (!CAN_LOG_IN.includes(user.status)) throw new HttpError(403, "This account can't be used right now.");
 
   req.user = user;
   next();

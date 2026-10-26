@@ -1,3 +1,4 @@
+// /api/reports: operators and recyclers report a problem with a listing.
 import { Router } from "express";
 import { createReport } from "../controllers/reportController.js";
 import { requireAuth } from "../middleware/auth.js";
@@ -7,6 +8,6 @@ import { createReportSchema } from "../utils/validation.js";
 
 const router = Router();
 
-router.post("/", requireAuth, requireRole("operator"), validate(createReportSchema), createReport);
+router.post("/", requireAuth, requireRole("operator", "recycler"), validate(createReportSchema), createReport);
 
 export default router;

@@ -1,10 +1,10 @@
-import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { toJSONPlugin } from "./toJSON.js";
 
-const ROLES = ["operator", "recycler", "admin"];
+export const ROLES = ["operator", "recycler", "admin"];
 
-const USER_STATUSES = ["pending", "approved", "flagged", "suspended"];
+
+export const USER_STATUSES = ["pending", "approved", "flagged", "suspended"];
 export const CAN_LOG_IN = ["approved", "flagged"];
 
 const userSchema = new mongoose.Schema({
@@ -20,13 +20,6 @@ const userSchema = new mongoose.Schema({
   joined: { type: Date, default: Date.now },
 });
 
-userSchema.methods.checkPassword = function (password) {
-  return bcrypt.compare(password, this.passwordHash);
-};
-
-userSchema.methods.canLogIn = function () {
-  return CAN_LOG_IN.includes(this.status);
-};
 
 userSchema.plugin(toJSONPlugin, { hide: ["passwordHash"] });
 

@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 import { CONDITION_IDS } from "./Category.js";
 import { toJSONPlugin } from "./toJSON.js";
 
-const LISTING_STATUSES = ["available", "claimed", "completed", "cancelled"];
+
+export const LISTING_STATUSES = ["available", "claimed", "completed", "cancelled"];
+
 
 const listingSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
@@ -21,10 +23,6 @@ const listingSchema = new mongoose.Schema({
   claimedAt: { type: Date },
   completedAt: { type: Date },
 });
-
-listingSchema.statics.activeForScan = function (scanId) {
-  return this.findOne({ scanId, status: { $ne: "cancelled" } });
-};
 
 listingSchema.plugin(toJSONPlugin);
 

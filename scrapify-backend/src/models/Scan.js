@@ -4,6 +4,7 @@ import { toJSONPlugin } from "./toJSON.js";
 
 export const PHOTO_QUALITIES = ["good", "dark", "blurry"];
 
+
 const aiResultSchema = new mongoose.Schema(
   {
     composition: { type: Map, of: Number },
@@ -13,7 +14,7 @@ const aiResultSchema = new mongoose.Schema(
 );
 
 const scanSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
+  id: { type: String, required: true, unique: true }, // "SC-1042"
   operatorId: { type: String, required: true, index: true },
   location: { type: String, required: true },
   date: { type: Date, default: Date.now },
@@ -25,7 +26,6 @@ const scanSchema = new mongoose.Schema({
   corrected: { type: Boolean, default: false },
   aiResult: { type: aiResultSchema, default: undefined },
   image: { type: String },
-  gradingId: { type: String },
 });
 
 scanSchema.plugin(toJSONPlugin);

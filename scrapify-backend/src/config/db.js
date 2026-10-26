@@ -1,3 +1,4 @@
+// Connects to MongoDB (Atlas or a local server) using MONGO_URI from .env.
 import mongoose from "mongoose";
 import { env } from "./env.js";
 

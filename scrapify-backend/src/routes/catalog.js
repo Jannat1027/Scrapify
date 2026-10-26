@@ -1,9 +1,12 @@
+// /api/categories, /api/conditions, /api/locations: shared lookups.
+// Locations are public because the sign-up form needs them before anyone is logged in.
 import { Router } from "express";
-import { listCategories, listConditions } from "../controllers/catalogController.js";
+import { listCategories, listConditions, listLocations } from "../controllers/catalogController.js";
 import { requireAuth } from "../middleware/auth.js";
 
 const router = Router();
 
+router.get("/locations", listLocations);
 router.get("/categories", requireAuth, listCategories);
 router.get("/conditions", requireAuth, listConditions);
 
