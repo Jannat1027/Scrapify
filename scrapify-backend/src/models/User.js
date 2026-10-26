@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   passwordHash: { type: String, required: true },
   status: { type: String, enum: USER_STATUSES, default: "pending" },
-  note: { type: String, default: "" },
+  note: { type: String, default: "" }, 
   joined: { type: Date, default: Date.now },
 });
 

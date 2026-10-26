@@ -79,6 +79,18 @@ export const resolveReportSchema = z.object({
   resolution: z.string().trim().default(""),
 });
 
+// ---------- Payments ----------
+
+export const createPaymentSchema = z.object({
+  listingId: text(1, "Choose a listing."),
+  method: z.enum(["bkash", "nagad"]),
+  phoneNumber: z.string().trim().regex(/^01[3-9]\d{8}$/, "Enter a valid Bangladesh mobile number."),
+});
+
+export const verifyPaymentSchema = z.object({
+  transactionId: z.string().trim().min(3, "Enter the transaction ID.").max(64, "Transaction ID is too long."),
+});
+
 // ---------- Admin ----------
 
 export const userStatusSchema = z.object({

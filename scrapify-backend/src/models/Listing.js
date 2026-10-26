@@ -7,11 +7,11 @@ export const LISTING_STATUSES = ["available", "claimed", "completed", "cancelled
 
 
 const listingSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
+  id: { type: String, required: true, unique: true }, 
   scanId: { type: String, required: true, index: true },
   operatorId: { type: String, required: true, index: true },
   recyclerId: { type: String, index: true },
-  category: { type: String, required: true },
+  category: { type: String, required: true }, 
   condition: { type: String, enum: CONDITION_IDS, required: true },
   weight: { type: Number, required: true, min: 0 },
   location: { type: String, required: true },

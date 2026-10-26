@@ -71,7 +71,7 @@ export async function createLocation(req, res) {
   res.status(201).json({ location: location.name });
 }
 
-// DELETE /api/admin/locations/:name
+// DELETE /api/admin/locations/:name  
 export async function deleteLocation(req, res) {
   const { deletedCount } = await Location.deleteOne({ name: req.params.name });
   if (deletedCount === 0) throw new HttpError(404, `No area called ${req.params.name}.`);

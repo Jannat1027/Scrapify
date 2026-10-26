@@ -2,7 +2,7 @@
 export function toJSONPlugin(schema, { hide = [] } = {}) {
   schema.set("toJSON", {
     versionKey: false,
-    flattenMaps: true,
+    flattenMaps: true, 
     transform(document, output) {
       delete output._id;
       hide.forEach((field) => delete output[field]);

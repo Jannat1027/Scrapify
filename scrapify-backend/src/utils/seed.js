@@ -10,6 +10,7 @@ import { categories, DEMO_PASSWORD, listings, locations, reports, scans, users }
 import Category from "../models/Category.js";
 import Listing from "../models/Listing.js";
 import Location from "../models/Location.js";
+import Payment from "../models/Payment.js";
 import Report from "../models/Report.js";
 import Scan from "../models/Scan.js";
 import User from "../models/User.js";
@@ -22,6 +23,7 @@ export async function seedDatabase() {
     [Location, locations],
     [Scan, scans],
     [Listing, listings],
+    [Payment, []],
     [Report, reports],
   ];
 
