@@ -13,6 +13,11 @@ export const NOTE_REQUIRED_FOR = [USER_STATUS.FLAGGED, USER_STATUS.SUSPENDED];
 export const MIN_PASSWORD_LENGTH = 6;
 export const MIN_NOTE_LENGTH = 5;
 
+export const STALE_RATE_DAYS = 14;
+export const LOW_CONFIDENCE = 0.7;
+export const MIN_LOCATION_LENGTH = 3;
+export const REPORT_STATUS = { OPEN: "open", RESOLVED: "resolved" };
+
 export const STATUS = {
   OK: 200,
   CREATED: 201,
@@ -54,7 +59,54 @@ export const MESSAGES = {
     alreadyHasStatus: (status) => `This user is already ${status}`,
     statusChanged: (name, status) => `${name} is now ${status}`,
   },
+
+    RATE: {
+    LISTED: "Rates loaded",
+    UPDATED: (name) => `${name} saved`,
+    NOT_FOUND: "No rate found for this category",
+    VALUE_INVALID: "Rates must be numbers, zero or more",
+    SOURCE_REQUIRED: "Say where these rates come from",
+    NAME_INVALID: "Give the category a name (at least 2 characters)",
+    NOTE_INVALID: "The note must be text",
+    NOTHING_TO_UPDATE: "Send at least one of: name, note, clean, light, heavy, source",
+  },
+  CATEGORY: {
+    ADDED: (name) => `${name} added`,
+    DELETED: (name) => `${name} deleted`,
+    NAME_UNUSABLE: "The name must contain letters or numbers (a-z, 0-9)",
+    EXISTS: "That category already exists",
+    inUse: (name, uses) => `${name} is used by ${uses} scans and listings, so it can't be deleted.`,
+  },
+  LOCATION: {
+    LISTED: "Locations loaded",
+    ADDED: (name) => `${name} added`,
+    REMOVED: (name) => `${name} removed`,
+    TOO_SHORT: "Enter a location of at least 3 characters",
+    EXISTS: "That location is already listed",
+    INVALID_ID: "Invalid location id",
+    NOT_FOUND: "Location not found",
+  },
+  REPORT: {
+    LISTED: "Reports loaded",
+    RESOLVED: "Report resolved",
+    INVALID_ID: "Invalid report id",
+    NOT_FOUND: "Report not found",
+    FILTER_INVALID: "Status filter must be open or resolved",
+    STATUS_INVALID: 'Status must be "resolved"',
+    RESOLUTION_REQUIRED: "Please write what was decided (at least 5 characters)",
+    ALREADY_RESOLVED: "This report is already resolved",
+  },
+  OVERVIEW: {
+    LOADED: "Overview loaded",
+  },
+
+
   // ===== OPERATOR (Jbh) =====
+
+
+
+
+
   // ===== RECYCLER (Nou) =====
   COMMON: {
     MISSING_FIELDS: (fields) => `Please fill in: ${fields.join(", ")}`,
