@@ -8,6 +8,7 @@ import { pathToFileURL } from "node:url";
 import { connectDatabase, disconnectDatabase } from "../config/db.js";
 import { categories, DEMO_PASSWORD, listings, locations, reports, scans, users } from "../data/seed.js";
 import Category from "../models/Category.js";
+import Grading from "../models/Grading.js";
 import Listing from "../models/Listing.js";
 import Location from "../models/Location.js";
 import Payment from "../models/Payment.js";
@@ -25,6 +26,7 @@ export async function seedDatabase() {
     [Listing, listings],
     [Payment, []],
     [Report, reports],
+    [Grading, []],
   ];
 
   for (const [Model, rows] of collections) {
@@ -37,6 +39,10 @@ export async function seedDatabase() {
 // Runs only when called as a script, not when imported.
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
+    // The seed empties every collection. Never let it run against a live database by accident.
+    if (process.env.NODE_ENV === "production" && !process.argv.includes("--force")) {
+      throw new Error("Refusing to empty the database while NODE_ENV=production. Add --force if you really mean it.");
+    }
     await connectDatabase();
     console.log("Seeding demo data...");
     await seedDatabase();

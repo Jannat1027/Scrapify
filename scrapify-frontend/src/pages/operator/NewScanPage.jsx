@@ -141,7 +141,7 @@ export default function NewScanPage() {
           </div>
           <p className="mt-4 flex items-start gap-1.5 rounded-xl border border-amber-400/30 bg-amber-400/[.08] px-3 py-2 text-amber-800 text-xs">
             <Icon name="info" />
-            The photo is graded by a free AI model (CLIP) on the Scrapify server. Photos with no plastic in them are rejected.
+            The photo is graded on the Scrapify server. Use a clear, well-lit photo for a higher confidence.
           </p>
         </section>
 

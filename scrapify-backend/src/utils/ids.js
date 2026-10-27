@@ -1,9 +1,10 @@
-// A short unique-enough ID such as "LS-K3F9A2", built from the current time plus two random characters.
-// Same format as makeId() in the frontend, so new rows look like the seeded ones.
+import { randomBytes } from "node:crypto";
+
+// A short unique ID such as "LS-K3F9A2C1": the prefix plus 8 random characters.
+// Same look as the ids in the frontend, but random, so two requests in the same millisecond never clash.
 export function makeId(prefix) {
-  const timePart = Date.now().toString(36).slice(-4);
-  const randomPart = Math.random().toString(36).slice(2, 4);
-  return `${prefix}-${timePart}${randomPart}`.toUpperCase();
+  const randomPart = randomBytes(5).toString("hex").slice(0, 8);
+  return `${prefix}-${randomPart}`.toUpperCase();
 }
 
 // "Clear PET" -> "clear-pet". Used as the id of a new category.

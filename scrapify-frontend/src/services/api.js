@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------
 // The one Axios instance every request to the Scrapify backend goes through.
-// - baseURL comes from VITE_API_URL in .env (http://localhost:5050/api by default)
+// - baseURL comes from VITE_API_URL in .env (http://localhost:5000/api by default)
 // - the saved JWT is attached to every request as "Authorization: Bearer <token>"
 // - a 401 (expired token, or the account was suspended) logs the user out
 // ---------------------------------------------------------------------------
@@ -8,7 +8,7 @@ import axios from "axios";
 import { loadFromStorage, removeFromStorage, saveToStorage, STORAGE_KEYS } from "./storage.js";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5050/api",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
 export function getToken() {

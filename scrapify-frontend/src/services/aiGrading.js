@@ -3,8 +3,6 @@
 // gradePhoto() uploads the photo to the backend (POST /api/scans/grade) and
 // returns its grading: { gradingId, composition, condition, quality, confidence }.
 // The server keeps the grading (and the photo), and the scan is later saved from its gradingId.
-// The server grades it with a real AI model (CLIP), so a photo with no plastic
-// in it (a cat, a person) is rejected with a 422 error.
 // The other helpers below prepare photos in the browser before upload.
 // ---------------------------------------------------------------------------
 import api from "./api.js";

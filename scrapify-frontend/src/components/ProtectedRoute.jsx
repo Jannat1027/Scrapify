@@ -32,7 +32,7 @@ export default function ProtectedRoute({ role }) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
   if (user.role !== role) {
-    return <Navigate to={HOME_PAGE_FOR_ROLE[user.role]} replace />;
+    return <Navigate to={HOME_PAGE_FOR_ROLE[user.role] || "/login"} replace />;
   }
   if (error) {
     return (

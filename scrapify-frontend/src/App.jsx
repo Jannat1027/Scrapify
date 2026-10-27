@@ -6,6 +6,7 @@ import ScrollManager from "./components/ScrollManager.jsx";
 import WorkspaceLayout from "./layouts/WorkspaceLayout.jsx";
 
 import LoginPage from "./pages/auth/LoginPage.jsx";
+import RegisterPage from "./pages/auth/RegisterPage.jsx";
 
 import MyListingsPage from "./pages/operator/MyListingsPage.jsx";
 import NewScanPage from "./pages/operator/NewScanPage.jsx";
@@ -21,6 +22,7 @@ export default function App() {
       <Routes>
         {/* The operator logs in with the backend */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         {/* The five operator pages, inside the sidebar + top bar frame: only for logged-in operators */}
         <Route element={<ProtectedRoute role="operator" />}>

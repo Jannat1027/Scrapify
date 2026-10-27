@@ -5,7 +5,6 @@
 // ---------------------------------------------------------------------------
 import { z } from "zod";
 import { CONDITION_IDS } from "../models/Category.js";
-import { PHOTO_QUALITIES } from "../models/Scan.js";
 
 const text = (min, message) => z.string().trim().min(min, message);
 const rate = z.coerce.number().min(0, "Rates must be zero or more.");
@@ -40,17 +39,11 @@ const composition = z
 const condition = z.enum(CONDITION_IDS);
 
 export const createScanSchema = z.object({
+  gradingId: text(1, "Analyse a photo first."),
   weight: z.coerce.number().positive("Enter the weight in kg."),
-  composition,
-  condition,
-  confidence: z.number().min(0).max(1),
-  quality: z.enum(PHOTO_QUALITIES).default("good"),
-  corrected: z.boolean().default(false),
-  aiResult: z.object({ composition, condition }).optional(),
-  image: z
-    .string()
-    .regex(/^data:image\/[a-z+]+;base64,/, "The image must be a data URL.")
-    .optional(),
+  // Only sent when the operator corrected the AI's answer.
+  composition: composition.optional(),
+  condition: condition.optional(),
 });
 
 // ---------- Listings ----------

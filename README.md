@@ -1,0 +1,61 @@
+# Scrapify: Jannat (operator workspace + full API)
+
+```
+scrapify-backend/    Express + MongoDB API (auth, scans, listings, payments, reports, admin). Deploys on its own.
+scrapify-frontend/   React + Vite operator app: register, log in, scan, list, payments.
+```
+
+## Run it locally
+
+Backend (needs Node 20+ and a MongoDB, local or Atlas):
+
+```
+cd scrapify-backend
+cp .env.example .env        # fill in MONGO_URI and JWT_SECRET
+npm install
+npm run seed                # demo data; every demo account has the password demo1234
+npm run dev                 # http://localhost:5000
+```
+
+Frontend:
+
+```
+cd scrapify-frontend
+cp .env.example .env        # VITE_API_URL=http://localhost:5000/api
+npm install
+npm run dev                 # http://localhost:5173
+```
+
+Demo operator: `rahima@greenbin.bd` / `demo1234`.
+
+## The shared API contract
+
+All three backends (Jannat, Noushin, Umama) use the same database models, the same login and the same
+JSON shapes, so any frontend can talk to any backend. Errors are always `{ "message": "..." }`.
+
+| Endpoint | Who | Answer |
+| --- | --- | --- |
+| `POST /api/auth/register` `{role,name,org,location,email,password}` | public (operator or recycler) | `201 { user }` with `status: "pending"` |
+| `POST /api/auth/login` `{email,password}` | public | `{ token, user }`; `403` while pending/suspended |
+| `GET /api/auth/me` | any logged-in user | `{ user }` |
+| `GET /api/locations` | public | `{ locations: [name] }` |
+
+Send the token as `Authorization: Bearer <token>`. New accounts are `pending` until an admin approves them.
+Passwords: at least 6 characters, with a number. The first admin is created with `npm run create-admin`.
+
+## Operator endpoints (this folder)
+
+`POST /api/scans/grade` (photo) then `POST /api/scans {gradingId, weight, composition?, condition?}`,
+`GET /api/scans`, `POST /api/listings`, `GET /api/listings/mine`, `PATCH /api/listings/:id/cancel`,
+and the payment routes under `/api/payments`. This backend also contains the recycler and admin routes,
+so it alone serves every frontend.
+
+## Deploy
+
+* **Backend (Render / Railway):** root directory `scrapify-backend`, build `npm install`, start `npm start`.
+  Set `MONGO_URI`, `JWT_SECRET` (24+ random characters), `NODE_ENV=production`, `CLIENT_URL` (the deployed
+  frontend address(es), comma separated), and `BKASH_MERCHANT_NUMBER` / `NAGAD_MERCHANT_NUMBER` for payments.
+  Then run `npm run create-admin` once (with `ADMIN_EMAIL` and `ADMIN_PASSWORD` set) to make the first admin.
+  `npm run seed` empties the database; it refuses to run when `NODE_ENV=production`.
+* **Frontend (Vercel / Netlify):** root directory `scrapify-frontend`, build `npm run build`, output `dist`.
+  Set `VITE_API_URL` to `https://<your-backend>/api`. `vercel.json` makes page refreshes work.

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import Brand from "../../components/Brand.jsx";
 import Button from "../../components/Button.jsx";
 import FormField from "../../components/FormField.jsx";
@@ -83,7 +83,12 @@ export default function LoginPage() {
           </Button>
         </form>
 
-
+        <p className="mt-6 text-center text-sm text-ink/60">
+          New here?{" "}
+          <Link to="/register" className="font-semibold text-forest hover:underline">
+            Create an account
+          </Link>
+        </p>
       </div>
     </div>
   );

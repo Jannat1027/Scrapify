@@ -6,9 +6,12 @@
 // saved token is checked with /auth/me, so a refresh keeps the user logged in.
 // ---------------------------------------------------------------------------
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { HOME_PAGE_FOR_ROLE } from "../services/marketplace.js";
 import api, { apiErrorMessage, clearToken, getToken, saveToken } from "../services/api.js";
 
 const AuthContext = createContext(null);
+
+const WRONG_APP = "This app is for shop operators. Recyclers and admins use their own app.";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -23,7 +26,12 @@ export function AuthProvider({ children }) {
     setSessionError(null);
     try {
       const response = await api.get("/auth/me");
-      setUser(response.data.user);
+      if (!HOME_PAGE_FOR_ROLE[response.data.user.role]) {
+        clearToken();
+        setSessionError(WRONG_APP);
+      } else {
+        setUser(response.data.user);
+      }
     } catch (error) {
       // Only a 401 means the token is bad (expired, or the account was blocked): start logged out.
       // Anything else (server down, no internet) keeps the token, so "Try again" can log back in.
@@ -41,9 +49,16 @@ export function AuthProvider({ children }) {
   // Returns the user. Throws the Axios error when the backend refuses (401 wrong password, 403 blocked).
   async function logIn(email, password) {
     const response = await api.post("/auth/login", { email, password });
+    if (!HOME_PAGE_FOR_ROLE[response.data.user.role]) throw new Error(WRONG_APP);
     saveToken(response.data.token);
     setSessionError(null);
     setUser(response.data.user);
+    return response.data.user;
+  }
+
+  // Creates an account. It starts as "pending": an admin must approve it before it can log in.
+  async function register(details) {
+    const response = await api.post("/auth/register", { ...details, role: "operator" });
     return response.data.user;
   }
 
@@ -53,7 +68,7 @@ export function AuthProvider({ children }) {
     setSessionError(null);
   }
 
-  const value = { user, checking, sessionError, restoreSession, logIn, logOut };
+  const value = { user, checking, sessionError, restoreSession, logIn, register, logOut };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
