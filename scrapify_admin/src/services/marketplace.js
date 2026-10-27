@@ -9,6 +9,9 @@ export const HOME_PAGE_FOR_ROLE = {
   admin: "/admin",
 };
 
+// Roles whose pages exist in this app. When the other branches are merged in, add "operator" and "recycler".
+export const ENABLED_ROLES = ["admin"];
+
 export const ROLE_LABELS = {
   operator: "Operator",
   recycler: "Recycler",

@@ -5,6 +5,7 @@ import DataTable from "../../components/DataTable.jsx";
 import PillTabs from "../../components/PillTabs.jsx";
 import SearchInput from "../../components/SearchInput.jsx";
 import StatusBadge from "../../components/StatusBadge.jsx";
+import api from "../../services/api.js";
 import { useData } from "../../context/DataContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
 import { ROLE_LABELS, STATUS_LABELS } from "../../services/marketplace.js";
@@ -33,7 +34,7 @@ const ACTIONS = {
 
 // Admin: approve, flag or suspend operator and recycler accounts.
 export default function ManageUsersPage() {
-  const { data, updateRow } = useData();
+  const { data, send } = useData();
   const showToast = useToast();
   const [currentTab, setCurrentTab] = useState("pending");
   const [search, setSearch] = useState("");
@@ -46,9 +47,11 @@ export default function ManageUsersPage() {
     `${user.name} ${user.org} ${user.email}`.toLowerCase().includes(query),
   );
 
-  function changeStatus(user, newStatus, note = "") {
-    updateRow("users", user.id, note ? { status: newStatus, note } : { status: newStatus });
-    showToast(`${user.org} is now ${STATUS_LABELS[newStatus].toLowerCase()}.`);
+  async function changeStatus(user, newStatus, note = "") {
+    const body = note ? { status: newStatus, note } : { status: newStatus };
+    if (await send(() => api.patch(`/admin/users/${user.id}/status`, body))) {
+      showToast(`${user.org} is now ${STATUS_LABELS[newStatus].toLowerCase()}.`);
+    }
   }
 
   // Approving happens at once; flagging and suspending first ask for a note for the audit log.

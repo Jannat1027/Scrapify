@@ -1,83 +1,95 @@
 // ---------------------------------------------------------------------------
-// DataContext: the demo "database".
-// It holds every table (users, scans, listings, ...) in React state, so when a
-// page changes something, every page that shows it re-renders automatically.
-// Each change is also saved to localStorage, so a refresh keeps it.
-// A real app would replace these functions with calls to a backend API.
+// DataContext: the admin's data, loaded from the Scrapify backend.
+//   data = { users, categories, rates, conditions, locations, reports, stats }
+// Pages call send(request) for every change. A change goes to the server, then the data is
+// loaded again, so every page shows what the server now holds. A failed request shows the
+// server's message in a red toast and send() returns null, so a page can write:
+//   if (await send(() => api.patch(...))) showToast("Saved.");
 // ---------------------------------------------------------------------------
-import { createContext, useContext, useEffect, useState } from "react";
-import { createSeedData } from "../data/seed.js";
-import { canBeClaimed } from "../services/marketplace.js";
-import { loadFromStorage, saveToStorage, STORAGE_KEYS } from "../services/storage.js";
-import { nowIso } from "../utils/format.js";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import api, { apiErrorMessage } from "../services/api.js";
+import { useAuth } from "./AuthContext.jsx";
+import { useToast } from "./ToastContext.jsx";
 
 const DataContext = createContext(null);
 
-function loadSavedData() {
-  return loadFromStorage(STORAGE_KEYS.data, null) || createSeedData();
+const EMPTY_STATS = {
+  totals: { scans: 0, kgGraded: 0, liveListings: 0, listingsAllTime: 0, completed: 0, settled: 0, completionRate: 0, pendingUsers: 0, openReports: 0 },
+  scanVolume: [],
+  categoryMix: [],
+  priceTrend: [],
+  pendingUsers: [],
+  lowConfidenceScans: [],
+};
+const EMPTY_DATA = { users: [], categories: [], rates: [], conditions: [], locations: [], reports: [], stats: EMPTY_STATS };
+
+// Everything the admin pages show.
+async function loadAdminData() {
+  const [users, categories, conditions, locations, reports, stats] = await Promise.all([
+    api.get("/admin/users"),
+    api.get("/categories"),
+    api.get("/conditions"),
+    api.get("/locations"),
+    api.get("/admin/reports"),
+    api.get("/admin/stats"),
+  ]);
+  return {
+    users: users.data.users,
+    // Each category carries its rates, so the same rows serve as data.categories and data.rates.
+    categories: categories.data.categories,
+    rates: categories.data.categories,
+    conditions: conditions.data.conditions,
+    locations: locations.data.locations,
+    reports: reports.data.reports,
+    stats: stats.data,
+  };
 }
 
 export function DataProvider({ children }) {
-  // useState(loadSavedData) runs loadSavedData only once, on the first render.
-  const [data, setData] = useState(loadSavedData);
+  const { user } = useAuth();
+  const showToast = useToast();
+  const [data, setData] = useState(EMPTY_DATA);
+  // Whose data is in `data`: a user id, null when logged out, undefined before the first load.
+  const [loadedFor, setLoadedFor] = useState(undefined);
+  const [error, setError] = useState(null); // the message when loading failed
+  // Numbers each load, so an older load that finishes late can't overwrite a newer one.
+  const latestLoad = useRef(0);
 
-  // useEffect runs after React has updated the screen. Here: save whenever data changes.
-  useEffect(() => {
-    saveToStorage(STORAGE_KEYS.data, data);
-  }, [data]);
-
-  // If the app is open in two tabs (say, two recyclers), a change in one tab updates the other.
-  useEffect(() => {
-    function handleStorageChange(event) {
-      if (event.key === `scrapify.${STORAGE_KEYS.data}`) setData(loadSavedData());
+  const refresh = useCallback(async () => {
+    const thisLoad = ++latestLoad.current;
+    try {
+      const adminData = user ? await loadAdminData() : {};
+      if (thisLoad !== latestLoad.current) return;
+      setData({ ...EMPTY_DATA, ...adminData });
+      setLoadedFor(user ? user.id : null);
+      setError(null);
+    } catch (loadError) {
+      if (thisLoad === latestLoad.current) setError(apiErrorMessage(loadError));
     }
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+  }, [user]);
 
-  // Adds a row to the top of a table.
-  function insertRow(tableName, newRow) {
-    setData((oldData) => ({ ...oldData, [tableName]: [newRow, ...oldData[tableName]] }));
-  }
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
-  // Changes some fields of the row with this id, e.g. updateRow("users", "u3", { status: "approved" }).
-  function updateRow(tableName, rowId, changes) {
-    setData((oldData) => ({
-      ...oldData,
-      [tableName]: oldData[tableName].map((row) => (row.id === rowId ? { ...row, ...changes } : row)),
-    }));
-  }
+  const loading = loadedFor !== (user ? user.id : null);
 
-  // Removes a row. Works for tables of objects (matched by id) and lists of plain text (like locations).
-  function removeRow(tableName, idOrValue) {
-    setData((oldData) => ({
-      ...oldData,
-      [tableName]: oldData[tableName].filter((row) => row !== idOrValue && row.id !== idOrValue),
-    }));
-  }
-
-  // Claims a listing for a recycler. Returns false if someone else claimed it first.
-  // It re-reads the saved data first, so a claim made a moment ago in another tab is seen.
-  function claimListing(listingId, recyclerId) {
-    const latestData = loadSavedData();
-    const latestListing = latestData.listings.find((listing) => listing.id === listingId);
-    if (!canBeClaimed(latestListing)) {
-      setData(latestData);
-      return false;
+  // Sends one change, then reloads. Returns the response, or null after showing why it failed.
+  async function send(request) {
+    try {
+      const result = await request();
+      await refresh();
+      return result;
+    } catch (requestError) {
+      showToast(apiErrorMessage(requestError), "red");
+      return null;
     }
-    updateRow("listings", listingId, { status: "claimed", recyclerId, claimedAt: nowIso() });
-    return true;
   }
 
-  function resetDemoData() {
-    setData(createSeedData());
-  }
-
-  const value = { data, insertRow, updateRow, removeRow, claimListing, resetDemoData };
+  const value = { data, loading, error, refresh, send };
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 }
 
-// Any component can call useData() to read the data and the functions above.
 export function useData() {
   return useContext(DataContext);
 }

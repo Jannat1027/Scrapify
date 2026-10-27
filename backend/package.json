@@ -1,22 +1,26 @@
 {
-  "name": "backend",
+  "name": "scrapify-admin-backend",
+  "private": true,
   "version": "1.0.0",
   "type": "module",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
-     "dev": "node --watch server.js",
-     "start": "node server.js"
-   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "seed": "node src/utils/seed.js",
+    "create-admin": "node src/utils/createAdmin.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^18.0.9",
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.11.3"
+    "mongoose": "^9.11.3",
+    "multer": "^2.5.0",
+    "zod": "^4.6.7"
   }
 }

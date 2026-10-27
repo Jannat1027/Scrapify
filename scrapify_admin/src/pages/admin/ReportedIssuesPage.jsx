@@ -4,16 +4,17 @@ import ConfirmDialog from "../../components/ConfirmDialog.jsx";
 import EmptyState from "../../components/EmptyState.jsx";
 import PillTabs from "../../components/PillTabs.jsx";
 import StatusBadge from "../../components/StatusBadge.jsx";
+import api from "../../services/api.js";
 import { useData } from "../../context/DataContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
-import { findCategory, findUser, otherPartyId, ROLE_LABELS, STATUS_LABELS } from "../../services/marketplace.js";
+import { findCategory, ROLE_LABELS, STATUS_LABELS } from "../../services/marketplace.js";
 import { formatDate, formatTaka } from "../../utils/format.js";
 
 const EMPTY_TEXT = { open: "No open reports. All quiet.", resolved: "Nothing resolved yet." };
 
 // Admin: disputes raised about listings. Resolve them, or suspend the account at fault.
 export default function ReportedIssuesPage() {
-  const { data, updateRow } = useData();
+  const { data, send } = useData();
   const showToast = useToast();
   const [currentTab, setCurrentTab] = useState("open");
   const [resolvingReport, setResolvingReport] = useState(null);
@@ -22,14 +23,15 @@ export default function ReportedIssuesPage() {
   const reportsWith = (status) => data.reports.filter((report) => report.status === status);
   const tabs = ["open", "resolved"].map((status) => ({ value: status, label: STATUS_LABELS[status], count: reportsWith(status).length }));
 
-  function resolveReport(report, note) {
-    updateRow("reports", report.id, { status: "resolved", resolution: note });
-    showToast("Report resolved.");
+  async function resolveReport(report, note) {
+    if (await send(() => api.patch(`/admin/reports/${report.id}/resolve`, { resolution: note }))) showToast("Report resolved.");
   }
 
-  function suspendUser(user) {
-    updateRow("users", user.id, { status: "suspended" });
-    showToast(`${user.org} suspended.`, "red");
+  async function suspendUser(user) {
+    const note = "Suspended by an admin after a report.";
+    if (await send(() => api.patch(`/admin/users/${user.id}/status`, { status: "suspended", note }))) {
+      showToast(`${user.org} suspended.`, "red");
+    }
   }
 
   return (
@@ -74,10 +76,8 @@ export default function ReportedIssuesPage() {
 
 function ReportCard({ report, onResolve, onSuspend }) {
   const { data } = useData();
-  const listing = data.listings.find((item) => item.id === report.listingId);
-  const reporter = findUser(data, report.by);
-  const otherId = listing ? otherPartyId(report, listing) : null;
-  const otherParty = otherId ? findUser(data, otherId) : null;
+  // The server sends each report with its listing and the two people involved.
+  const { listing, reporter, otherParty } = report;
 
   return (
     <article className="glass grid gap-5 p-6 lg:grid-cols-[1.4fr_1fr]">
@@ -113,7 +113,7 @@ function ReportCard({ report, onResolve, onSuspend }) {
       </div>
 
       <div className="grid content-start gap-3 sm:max-lg:grid-cols-2">
-        <PartyBox label="Reported by" user={reporter} />
+        {reporter && <PartyBox label="Reported by" user={reporter} />}
         {otherParty && <PartyBox label="Other party" user={otherParty} />}
       </div>
     </article>

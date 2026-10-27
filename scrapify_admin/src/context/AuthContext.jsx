@@ -1,38 +1,74 @@
 // ---------------------------------------------------------------------------
 // AuthContext: who is logged in.
-// SIMULATED: there is no server and passwords are not checked. Logging in just
-// remembers the user's id in localStorage. A real app would send the email and
-// password to a backend and keep a secure session token instead.
+// Logging in sends the email and password to the backend, which checks the
+// password and answers with a JWT. The token is kept in localStorage and
+// sent with every request (see services/api.js). When the app opens, the
+// saved token is checked with /auth/me, so a refresh keeps the user logged in.
 // ---------------------------------------------------------------------------
-import { createContext, useContext, useState } from "react";
-import { loadFromStorage, removeFromStorage, saveToStorage, STORAGE_KEYS } from "../services/storage.js";
-import { useData } from "./DataContext.jsx";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { ENABLED_ROLES, ROLE_LABELS } from "../services/marketplace.js";
+import api, { apiErrorMessage, clearToken, getToken, saveToken } from "../services/api.js";
 
 const AuthContext = createContext(null);
 
+const WRONG_APP = `This app is only for ${ENABLED_ROLES.map((role) => ROLE_LABELS[role].toLowerCase()).join(" and ")} accounts. Other account types use their own app.`;
+
 export function AuthProvider({ children }) {
-  const { data, insertRow } = useData();
-  const [userId, setUserId] = useState(() => loadFromStorage(STORAGE_KEYS.session, null));
+  const [user, setUser] = useState(null);
+  // True while a saved token is being checked, so pages don't send the user to /login too early.
+  const [checking, setChecking] = useState(() => Boolean(getToken()));
+  // Set when the server couldn't be reached to check the token. The token is kept for a retry.
+  const [sessionError, setSessionError] = useState(null);
 
-  // We only store the id, and look the user up each time, so admin changes (like a suspension) show at once.
-  const user = data.users.find((person) => person.id === userId) || null;
+  const restoreSession = useCallback(async () => {
+    if (!getToken()) return;
+    setChecking(true);
+    setSessionError(null);
+    try {
+      const response = await api.get("/auth/me");
+      if (!ENABLED_ROLES.includes(response.data.user.role)) {
+        clearToken();
+        setSessionError(WRONG_APP);
+      } else {
+        setUser(response.data.user);
+      }
+    } catch (error) {
+      // Only a 401 means the token is bad (expired, or the account was blocked): start logged out.
+      // Anything else (server down, no internet) keeps the token, so "Try again" can log back in.
+      if (error.response?.status === 401) clearToken();
+      else setSessionError(apiErrorMessage(error));
+    } finally {
+      setChecking(false);
+    }
+  }, []);
 
-  function logIn(person) {
-    saveToStorage(STORAGE_KEYS.session, person.id);
-    setUserId(person.id);
+  useEffect(() => {
+    restoreSession();
+  }, [restoreSession]);
+
+  // Returns the user. Throws the Axios error when the backend refuses (401 wrong password, 403 blocked).
+  async function logIn(email, password) {
+    const response = await api.post("/auth/login", { email, password });
+    if (!ENABLED_ROLES.includes(response.data.user.role)) throw new Error(WRONG_APP);
+    saveToken(response.data.token);
+    setSessionError(null);
+    setUser(response.data.user);
+    return response.data.user;
+  }
+
+  // Creates an account. It starts as "pending": an admin must approve it before it can log in.
+  async function register(details) {
+    const response = await api.post("/auth/register", details);
+    return response.data.user;
   }
 
   function logOut() {
-    removeFromStorage(STORAGE_KEYS.session);
-    setUserId(null);
+    clearToken();
+    setUser(null);
+    setSessionError(null);
   }
 
-  // Saves a new account. It starts as "pending", so it can't log in until an admin approves it.
-  function register(newUser) {
-    insertRow("users", { ...newUser, status: "pending" });
-  }
-
-  const value = { user, logIn, logOut, register };
+  const value = { user, checking, sessionError, restoreSession, logIn, register, logOut };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
