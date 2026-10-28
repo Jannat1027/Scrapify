@@ -45,3 +45,40 @@ Passwords: at least 6 characters, with a number. The first admin is created with
 
 Backend root `backend` (`npm start`); frontend root `scrapify_admin` (`npm run build`, output `dist`,
 `VITE_API_URL=https://<backend>/api`). Set the backend's `CLIENT_URL` to the deployed frontend address.
+
+---
+
+# Scrapify: Noushin (sign-up / log-in + recycler workspace)
+
+```
+mern-listings-backend/   Express + MongoDB API: auth, locations/categories, browse + claim listings, reports.
+noushin/                 React + Vite app: AuthPage (log in / sign up), Browse listings, My claims.
+scrapify-frontend/       The same three pages, copied here so they drop into a shared frontend when branches merge.
+frontend/                The static landing site (unchanged).
+_backup-original-backend/  Your original starter backend, kept in case you want it. Delete it when you don't.
+```
+
+The old backend was a generic starter (users with role `user/admin`, `{success,data}` answers). It did not match the
+Scrapify frontend, so it was replaced by the shared contract above.
+
+## Run it locally
+
+```
+cd mern-listings-backend && cp .env.example .env && npm install && npm run seed && npm run dev   # http://localhost:5000
+cd noushin && cp .env.example .env && npm install && npm run dev                                 # http://localhost:5173
+```
+
+Demo recycler: `tanvir@polymerloop.com` / `demo1234`. Sign up a new account here, then an admin approves it.
+
+## Recycler endpoints (this folder)
+
+`GET /api/listings` (available batches), `GET /api/listings/claims`, `PATCH /api/listings/:id/claim|complete|rate|cancel`,
+`POST /api/reports`, `GET /api/categories`, `GET /api/conditions`.
+There are no admin routes here, so to approve a new account use Jannat's or Umama's backend on the same MongoDB,
+or `npm run create-admin` and approve through the database.
+
+## Deploy
+
+Same as the other folders: backend root `mern-listings-backend` (`npm start`, env vars from `.env.example`);
+frontend root `noushin` (`npm run build`, output `dist`, `VITE_API_URL=https://<backend>/api`).
+Set the backend's `CLIENT_URL` to the deployed frontend address.
