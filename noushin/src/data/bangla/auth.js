@@ -21,6 +21,8 @@ const phrases = {
   "Shop / organisation": "দোকান / প্রতিষ্ঠান",
   "Location": "অবস্থান",
   "Choose your area": "আপনার এলাকা বেছে নিন",
+  "Your area, e.g. Uttara, Dhaka": "আপনার এলাকা, যেমন উত্তরা, ঢাকা",
+  "Write the area where you collect or buy plastic, like Uttara, Dhaka.": "যেখানে প্লাস্টিক সংগ্রহ বা কেনেন সেই এলাকা লিখুন, যেমন উত্তরা, ঢাকা।",
   "Create account": "অ্যাকাউন্ট খুলুন",
   "I agree to the terms of use and the privacy policy.": "আমি ব্যবহারের শর্ত ও গোপনীয়তা নীতিতে সম্মত।",
   "Account created": "অ্যাকাউন্ট তৈরি হয়েছে",

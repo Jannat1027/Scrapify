@@ -7,6 +7,8 @@ import { makeId } from "../utils/ids.js";
 
 const SALT_ROUNDS = 10;
 
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const LOGIN_BLOCKED = {
   pending: "Your account is waiting for an admin to approve it. You can log in as soon as it's approved.",
   suspended: "This account is suspended. Contact Scrapify support if you think this is a mistake.",
@@ -16,12 +18,14 @@ const LOGIN_BLOCKED = {
 export async function register(req, res) {
   const { password, ...details } = req.body;
 
-  if (!(await Location.exists({ name: details.location }))) {
-    throw new HttpError(400, "Choose one of the listed areas.");
-  }
   if (await User.exists({ email: details.email })) {
     throw new HttpError(409, "This email already has an account. Log in instead, or use a different email.");
   }
+
+  // Any area is allowed. A known one keeps its spelling; a new one is added to the list.
+  const existing = await Location.findOne({ name: new RegExp(`^${escapeRegExp(details.location)}$`, "i") });
+  if (existing) details.location = existing.name;
+  else await Location.create({ name: details.location });
 
   const user = await User.create({
     ...details,
