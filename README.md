@@ -1,55 +1,61 @@
-# Scrapify
-
-AI-assisted plastic grading and a fair-price recycling marketplace for scrap shops, NGO collection points and recyclers in Bangladesh.
-
-This repository contains the frontend only. It runs on demo data stored in the browser, so no server or database is needed.
-
-## Run it
-
-Open `frontend/index.html` in a browser, or serve the folder:
+# Scrapify: Jannat (operator workspace + full API)
 
 ```
-cd frontend
-python -m http.server 5500
+backend/scrapify-backend/     Express + MongoDB API (auth, scans, listings, payments, reports, admin). Deploys on its own.
+frontend/scrapify-frontend/   React + Vite operator app: register, log in, scan, list, payments.
 ```
 
-Then visit http://localhost:5500.
+## Run it locally
 
-## Demo logins
-
-Use the demo buttons on the login page, or any of these emails with a 6+ character password:
-
-| Role     | Email                  |
-| -------- | ---------------------- |
-| Operator | rahima@greenbin.bd     |
-| Recycler | tanvir@polymerloop.com |
-| Admin    | admin@scrapify.app     |
-
-Run `S.db.reset()` in the browser console to restore the demo data.
-
-## Tailwind CSS
-
-Tailwind is loaded from its CDN in each page's `<head>`. `js/tailwind.config.js` holds the theme and base styles,
-and `js/tailwind.components.js` holds the shared classes (`.glass`, `.btn`, `.panel`, `.page-head`, `.badge` …).
-
-## Structure
+Backend (needs Node 20+ and a MongoDB, local or Atlas):
 
 ```
-frontend/
-  index.html, info.html, login.html, 404.html   Public pages (register.html opens the sign-up side of login.html)
-  operator/  recycler/  admin/                  Workspace pages for each role
-  assets/logo.svg                               Logo and favicon
-  js/app.js                 Loads everything a page needs; each page names its own script in data-page
-  js/core.js, labels.js     Helpers, session, toasts, click actions, English labels
-  js/motion.js              Counters, scroll entrances, step bars and SVG animation moves
-  js/data.js, db.js         Demo data and the localStorage store
-  js/domain.js              Pricing, simulated AI grading, claiming and listing rules
-  js/ui.js, cards.js        Shared HTML builders: stats, tables, tabs, badges, listing cards
-  js/forms.js, dialogs.js   Form fields with live hints, keypad, modal dialogs
-  js/site.js, shell.js      Public navbar and footer, workspace sidebar and top bar
-  js/charts.js              Chart.js theme, loaded only on pages with charts
-  js/translate.js, lang/    Full Bangla mode
-  js/pages/                 One script per page, plus the hero and login animations
+cd backend/scrapify-backend
+cp .env.example .env        # fill in MONGO_URI and JWT_SECRET
+npm install
+npm run seed                # demo data; every demo account has the password demo1234
+npm run dev                 # http://localhost:5000
 ```
 
-Each page only describes its own layout and content; anything used twice lives once in `js/`.
+Frontend:
+
+```
+cd frontend/scrapify-frontend
+cp .env.example .env        # VITE_API_URL=http://localhost:5000/api
+npm install
+npm run dev                 # http://localhost:5173
+```
+
+Demo operator: `rahima@greenbin.bd` / `demo1234`.
+
+## The shared API contract
+
+All three backends (Jannat, Noushin, Umama) use the same database models, the same login and the same
+JSON shapes, so any frontend can talk to any backend. Errors are always `{ "message": "..." }`.
+
+| Endpoint | Who | Answer |
+| --- | --- | --- |
+| `POST /api/auth/register` `{role,name,org,location,email,password}` | public (operator or recycler) | `201 { user }` with `status: "pending"` |
+| `POST /api/auth/login` `{email,password}` | public | `{ token, user }`; `403` while pending/suspended |
+| `GET /api/auth/me` | any logged-in user | `{ user }` |
+| `GET /api/locations` | public | `{ locations: [name] }` |
+
+Send the token as `Authorization: Bearer <token>`. New accounts are `pending` until an admin approves them.
+Passwords: at least 6 characters, with a number. The first admin is created with `npm run create-admin`.
+
+## Operator endpoints (this folder)
+
+`POST /api/scans/grade` (photo) then `POST /api/scans {gradingId, weight, composition?, condition?}`,
+`GET /api/scans`, `POST /api/listings`, `GET /api/listings/mine`, `PATCH /api/listings/:id/cancel`,
+and the payment routes under `/api/payments`. This backend also contains the recycler and admin routes,
+so it alone serves every frontend.
+
+## Deploy
+
+* **Backend (Render / Railway):** root directory `backend/scrapify-backend`, build `npm install`, start `npm start`.
+  Set `MONGO_URI`, `JWT_SECRET` (24+ random characters), `NODE_ENV=production`, `CLIENT_URL` (the deployed
+  frontend address(es), comma separated), and `BKASH_MERCHANT_NUMBER` / `NAGAD_MERCHANT_NUMBER` for payments.
+  Then run `npm run create-admin` once (with `ADMIN_EMAIL` and `ADMIN_PASSWORD` set) to make the first admin.
+  `npm run seed` empties the database; it refuses to run when `NODE_ENV=production`.
+* **Frontend (Vercel / Netlify):** root directory `frontend/scrapify-frontend`, build `npm run build`, output `dist`.
+  Set `VITE_API_URL` to `https://<your-backend>/api`. `vercel.json` makes page refreshes work.
