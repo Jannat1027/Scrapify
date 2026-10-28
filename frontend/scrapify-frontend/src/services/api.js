@@ -2,7 +2,7 @@ import axios from "axios";
 import { loadFromStorage, removeFromStorage, saveToStorage, STORAGE_KEYS } from "./storage.js";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5050/api",
 });
 
 export function getToken() {
