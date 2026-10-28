@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useData } from "../../context/DataContext.jsx";
-import { makeId, nowIso } from "../../utils/format.js";
+import api, { apiErrorMessage } from "../../services/api.js";
 import { useFormValidation } from "../../utils/useFormValidation.js";
 import { isEmail } from "../../utils/validation.js";
 import Button from "../Button.jsx";
@@ -17,11 +16,18 @@ const ROLE_CHOICES = [
 
 // Sign-up. New accounts start as "pending": an admin must approve them before they can log in.
 export default function RegisterForm({ onSwitch }) {
-  const { data } = useData();
   const { register } = useAuth();
   const [newUser, setNewUser] = useState(null); // set after a successful sign-up
+  const [locations, setLocations] = useState([]); // the areas an admin allows, from the backend
+  const [submitting, setSubmitting] = useState(false);
+  const [serverProblem, setServerProblem] = useState("");
 
-  const emailTaken = (email) => data.users.some((user) => user.email === email.toLowerCase());
+  useEffect(() => {
+    api
+      .get("/locations")
+      .then((response) => setLocations(response.data.locations))
+      .catch((error) => setServerProblem(apiErrorMessage(error)));
+  }, []);
 
   // Each rule says exactly what to change, so nobody is left guessing why the button won't work.
   const rules = {
@@ -31,7 +37,6 @@ export default function RegisterForm({ onSwitch }) {
     email: [
       [(value) => value.length > 0, "Add an email. Your approval arrives there."],
       [isEmail, "That doesn't look like an email yet. It should look like name@shop.com."],
-      [(value) => !emailTaken(value), "This email already has an account. Log in instead, or use a different email."],
     ],
     password: [
       [(value) => value.length >= 6, "Use at least 6 characters."],
@@ -49,23 +54,28 @@ export default function RegisterForm({ onSwitch }) {
     onSwitch();
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    setServerProblem("");
     if (!form.validateForm()) return;
 
     const { values } = form;
-    const user = {
-      id: makeId("u"),
-      role: values.role,
-      name: values.name.trim(),
-      org: values.org.trim(),
-      location: values.location,
-      email: values.email.trim().toLowerCase(),
-      status: "pending",
-      joined: nowIso(),
-    };
-    register(user);
-    setNewUser(user);
+    setSubmitting(true);
+    try {
+      const user = await register({
+        role: values.role,
+        name: values.name.trim(),
+        org: values.org.trim(),
+        location: values.location,
+        email: values.email.trim().toLowerCase(),
+        password: values.password,
+      });
+      setNewUser(user);
+    } catch (error) {
+      // "This email already has an account" and other server answers appear under the button.
+      setServerProblem(apiErrorMessage(error));
+    }
+    setSubmitting(false);
   }
 
   if (newUser) {
@@ -78,11 +88,8 @@ export default function RegisterForm({ onSwitch }) {
         <p className="mt-3 text-ink/60">
           An admin checks every new account, usually within a day. You can log in as soon as yours is approved.
         </p>
-        <p className="mt-4 flex items-start gap-1.5 rounded-xl border border-amber-400/30 bg-amber-400/[.08] px-3 py-2 text-amber-800 text-xs">
-          <Icon name="info" />
-          <span>
-            Demo: log in as Admin, approve the account on the dashboard or under Users, then log in with <b>{newUser.email}</b>
-          </span>
+        <p className="mt-4 text-sm text-ink/60">
+          Then log in with <b>{newUser.email}</b>.
         </p>
         <button type="button" className="btn btn-primary mt-8" onClick={goToLogIn}>
           Go to log in <Icon name="arrow-right" />
@@ -133,7 +140,7 @@ export default function RegisterForm({ onSwitch }) {
           <option value="" disabled>
             Choose your area
           </option>
-          {data.locations.map((place) => (
+          {locations.map((place) => (
             <option key={place} value={place}>
               {place}
             </option>
@@ -159,8 +166,15 @@ export default function RegisterForm({ onSwitch }) {
         </label>
       </FormField>
 
-      <Button type="submit" variant="primary" size="lg" className="w-full">
-        Create account
+      {serverProblem && (
+        <p className="flex items-start gap-1.5 text-[0.8125rem] text-red-600" role="alert">
+          <Icon name="circle-alert" className="mt-px" />
+          <span>{serverProblem}</span>
+        </p>
+      )}
+
+      <Button type="submit" variant="primary" size="lg" className="w-full" disabled={submitting}>
+        {submitting ? "Creating…" : "Create account"}
       </Button>
       <p className="text-center text-sm text-ink/60">
         Already registered?{" "}

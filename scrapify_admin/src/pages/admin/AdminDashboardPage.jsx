@@ -8,21 +8,15 @@ import Icon from "../../components/Icon.jsx";
 import StatCard from "../../components/StatCard.jsx";
 import { useData } from "../../context/DataContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
+import api from "../../services/api.js";
 import { categoryColor, describeGrading, findCategory, findUser, ROLE_LABELS } from "../../services/marketplace.js";
-import { calculatePrice, LOW_CONFIDENCE } from "../../services/pricing.js";
-import { formatShortDate, ONE_DAY_MS } from "../../utils/format.js";
+import { formatShortDate } from "../../utils/format.js";
 
 // Admin home: platform-wide numbers, charts, approvals waiting and scans the AI wasn't sure about.
 export default function AdminDashboardPage() {
   const { data } = useData();
-  const { scans, listings } = data;
-
-  const settled = listings.filter((listing) => listing.status === "completed" || listing.status === "cancelled");
-  const completed = listings.filter((listing) => listing.status === "completed");
-  const completionRate = settled.length ? Math.round((completed.length / settled.length) * 100) : 0;
-  const totalKg = scans.reduce((sum, scan) => sum + scan.weight, 0);
-  const liveCount = listings.filter((listing) => listing.status === "available").length;
-  const pendingCount = data.users.filter((user) => user.status === "pending").length;
+  // The server adds everything up (see GET /api/admin/stats), so the page only shows the numbers.
+  const { totals } = data.stats;
 
   return (
     <>
@@ -32,22 +26,22 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard icon="scan-line" label="Total scans" value={scans.length} hint={`${totalKg.toLocaleString("en-IN")} kg graded`} />
-        <StatCard icon="tags" label="Live listings" value={liveCount} hint={`${listings.length} listed all time`} />
+        <StatCard icon="scan-line" label="Total scans" value={totals.scans} hint={`${totals.kgGraded.toLocaleString("en-IN")} kg graded`} />
+        <StatCard icon="tags" label="Live listings" value={totals.liveListings} hint={`${totals.listingsAllTime} listed all time`} />
         <StatCard
           icon="trending-up"
           label="Listing → completion"
-          value={`${completionRate}%`}
-          hint={`${completed.length} of ${settled.length} settled`}
+          value={`${totals.completionRate}%`}
+          hint={`${totals.completed} of ${totals.settled} settled`}
         />
-        <StatCard icon="user-check" label="Awaiting approval" value={pendingCount} hint="New accounts" />
+        <StatCard icon="user-check" label="Awaiting approval" value={totals.pendingUsers} hint="New accounts" />
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[2fr_1fr]">
         <section className="panel">
           <h2 className="text-lg font-semibold">Scan volume</h2>
           <p className="text-sm text-ink/60">Scans per day, last 14 days</p>
-          <ScanVolumeChart scans={scans} />
+          <ScanVolumeChart />
         </section>
         <section className="panel">
           <h2 className="text-lg font-semibold">Category mix</h2>
@@ -84,18 +78,16 @@ export default function AdminDashboardPage() {
   );
 }
 
-function ScanVolumeChart({ scans }) {
-  // The 14 days up to today, oldest first.
-  const days = [];
-  for (let daysBack = 13; daysBack >= 0; daysBack -= 1) days.push(new Date(Date.now() - daysBack * ONE_DAY_MS));
-  const scansOn = (day) => scans.filter((scan) => new Date(scan.date).toDateString() === day.toDateString()).length;
+function ScanVolumeChart() {
+  const { data } = useData();
+  const days = data.stats.scanVolume; // [{ date: "2026-10-23", count: 3 }, ...] for the last 14 days, oldest first
 
-  const datasets = [{ label: "Scans", data: days.map(scansOn), backgroundColor: "rgba(63,158,116,.55)", borderRadius: 8 }];
+  const datasets = [{ label: "Scans", data: days.map((day) => day.count), backgroundColor: "rgba(63,158,116,.55)", borderRadius: 8 }];
   const options = { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } };
   return (
     <ChartCanvas
       type="bar"
-      labels={days.map((day) => formatShortDate(day))}
+      labels={days.map((day) => formatShortDate(day.date))}
       datasets={datasets}
       options={options}
       label="Scans per day"
@@ -105,19 +97,12 @@ function ScanVolumeChart({ scans }) {
 
 function CategoryMixChart() {
   const { data } = useData();
-  // Kilograms graded per plastic type, across every scan.
-  const kgByType = {};
-  data.scans.forEach((scan) => {
-    Object.entries(scan.composition).forEach(([categoryId, percent]) => {
-      kgByType[categoryId] = (kgByType[categoryId] || 0) + (scan.weight * percent) / 100;
-    });
-  });
-  const typeIds = Object.keys(kgByType);
+  const mix = data.stats.categoryMix; // [{ categoryId, kg }]: kilograms graded per plastic type
 
   const datasets = [
     {
-      data: typeIds.map((id) => Math.round(kgByType[id])),
-      backgroundColor: typeIds.map(categoryColor),
+      data: mix.map((row) => row.kg),
+      backgroundColor: mix.map((row) => categoryColor(row.categoryId)),
       borderWidth: 0,
     },
   ];
@@ -125,7 +110,7 @@ function CategoryMixChart() {
   return (
     <ChartCanvas
       type="doughnut"
-      labels={typeIds.map((id) => findCategory(data, id).name)}
+      labels={mix.map((row) => findCategory(data, row.categoryId).name)}
       datasets={datasets}
       options={options}
       label="Category mix"
@@ -135,21 +120,12 @@ function CategoryMixChart() {
 
 function PriceTrendChart() {
   const { data } = useData();
-  // Group the ৳ per kg of each scan by its date, then average each day.
-  const valuesByDay = {};
-  [...data.scans]
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
-    .forEach((scan) => {
-      const day = formatShortDate(scan.date);
-      const perKg = calculatePrice(scan, data.rates).total / scan.weight;
-      valuesByDay[day] = [...(valuesByDay[day] || []), perKg];
-    });
-  const averages = Object.values(valuesByDay).map((values) => Math.round(values.reduce((a, b) => a + b, 0) / values.length));
+  const trend = data.stats.priceTrend; // [{ date, perKg }]: average estimated ৳ per kg of the scans on each day
 
   return (
     <LineChart
-      labels={Object.keys(valuesByDay)}
-      values={averages}
+      labels={trend.map((point) => formatShortDate(point.date))}
+      values={trend.map((point) => point.perKg)}
       seriesLabel="৳ per kg"
       color="#38bdf8"
       label="Average price per kg"
@@ -158,13 +134,14 @@ function PriceTrendChart() {
 }
 
 function PendingApprovals() {
-  const { data, updateRow } = useData();
+  const { data, send } = useData();
   const showToast = useToast();
   const pendingUsers = data.users.filter((user) => user.status === "pending");
 
-  function approve(user) {
-    updateRow("users", user.id, { status: "approved" });
-    showToast("Account approved. A welcome email is on its way.");
+  async function approve(user) {
+    if (await send(() => api.patch(`/admin/users/${user.id}/status`, { status: "approved" }))) {
+      showToast("Account approved. They can log in now.");
+    }
   }
 
   if (pendingUsers.length === 0) return <EmptyState icon="user-check" text="No one is waiting. Nice." />;
@@ -187,7 +164,7 @@ function PendingApprovals() {
 
 function LowConfidenceTable() {
   const { data } = useData();
-  const flaggedScans = data.scans.filter((scan) => scan.confidence < LOW_CONFIDENCE || scan.corrected);
+  const flaggedScans = data.stats.lowConfidenceScans; // scans the AI was unsure about, or the operator corrected
   const columns = [
     { label: "Scan", render: (scan) => <b>{scan.id}</b> },
     { label: "Operator", render: (scan) => findUser(data, scan.operatorId).org },

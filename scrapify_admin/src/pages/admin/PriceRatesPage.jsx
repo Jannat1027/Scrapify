@@ -5,11 +5,12 @@ import ConfirmDialog from "../../components/ConfirmDialog.jsx";
 import DataTable from "../../components/DataTable.jsx";
 import Icon from "../../components/Icon.jsx";
 import Notice from "../../components/Notice.jsx";
+import api from "../../services/api.js";
 import { useData } from "../../context/DataContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
 import { categoryColor, findCategory } from "../../services/marketplace.js";
 import { findStaleRates, STALE_RATE_DAYS } from "../../services/pricing.js";
-import { daysSince, formatDate, nowIso } from "../../utils/format.js";
+import { daysSince, formatDate } from "../../utils/format.js";
 
 // The three rates from the category form, as numbers, plus the source and today's date.
 function rateFields(values) {
@@ -18,13 +19,12 @@ function rateFields(values) {
     light: Number(values.light),
     heavy: Number(values.heavy),
     source: values.source.trim(),
-    updated: nowIso(),
   };
 }
 
 // Admin: the ৳/kg rate table, plastic categories and collection locations.
 export default function PriceRatesPage() {
-  const { data, updateRow, insertRow, removeRow } = useData();
+  const { data, send } = useData();
   const showToast = useToast();
   // Typed but not yet saved values, e.g. { "pet.clean": "45" }.
   const [edits, setEdits] = useState({});
@@ -38,7 +38,7 @@ export default function PriceRatesPage() {
     return key in edits ? edits[key] : String(rate[conditionId]);
   }
 
-  function saveRow(rate) {
+  async function saveRow(rate) {
     const newRates = {};
     data.conditions.forEach((condition) => (newRates[condition.id] = Number(valueShown(rate, condition.id))));
     const anyInvalid = Object.values(newRates).some((value) => !(value >= 0) || Number.isNaN(value));
@@ -46,7 +46,7 @@ export default function PriceRatesPage() {
       showToast("Rates must be zero or more.", "red");
       return;
     }
-    updateRow("rates", rate.id, { ...newRates, updated: nowIso() });
+    if (!(await send(() => api.patch(`/admin/categories/${rate.id}`, newRates)))) return;
 
     // Forget the typed values of this row; the saved ones are shown now.
     const remainingEdits = { ...edits };
@@ -55,47 +55,29 @@ export default function PriceRatesPage() {
     showToast(`${findCategory(data, rate.id).name} rates saved.`);
   }
 
-  function addCategory(values) {
-    const id = values.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    if (data.categories.some((category) => category.id === id)) {
-      showToast("That category already exists.", "red");
-      return;
-    }
-    insertRow("categories", { id, name: values.name.trim(), note: values.note.trim(), icon: "recycle" });
-    insertRow("rates", { id, ...rateFields(values) });
+  async function addCategory(values) {
+    const body = { name: values.name.trim(), note: values.note.trim(), icon: "recycle", ...rateFields(values) };
+    if (!(await send(() => api.post("/admin/categories", body)))) return; // e.g. "That category already exists."
     setDialog(null);
     showToast(`${values.name.trim()} added.`);
   }
 
   // The category keeps its id, so scans and listings that use it keep working after a rename.
-  function editCategory(rate, values) {
-    updateRow("categories", rate.id, { name: values.name.trim(), note: values.note.trim() });
-    updateRow("rates", rate.id, rateFields(values));
+  async function editCategory(rate, values) {
+    const body = { name: values.name.trim(), note: values.note.trim(), ...rateFields(values) };
+    if (!(await send(() => api.patch(`/admin/categories/${rate.id}`, body)))) return;
     setDialog(null);
     showToast(`${values.name.trim()} saved.`);
   }
 
-  // How many scans and listings use a category. A category in use can't be deleted.
-  function timesUsed(categoryId) {
-    const scans = data.scans.filter((scan) => scan.composition[categoryId]).length;
-    const listings = data.listings.filter((listing) => listing.category === categoryId).length;
-    return scans + listings;
-  }
-
+  // The server refuses to delete a category that scans or listings use, and says how many.
   function askToDelete(rate) {
-    const uses = timesUsed(rate.id);
-    if (uses > 0) {
-      showToast(`${findCategory(data, rate.id).name} is used by ${uses} scans and listings, so it can't be deleted.`, "red");
-      return;
-    }
     setDialog({ type: "delete", rate });
   }
 
-  function deleteCategory(rate) {
+  async function deleteCategory(rate) {
     const name = findCategory(data, rate.id).name;
-    removeRow("categories", rate.id);
-    removeRow("rates", rate.id);
-    showToast(`${name} deleted.`);
+    if (await send(() => api.delete(`/admin/categories/${rate.id}`))) showToast(`${name} deleted.`);
   }
 
   const columns = [
@@ -184,7 +166,7 @@ export default function PriceRatesPage() {
       {dialog?.type === "delete" && (
         <ConfirmDialog
           title={`Delete ${findCategory(data, dialog.rate.id).name}?`}
-          text="The category and its rates are removed. No scans or listings use it."
+          text="The category and its rates are removed. A category that scans or listings use cannot be deleted."
           confirmLabel="Delete category"
           danger
           onConfirm={() => deleteCategory(dialog.rate)}
@@ -197,12 +179,12 @@ export default function PriceRatesPage() {
 
 // The list of collection areas, used in sign-up and the recycler filters.
 function LocationsPanel() {
-  const { data, insertRow, removeRow } = useData();
+  const { data, send } = useData();
   const showToast = useToast();
   const [newPlace, setNewPlace] = useState("");
   const [placeToRemove, setPlaceToRemove] = useState(null);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     const place = newPlace.trim();
     if (place.length < 3) {
@@ -213,14 +195,13 @@ function LocationsPanel() {
       showToast("That location is already listed.", "red");
       return;
     }
-    insertRow("locations", place);
+    if (!(await send(() => api.post("/admin/locations", { name: place })))) return;
     setNewPlace("");
     showToast(`${place} added.`);
   }
 
-  function removePlace(place) {
-    removeRow("locations", place);
-    showToast(`${place} removed.`);
+  async function removePlace(place) {
+    if (await send(() => api.delete(`/admin/locations/${encodeURIComponent(place)}`))) showToast(`${place} removed.`);
   }
 
   return (
