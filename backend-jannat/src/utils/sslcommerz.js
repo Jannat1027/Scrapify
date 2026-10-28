@@ -7,7 +7,7 @@ export function onlinePaymentsEnabled() {
   return Boolean(env.sslcommerz.storeId && env.sslcommerz.storePassword);
 }
 
-export async function startSession({ payment, listing, payer, phone }) {
+export async function startSession({ payment, listing, payer, phone, returnTo }) {
   const callback = (kind) => `${env.serverUrl}/api/payments/sslcommerz/${kind}`;
   const form = new URLSearchParams({
     store_id: env.sslcommerz.storeId,
@@ -30,6 +30,7 @@ export async function startSession({ payment, listing, payer, phone }) {
     product_category: "Recyclable plastic",
     product_profile: "general",
     value_a: listing.id,
+    value_b: returnTo,
   });
 
   let answer;

@@ -106,7 +106,7 @@ export async function payOnline(req, res) {
   });
 
   try {
-    const session = await startSession({ payment, listing, payer: req.user, phone: req.body.phone });
+    const session = await startSession({ payment, listing, payer: req.user, phone: req.body.phone, returnTo: appAddress(req.get("origin")) });
     payment.gateway = { sessionKey: session.sessionKey };
     await payment.save();
     res.status(201).json({ payment, url: session.url });
@@ -152,25 +152,32 @@ async function settleOnlinePayment(tranId, valId) {
   }
 }
 
-function backToClaims(res, outcome, listingId = "") {
+// The recycler app the payer started from, if it's one this API serves. Otherwise FRONTEND_URL.
+function appAddress(origin) {
+  const address = (origin || "").replace(/\/$/, "");
+  const localDev = !env.isProduction && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(address);
+  return localDev || env.clientUrls.includes(address) ? address : env.frontendUrl;
+}
+
+function backToClaims(res, outcome, listingId = "", returnTo = "") {
   const query = new URLSearchParams({ payment: outcome, ...(listingId && { listing: listingId }) });
-  res.redirect(303, `${env.frontendUrl}/recycler/claims?${query}`);
+  res.redirect(303, `${appAddress(returnTo)}/recycler/claims?${query}`);
 }
 
 export async function gatewaySuccess(req, res) {
-  const { tran_id: tranId, val_id: valId, value_a: listingId } = req.body;
+  const { tran_id: tranId, val_id: valId, value_a: listingId, value_b: returnTo } = req.body;
   const payment = await settleOnlinePayment(tranId, valId).catch(() => null);
-  backToClaims(res, payment ? "success" : "failed", listingId);
+  backToClaims(res, payment ? "success" : "failed", listingId, returnTo);
 }
 
 export function gatewayClosed(outcome) {
   return async (req, res) => {
-    const { tran_id: tranId, value_a: listingId, error } = req.body;
+    const { tran_id: tranId, value_a: listingId, value_b: returnTo, error } = req.body;
     if (tranId) {
       const note = outcome === "cancelled" ? "Cancelled at the checkout." : `Payment failed${error ? `: ${error}` : "."}`;
       await Payment.updateOne({ id: tranId, status: "initiated" }, { $set: { status: "failed", active: false, note } }).catch(() => {});
     }
-    backToClaims(res, outcome, listingId);
+    backToClaims(res, outcome, listingId, returnTo);
   };
 }
 

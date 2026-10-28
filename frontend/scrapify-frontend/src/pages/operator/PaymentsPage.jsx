@@ -110,7 +110,7 @@ export default function PaymentsPage() {
         label="Filter payments"
       />
 
-      <section className="glass p-5">
+      <section className="panel">
         <DataTable columns={columns} rows={shown} emptyText="No payments here yet." />
       </section>
 
@@ -153,7 +153,7 @@ function WalletSettings() {
   }
 
   return (
-    <section className={`glass p-5 ${noWallet ? "border-amber-400/40 bg-amber-400/5" : ""}`}>
+    <section className={`panel ${noWallet ? "border-amber-400/40 bg-amber-400/5" : ""}`}>
       <h2 className="text-lg font-semibold">Your payout wallets</h2>
       <p className="text-sm text-ink/60">
         {noWallet
