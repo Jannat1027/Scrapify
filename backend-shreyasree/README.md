@@ -6,7 +6,7 @@ REST API for the Scrapify React frontend. Modular architecture:
 ## 1. Setup (one time)
 
 ```bash
-cd backend
+cd backend-shreyasree
 npm install
 ```
 
