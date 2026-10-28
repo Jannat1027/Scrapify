@@ -1,7 +1,7 @@
 # Scrapify: Jannat (operator workspace + full API)
 
 ```
-backend/scrapify-backend/     Express + MongoDB API (auth, scans, listings, payments, reports, admin). Deploys on its own.
+backend-jannat/               Express + MongoDB API (auth, scans, listings, payments, reports, admin). Deploys on its own.
 frontend/scrapify-frontend/   React + Vite operator app: register, log in, scan, list, payments.
 ```
 
@@ -10,7 +10,7 @@ frontend/scrapify-frontend/   React + Vite operator app: register, log in, scan,
 Backend (needs Node 20+ and a MongoDB, local or Atlas):
 
 ```
-cd backend/scrapify-backend
+cd backend-jannat
 cp .env.example .env        # fill in MONGO_URI and JWT_SECRET
 npm install
 npm run seed                # demo data; every demo account has the password demo1234
@@ -52,7 +52,7 @@ so it alone serves every frontend.
 
 ## Deploy
 
-* **Backend (Render / Railway):** root directory `backend/scrapify-backend`, build `npm install`, start `npm start`.
+* **Backend (Render / Railway):** root directory `backend-jannat`, build `npm install`, start `npm start`.
   Set `MONGO_URI`, `JWT_SECRET` (24+ random characters), `NODE_ENV=production`, `CLIENT_URL` (the deployed
   frontend address(es), comma separated), and `BKASH_MERCHANT_NUMBER` / `NAGAD_MERCHANT_NUMBER` for payments.
   Then run `npm run create-admin` once (with `ADMIN_EMAIL` and `ADMIN_PASSWORD` set) to make the first admin.
