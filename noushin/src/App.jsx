@@ -1,12 +1,15 @@
 // Every address (route) in the app and the page it shows.
 // Routes inside another <Route element={...}> are drawn inside that element's <Outlet />.
 //
-// This branch only contains: AuthPage, BrowseListingsPage and MyClaimsPage.
-// Pages that belong to teammates (public, operator, admin) are added back when branches are merged.
+// Pages: Shreyasree's landing page and plastic guide, AuthPage, BrowseListingsPage and MyClaimsPage.
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ScrollManager from "./components/ScrollManager.jsx";
+import PublicLayout from "./layouts/PublicLayout.jsx";
 import WorkspaceLayout from "./layouts/WorkspaceLayout.jsx";
+
+import GuidePage from "./pages/public/GuidePage.jsx";
+import LandingPage from "./pages/public/LandingPage.jsx";
 
 import AuthPage from "./pages/auth/AuthPage.jsx";
 
@@ -18,8 +21,11 @@ export default function App() {
     <>
       <ScrollManager />
       <Routes>
-        {/* Landing page is not part of this branch, so the home address opens the login page */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Public pages share the navbar and footer */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/guide" element={<GuidePage />} />
+        </Route>
 
         {/* Login and sign-up are one page, so the picture panel can slide between the two forms */}
         <Route path="/login" element={<AuthPage mode="login" />} />
