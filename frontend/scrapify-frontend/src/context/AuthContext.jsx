@@ -49,6 +49,11 @@ export function AuthProvider({ children }) {
     return response.data.user;
   }
 
+  async function resendVerification(email) {
+    const response = await api.post("/auth/resend-verification", { email });
+    return response.data.message;
+  }
+
   function logOut() {
     clearToken();
     setUser(null);
@@ -61,7 +66,7 @@ export function AuthProvider({ children }) {
     return response.data.user;
   }
 
-  const value = { user, checking, sessionError, restoreSession, logIn, register, logOut, saveWallets };
+  const value = { user, checking, sessionError, restoreSession, logIn, register, resendVerification, logOut, saveWallets };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

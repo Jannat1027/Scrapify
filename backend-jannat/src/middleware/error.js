@@ -1,6 +1,7 @@
 import multer from "multer";
 import { ZodError } from "zod";
 import { env } from "../config/env.js";
+import { HttpError } from "../utils/httpError.js";
 
 export function notFound(req, res) {
   res.status(404).json({ message: `No route for ${req.method} ${req.originalUrl}` });
@@ -32,5 +33,6 @@ export function errorHandler(error, req, res, next) {
   if (status >= 500) console.error(error);
   res.status(status).json({
     message: status >= 500 && env.isProduction ? "Something went wrong on the server." : error.message,
+    ...(error instanceof HttpError && error.code ? { code: error.code } : {}),
   });
 }

@@ -12,12 +12,13 @@ import { HOME_PAGE_FOR_ROLE } from "../../services/marketplace.js";
 const EMPTY = { name: "", org: "", location: "", email: "", password: "" };
 
 export default function RegisterPage() {
-  const { user, register } = useAuth();
+  const { user, register, resendVerification } = useAuth();
   const [form, setForm] = useState(EMPTY);
   const [locations, setLocations] = useState([]);
   const [problem, setProblem] = useState(undefined);
   const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
+  const [sentTo, setSentTo] = useState("");
+  const [resendNote, setResendNote] = useState("");
 
   useEffect(() => {
     api
@@ -38,13 +39,23 @@ export default function RegisterPage() {
     }
     setSubmitting(true);
     setProblem(undefined);
+    const email = form.email.trim().toLowerCase();
     try {
-      await register({ ...form, location: form.location.trim(), email: form.email.trim().toLowerCase() });
-      setDone(true);
+      await register({ ...form, location: form.location.trim(), email });
+      setSentTo(email);
     } catch (error) {
       setProblem(apiErrorMessage(error));
     }
     setSubmitting(false);
+  }
+
+  async function handleResend() {
+    setResendNote("Sending…");
+    try {
+      setResendNote(await resendVerification(sentTo));
+    } catch (error) {
+      setResendNote(apiErrorMessage(error));
+    }
   }
 
   return (
@@ -55,13 +66,23 @@ export default function RegisterPage() {
           <LanguageButton />
         </div>
 
-        {done ? (
+        {sentTo ? (
           <div className="mt-8 grid justify-items-center gap-3 text-center">
-            <Icon name="circle-check" size={40} className="text-forest" />
-            <h1 className="text-2xl font-bold tracking-tight">Account created</h1>
-            <p className="text-ink/60">An admin has to approve your account before you can log in. Try logging in again later.</p>
+            <Icon name="mail" size={40} className="text-forest" />
+            <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
+            <p className="text-ink/60">
+              We sent a link to <b className="text-ink">{sentTo}</b>. Open it to confirm your email, then log in.
+            </p>
+            <p className="text-sm text-ink/60">
+              Nothing there? Check spam, or{" "}
+              <button type="button" className="font-semibold text-forest hover:underline" onClick={handleResend}>
+                send it again
+              </button>
+              .
+            </p>
+            {resendNote && <p className="text-sm text-ink/60" aria-live="polite">{resendNote}</p>}
             <Link to="/login" className="btn btn-primary mt-2">
-              Back to log in
+              Go to log in
             </Link>
           </div>
         ) : (
