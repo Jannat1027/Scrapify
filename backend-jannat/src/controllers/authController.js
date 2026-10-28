@@ -49,3 +49,11 @@ export async function login(req, res) {
 export function me(req, res) {
   res.json({ user: req.user });
 }
+
+export async function updateWallets(req, res) {
+  for (const field of ["bkashNumber", "nagadNumber"]) {
+    if (req.body[field] !== undefined) req.user[field] = req.body[field];
+  }
+  await req.user.save();
+  res.json({ user: req.user });
+}

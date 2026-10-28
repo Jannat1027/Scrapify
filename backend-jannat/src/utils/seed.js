@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { pathToFileURL } from "node:url";
 import { connectDatabase, disconnectDatabase } from "../config/db.js";
-import { categories, DEMO_PASSWORD, listings, locations, reports, scans, users } from "../data/seed.js";
+import { categories, DEMO_PASSWORD, listings, locations, payments, reports, scans, users } from "../data/seed.js";
 import Category from "../models/Category.js";
 import Grading from "../models/Grading.js";
 import Listing from "../models/Listing.js";
@@ -19,7 +19,7 @@ export async function seedDatabase() {
     [Location, locations],
     [Scan, scans],
     [Listing, listings],
-    [Payment, []],
+    [Payment, payments],
     [Report, reports],
     [Grading, []],
   ];
@@ -27,6 +27,7 @@ export async function seedDatabase() {
   for (const [Model, rows] of collections) {
     await Model.deleteMany({});
     await Model.insertMany(rows);
+    await Model.syncIndexes();
     console.log(`  ${Model.modelName}: ${rows.length}`);
   }
 }

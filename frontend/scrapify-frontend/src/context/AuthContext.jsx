@@ -55,7 +55,13 @@ export function AuthProvider({ children }) {
     setSessionError(null);
   }
 
-  const value = { user, checking, sessionError, restoreSession, logIn, register, logOut };
+  async function saveWallets(wallets) {
+    const response = await api.patch("/auth/me/wallets", wallets);
+    setUser(response.data.user);
+    return response.data.user;
+  }
+
+  const value = { user, checking, sessionError, restoreSession, logIn, register, logOut, saveWallets };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

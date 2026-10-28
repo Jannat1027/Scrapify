@@ -42,6 +42,23 @@ export const STATUS_TONES = {
 
 export const PHOTO_QUALITY_LABELS = { good: "Clear photo", dark: "Too dark", blurry: "Blurry" };
 
+// Payment status badges, and which payment belongs to a claim.
+export const PAYMENT_STATUS_LABELS = {
+  initiated: "Checkout open",
+  pending: "Waiting for operator",
+  paid: "Paid",
+  failed: "Failed",
+  rejected: "Not received",
+};
+export const PAYMENT_STATUS_TONES = { initiated: "blue", pending: "amber", paid: "green", failed: "red", rejected: "red" };
+export const PAYMENT_METHOD_LABELS = { online: "Online (SSLCommerz)", bkash: "bKash", nagad: "Nagad" };
+
+// The live payment for a batch (open checkout, waiting or paid), else the latest attempt.
+export function paymentForListing(data, listingId) {
+  const attempts = data.payments.filter((payment) => payment.listingId === listingId);
+  return attempts.find((payment) => ["initiated", "pending", "paid"].includes(payment.status)) || attempts[0] || null;
+}
+
 // Colours used for each plastic type in bars, charts and thumbnails.
 const CATEGORY_COLORS = { pet: "#38bdf8", hdpe: "#a78bfa", pp: "#fbbf24", film: "#84cc16", mixed: "#94a3b8" };
 export function categoryColor(categoryId) {

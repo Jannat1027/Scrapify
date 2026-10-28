@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // DataContext: the recycler's data, loaded from the Scrapify backend.
 // It keeps the shape the pages have always used:
-//   data = { users, categories, rates, conditions, locations, scans, listings }
+//   data = { users, categories, rates, conditions, locations, scans, listings, payments }
 // For a recycler, `listings` holds every batch on the market plus the batches they claimed.
 //
 // Pages call insertRow / updateRow / claimListing. Each one becomes the matching API request,
@@ -15,7 +15,7 @@ import { useToast } from "./ToastContext.jsx";
 
 const DataContext = createContext(null);
 
-const EMPTY_DATA = { users: [], categories: [], rates: [], conditions: [], locations: [], scans: [], listings: [] };
+const EMPTY_DATA = { users: [], categories: [], rates: [], conditions: [], locations: [], scans: [], listings: [], payments: [] };
 
 // The people named on listings (each listing carries its operator and recycler), so findUser() can show who sells a batch.
 function peopleOnListings(listings, currentUser) {
@@ -30,12 +30,13 @@ function peopleOnListings(listings, currentUser) {
 
 // Everything the recycler pages show.
 async function loadRecyclerData(user) {
-  const [categories, conditions, locations, browse, claims] = await Promise.all([
+  const [categories, conditions, locations, browse, claims, payments] = await Promise.all([
     api.get("/categories"),
     api.get("/conditions"),
     api.get("/locations"),
     api.get("/listings"),
     api.get("/listings/claims"),
+    api.get("/payments"),
   ]);
   // The market (available batches) and this recycler's own claims, without doubles.
   const listings = [...claims.data.listings];
@@ -49,6 +50,7 @@ async function loadRecyclerData(user) {
     locations: locations.data.locations,
     scans: [],
     listings,
+    payments: payments.data.payments,
     users: peopleOnListings(listings, user),
   };
 }
@@ -116,7 +118,7 @@ export function DataProvider({ children }) {
   // Claims a listing for the logged-in recycler. Returns the claimed listing, or null if someone else was first.
   const claimListing = (listingId) => change(() => api.patch(`/listings/${listingId}/claim`).then((response) => response.data.listing));
 
-  const value = { data, loading, error, refresh, insertRow, updateRow, claimListing };
+  const value = { data, loading, error, refresh, send: change, insertRow, updateRow, claimListing };
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 }
 

@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import Button from "../../components/Button.jsx";
 import ConfirmDialog from "../../components/ConfirmDialog.jsx";
 import EmptyState from "../../components/EmptyState.jsx";
 import Icon from "../../components/Icon.jsx";
 import ListingCard from "../../components/ListingCard.jsx";
 import MeterList from "../../components/MeterList.jsx";
+import PayDialog from "../../components/PayDialog.jsx";
+import PaymentBadge from "../../components/PaymentBadge.jsx";
 import PillTabs from "../../components/PillTabs.jsx";
 import ReportProblemDialog from "../../components/ReportProblemDialog.jsx";
 import StatCard from "../../components/StatCard.jsx";
@@ -13,7 +15,7 @@ import Stars from "../../components/Stars.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useData } from "../../context/DataContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
-import { findCategory } from "../../services/marketplace.js";
+import { findCategory, paymentForListing } from "../../services/marketplace.js";
 import { formatTaka } from "../../utils/format.js";
 
 const TABS = [
@@ -23,6 +25,13 @@ const TABS = [
 ];
 const GREEN_FADE = "linear-gradient(90deg, #3f9e74, #a7d7b8)";
 
+// What to say when SSLCommerz sends the recycler back here (?payment=success|failed|cancelled).
+const RETURN_MESSAGES = {
+  success: ["Payment received. The operator can see it's paid.", "green"],
+  failed: ["The payment didn't go through. No money was taken; you can try again.", "red"],
+  cancelled: ["Payment cancelled. You can pay whenever you're ready.", "amber"],
+};
+
 function sumOf(items, key) {
   return items.reduce((total, item) => total + item[key], 0);
 }
@@ -30,11 +39,24 @@ function sumOf(items, key) {
 // Recycler: batches this buyer has claimed, plus where their plastic comes from.
 export default function MyClaimsPage() {
   const { user } = useAuth();
-  const { data, updateRow } = useData();
+  const { data, updateRow, refresh } = useData();
   const showToast = useToast();
   const [currentTab, setCurrentTab] = useState("claimed");
-  // Which dialog is open: null or { type: "complete" | "cancel" | "rate" | "report", listingId }
+  // Which dialog is open: null or { type: "complete" | "cancel" | "rate" | "report" | "pay", listingId }
   const [dialog, setDialog] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Coming back from the SSLCommerz page: say how it went once, reload, and tidy the address bar.
+  const handledReturn = useRef(false);
+  useEffect(() => {
+    const outcome = searchParams.get("payment");
+    if (!RETURN_MESSAGES[outcome] || handledReturn.current) return;
+    handledReturn.current = true;
+    const [message, tone] = RETURN_MESSAGES[outcome];
+    showToast(message, tone);
+    refresh();
+    setSearchParams({}, { replace: true });
+  }, [searchParams, setSearchParams, showToast, refresh]);
 
   const myClaims = data.listings.filter((listing) => listing.recyclerId === user.id);
   const withStatus = (status) => myClaims.filter((listing) => listing.status === status);
@@ -109,7 +131,8 @@ export default function MyClaimsPage() {
         {withStatus(currentTab).length === 0 && <EmptyState icon="package-open" text="Nothing in this list." inGlass />}
         {withStatus(currentTab).map((listing) => (
           <ListingCard key={listing.id} listing={listing}>
-            <ClaimActions listing={listing} onAction={openDialog} />
+            <PaymentLine payment={paymentForListing(data, listing.id)} />
+            <ClaimActions listing={listing} payment={paymentForListing(data, listing.id)} onAction={openDialog} />
           </ListingCard>
         ))}
       </div>
@@ -145,16 +168,38 @@ export default function MyClaimsPage() {
         />
       )}
       {dialog?.type === "report" && <ReportProblemDialog listingId={dialog.listingId} onClose={closeDialog} />}
+      {dialog?.type === "pay" && <PayDialog listingId={dialog.listingId} onClose={closeDialog} />}
     </>
   );
 }
 
-// The buttons under a claim card change with its status.
-function ClaimActions({ listing, onAction }) {
+function PaymentLine({ payment }) {
+  if (!payment) return null;
+  return (
+    <p className="flex w-full flex-wrap items-center gap-2 text-xs text-ink/60">
+      <span>Payment:</span>
+      <PaymentBadge status={payment.status} />
+      {payment.note && payment.status !== "paid" && <span>{payment.note}</span>}
+    </p>
+  );
+}
+
+function needsPayment(listing, payment) {
+  return ["claimed", "completed"].includes(listing.status) && !["paid", "pending"].includes(payment?.status);
+}
+
+// The buttons under a claim card change with its status. Pay shows until the batch is paid for.
+function ClaimActions({ listing, payment, onAction }) {
+  const payButton = needsPayment(listing, payment) && (
+    <Button size="sm" variant="primary" icon="wallet" onClick={() => onAction("pay", listing.id)}>
+      Pay
+    </Button>
+  );
   if (listing.status === "claimed") {
     return (
       <>
-        <Button size="sm" variant="primary" icon="check" onClick={() => onAction("complete", listing.id)}>
+        {payButton}
+        <Button size="sm" variant={payButton ? "" : "primary"} icon="check" onClick={() => onAction("complete", listing.id)}>
           Mark completed
         </Button>
         <Button size="sm" variant="danger" onClick={() => onAction("cancel", listing.id)}>
@@ -166,16 +211,22 @@ function ClaimActions({ listing, onAction }) {
   }
   if (listing.status === "completed" && !listing.rating) {
     return (
-      <Button size="sm" icon="star" onClick={() => onAction("rate", listing.id)}>
-        Rate operator
-      </Button>
+      <>
+        {payButton}
+        <Button size="sm" icon="star" onClick={() => onAction("rate", listing.id)}>
+          Rate operator
+        </Button>
+      </>
     );
   }
   if (listing.rating) {
     return (
-      <p className="text-sm">
-        <Stars count={listing.rating} /> <span className="text-ink/60">your rating</span>
-      </p>
+      <>
+        {payButton}
+        <p className="text-sm">
+          <Stars count={listing.rating} /> <span className="text-ink/60">your rating</span>
+        </p>
+      </>
     );
   }
   return null;
