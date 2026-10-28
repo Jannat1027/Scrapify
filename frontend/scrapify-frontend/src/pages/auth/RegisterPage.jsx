@@ -39,7 +39,7 @@ export default function RegisterPage() {
     setSubmitting(true);
     setProblem(undefined);
     try {
-      await register({ ...form, email: form.email.trim().toLowerCase() });
+      await register({ ...form, location: form.location.trim(), email: form.email.trim().toLowerCase() });
       setDone(true);
     } catch (error) {
       setProblem(apiErrorMessage(error));
@@ -77,14 +77,21 @@ export default function RegisterPage() {
                 <input id="org" className="input" value={form.org} onChange={set("org")} />
               </FormField>
               <FormField id="location" label="Area">
-                <select id="location" className="input" value={form.location} onChange={set("location")}>
-                  <option value="">Choose your area</option>
+                <input
+                  id="location"
+                  className="input"
+                  list="location-suggestions"
+                  autoComplete="address-level2"
+                  maxLength={80}
+                  placeholder="Your area, e.g. Uttara, Dhaka"
+                  value={form.location}
+                  onChange={set("location")}
+                />
+                <datalist id="location-suggestions">
                   {locations.map((name) => (
-                    <option key={name} value={name}>
-                      {name}
-                    </option>
+                    <option key={name} value={name} />
                   ))}
-                </select>
+                </datalist>
               </FormField>
               <FormField id="email" label="Email">
                 <input id="email" type="email" className="input" autoComplete="email" value={form.email} onChange={set("email")} />

@@ -18,7 +18,7 @@ const ROLE_CHOICES = [
 export default function RegisterForm({ onSwitch }) {
   const { register } = useAuth();
   const [newUser, setNewUser] = useState(null); // set after a successful sign-up
-  const [locations, setLocations] = useState([]); // the areas an admin allows, from the backend
+  const [locations, setLocations] = useState([]); // known areas, offered as suggestions; any area can be typed
   const [submitting, setSubmitting] = useState(false);
   const [serverProblem, setServerProblem] = useState("");
 
@@ -33,7 +33,7 @@ export default function RegisterForm({ onSwitch }) {
   const rules = {
     name: [[(value) => value.length >= 2, "Add your full name so buyers know who they're dealing with."]],
     org: [[(value) => value.length >= 2, "Add your shop or organisation name. It appears on every listing."]],
-    location: [[(value) => value.length > 0, "Choose the area where you collect or buy plastic."]],
+    location: [[(value) => value.trim().length >= 2, "Write the area where you collect or buy plastic, like Uttara, Dhaka."]],
     email: [
       [(value) => value.length > 0, "Add an email. Your approval arrives there."],
       [isEmail, "That doesn't look like an email yet. It should look like name@shop.com."],
@@ -66,7 +66,7 @@ export default function RegisterForm({ onSwitch }) {
         role: values.role,
         name: values.name.trim(),
         org: values.org.trim(),
-        location: values.location,
+        location: values.location.trim(),
         email: values.email.trim().toLowerCase(),
         password: values.password,
       });
@@ -129,23 +129,23 @@ export default function RegisterForm({ onSwitch }) {
       </div>
 
       <FormField id="register-location" label="Location" problem={form.problems.location}>
-        <select
+        <input
           id="register-location"
           name="location"
           className="input"
+          list="register-location-suggestions"
+          autoComplete="address-level2"
+          maxLength={80}
+          placeholder="Your area, e.g. Uttara, Dhaka"
           value={form.values.location}
           onChange={form.handleChange}
           onBlur={form.handleBlur}
-        >
-          <option value="" disabled>
-            Choose your area
-          </option>
+        />
+        <datalist id="register-location-suggestions">
           {locations.map((place) => (
-            <option key={place} value={place}>
-              {place}
-            </option>
+            <option key={place} value={place} />
           ))}
-        </select>
+        </datalist>
       </FormField>
 
       <FormInput form={form} name="email" id="register-email" label="Email" type="email" autoComplete="email" placeholder="you@shop.com" />

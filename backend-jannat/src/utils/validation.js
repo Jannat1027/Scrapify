@@ -8,7 +8,11 @@ export const registerSchema = z.object({
   role: z.enum(["operator", "recycler"], { message: "Choose operator or recycler." }),
   name: text(2, "Add your full name so buyers know who they're dealing with."),
   org: text(2, "Add your shop or organisation name. It appears on every listing."),
-  location: text(1, "Choose the area where you collect or buy plastic."),
+  location: z
+    .string()
+    .trim()
+    .transform((place) => place.replace(/\s+/g, " "))
+    .pipe(z.string().min(2, "Write the area where you collect or buy plastic, like Uttara, Dhaka.").max(80, "Keep the area under 80 characters.")),
   email: z.string().trim().toLowerCase().pipe(z.email("That doesn't look like an email yet. It should look like name@shop.com.")),
   password: z
     .string()
