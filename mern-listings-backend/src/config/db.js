@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
+// Connects to MongoDB (Atlas or a local server) using MONGO_URI from .env.
+import mongoose from "mongoose";
+import { env } from "./env.js";
 
-async function connectDB() {
-  const uri = process.env.MONGO_URI;
-  if (!uri) throw new Error('MONGO_URI is missing. Add it to your .env file.');
-
-  mongoose.set('strictQuery', true);
-  await mongoose.connect(uri);
-  console.log(`MongoDB connected: ${mongoose.connection.name}`);
+export async function connectDatabase() {
+  await mongoose.connect(env.mongoUri);
+  console.log(`MongoDB connected: ${mongoose.connection.host}`);
 }
 
-module.exports = connectDB;
+export async function disconnectDatabase() {
+  await mongoose.disconnect();
+}

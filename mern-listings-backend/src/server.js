@@ -1,16 +1,12 @@
-require('dotenv').config();
-const app = require('./app');
-const connectDB = require('./config/db');
 
-const port = Number(process.env.PORT) || 5000;
+import app from "./app.js";
+import { connectDatabase } from "./config/db.js";
+import { env } from "./config/env.js";
 
-async function start() {
-  if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is missing. Copy .env.example to .env and set a secret.');
-  await connectDB();
-  app.listen(port, () => console.log(`API server running at http://localhost:${port}`));
-}
-
-start().catch((error) => {
-  console.error('Failed to start server:', error.message);
+try {
+  await connectDatabase();
+  app.listen(env.port, () => console.log(`Scrapify API running on http://localhost:${env.port}`));
+} catch (error) {
+  console.error("Could not start the server:", error.message);
   process.exit(1);
-});
+}

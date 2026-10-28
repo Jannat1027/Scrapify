@@ -1,25 +1,28 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const AppError = require('../utils/AppError');
-const asyncHandler = require('../utils/asyncHandler');
 
-const protect = asyncHandler(async (req, res, next) => {
-  const header = req.headers.authorization || '';
-  const [scheme, token] = header.split(' ');
-  if (scheme !== 'Bearer' || !token) throw new AppError('Please log in to access this resource.', 401);
-  if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is missing from .env');
+import jwt from "jsonwebtoken";
+import { env } from "../config/env.js";
+import User, { CAN_LOG_IN } from "../models/User.js";
+import { HttpError } from "../utils/httpError.js";
+
+export function signToken(user) {
+  return jwt.sign({ sub: user.id, role: user.role }, env.jwtSecret, { expiresIn: env.jwtExpiresIn });
+}
+
+export async function requireAuth(req, res, next) {
+  const [scheme, token] = (req.headers.authorization || "").split(" ");
+  if (scheme !== "Bearer" || !token) throw new HttpError(401, "Please log in first.");
 
   let payload;
   try {
-    payload = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (_error) {
-    throw new AppError('Invalid or expired token. Please log in again.', 401);
+    payload = jwt.verify(token, env.jwtSecret);
+  } catch {
+    throw new HttpError(401, "Your session has expired. Please log in again.");
   }
 
-  const user = await User.findById(payload.sub);
-  if (!user) throw new AppError('User account no longer exists.', 401);
+  const user = await User.findOne({ id: payload.sub });
+  if (!user) throw new HttpError(401, "This account no longer exists.");
+  if (!CAN_LOG_IN.includes(user.status)) throw new HttpError(403, "This account can't be used right now.");
+
   req.user = user;
   next();
-});
-
-module.exports = { protect };
+}

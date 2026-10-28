@@ -6,7 +6,6 @@ import ListingCard from "../../components/ListingCard.jsx";
 import ListingDetailsDialog from "../../components/ListingDetailsDialog.jsx";
 import SearchInput from "../../components/SearchInput.jsx";
 import SelectFilter from "../../components/SelectFilter.jsx";
-import { useAuth } from "../../context/AuthContext.jsx";
 import { useData } from "../../context/DataContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
 import { formatTaka } from "../../utils/format.js";
@@ -15,7 +14,6 @@ const EMPTY_FILTERS = { search: "", type: "", condition: "", place: "", minKg: "
 
 // Recycler: every available batch, with filters, a detail view and a fixed-price claim.
 export default function BrowseListingsPage() {
-  const { user } = useAuth();
   const { data, claimListing } = useData();
   const showToast = useToast();
   const [filters, setFilters] = useState(EMPTY_FILTERS);
@@ -29,7 +27,7 @@ export default function BrowseListingsPage() {
 
   function matchesFilters(listing) {
     const query = filters.search.trim().toLowerCase();
-    if (listing.status !== "available") return false;
+    if (listing.status !== "available") return false; // the market only; the recycler's own claims are on My claims
     if (query && !`${listing.id} ${listing.location}`.toLowerCase().includes(query)) return false;
     if (filters.type && listing.category !== filters.type) return false;
     if (filters.condition && listing.condition !== filters.condition) return false;
@@ -38,10 +36,9 @@ export default function BrowseListingsPage() {
     return true;
   }
 
-  function confirmClaim() {
-    const claimed = claimListing(claimingListing.id, user.id);
-    if (claimed) showToast("Batch claimed. You'll find it under My claims.");
-    else showToast("Someone else claimed this batch first.", "red");
+  async function confirmClaim() {
+    // On failure the server's reason (for example "Someone else claimed this batch a moment ago.") is already shown.
+    if (await claimListing(claimingListing.id)) showToast("Batch claimed. You'll find it under My claims.");
   }
 
   const shownListings = data.listings.filter(matchesFilters);

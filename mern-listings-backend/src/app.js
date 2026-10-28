@@ -1,28 +1,36 @@
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
-const authRoutes = require('./routes/auth.routes');
-const listingsRoutes = require('./routes/listings.routes');
-const claimsRoutes = require('./routes/claims.routes');
-const notFound = require('./middleware/notFound');
-const errorHandler = require('./middleware/errorHandler');
+
+import cors from "cors";
+import express from "express";
+import { env } from "./config/env.js";
+import { errorHandler, notFound } from "./middleware/error.js";
+import authRoutes from "./routes/auth.js";
+import catalogRoutes from "./routes/catalog.js";
+import listingRoutes from "./routes/listings.js";
+import reportRoutes from "./routes/reports.js";
 
 const app = express();
-const allowedOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 
-app.use(cors({ origin: allowedOrigin.split(',').map((origin) => origin.trim()) }));
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true }));
-if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
 
-app.get('/api/health', (_req, res) => {
-  res.status(200).json({ success: true, message: 'Backend is running.' });
-});
-app.use('/api/auth', authRoutes);
-app.use('/api/listings', listingsRoutes);
-app.use('/api/claims', claimsRoutes);
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || env.clientUrls.includes(origin)) callback(null, true);
+      else callback(null, false);
+    },
+  }),
+);
+
+
+app.use(express.json({ limit: "2mb" }));
+
+app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+
+app.use("/api/auth", authRoutes);
+app.use("/api", catalogRoutes);
+app.use("/api/listings", listingRoutes);
+app.use("/api/reports", reportRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

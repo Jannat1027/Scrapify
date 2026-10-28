@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useData } from "../../context/DataContext.jsx";
-import { DEMO_ACCOUNTS, DEMO_PASSWORD } from "../../data/seed.js";
-import { HOME_PAGE_FOR_ROLE, ROLE_LABELS } from "../../services/marketplace.js";
+import { apiErrorMessage } from "../../services/api.js";
+import { HOME_PAGE_FOR_ROLE } from "../../services/marketplace.js";
 import { useFormValidation } from "../../utils/useFormValidation.js";
 import { isEmail } from "../../utils/validation.js";
 import Button from "../Button.jsx";
@@ -17,80 +16,62 @@ const RULES = {
     [(value) => value.length > 0, "Enter the email you signed up with."],
     [isEmail, "That doesn't look like an email yet. It should look like name@shop.com."],
   ],
-  password: [
-    [(value) => value.length > 0, "Enter your password."],
-    [(value) => value.length >= 6, "Passwords on Scrapify are at least 6 characters. Check for a missing letter."],
-  ],
+  password: [[(value) => value.length > 0, "Enter your password."]],
 };
 
-// Accounts that can't log in yet get a clear next step instead of a generic error.
-const BLOCKED_MESSAGES = {
-  pending: {
-    icon: "clock",
-    title: "Your account is waiting for approval",
-    text: "An admin checks every new account, usually within a day. We'll email you the moment you're approved. (Demo: log in as Admin and approve it under Users.)",
-  },
-  suspended: {
-    icon: "ban",
-    title: "This account is suspended",
-    text: "Email hello@scrapify.app with your shop name and we'll look into it.",
-  },
-};
+// The backend answers 403 for accounts that can't log in yet; show a clear next step instead of a generic error.
+function blockedMessageFor(error) {
+  if (error.response?.status !== 403) return null;
+  const reason = error.response.data?.message || "";
+  if (/suspend/i.test(reason)) {
+    return { icon: "ban", title: "This account is suspended", text: "Email hello@scrapify.app with your shop name and we'll look into it." };
+  }
+  return { icon: "clock", title: "Your account is waiting for approval", text: "An admin checks every new account, usually within a day. You can log in as soon as it is approved." };
+}
 
-// SIMULATED login: the email must belong to a demo user; any password with 6+ characters is accepted.
+// Real login: the backend checks the password and answers with a token.
 export default function LoginForm({ onSwitch }) {
-  const { data } = useData();
   const { logIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const form = useFormValidation(RULES, { email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [blockedMessage, setBlockedMessage] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [serverProblem, setServerProblem] = useState("");
 
-  // The password is not checked in the demo, so only the email is needed here.
-  function tryLogIn(email) {
+  async function tryLogIn(email, password) {
     setBlockedMessage(null);
-    const user = data.users.find((person) => person.email === email.trim().toLowerCase());
-    if (!user) {
-      form.setFieldProblem("email", "No account uses this email. Check the spelling, or create an account below.");
-      return;
+    setServerProblem("");
+    setSubmitting(true);
+    try {
+      const user = await logIn(email.trim().toLowerCase(), password);
+      // Go back to the page the user tried to open, if it belongs to their role; otherwise to their dashboard.
+      const wantedPage = location.state?.from;
+      const home = HOME_PAGE_FOR_ROLE[user.role];
+      navigate(wantedPage && wantedPage.startsWith(home) ? wantedPage : home, { replace: true });
+    } catch (error) {
+      const blocked = blockedMessageFor(error);
+      if (blocked) setBlockedMessage(blocked);
+      else setServerProblem(apiErrorMessage(error));
+      setSubmitting(false);
     }
-    if (BLOCKED_MESSAGES[user.status]) {
-      setBlockedMessage(BLOCKED_MESSAGES[user.status]);
-      return;
-    }
-    logIn(user);
-    // Go back to the page the user tried to open, if it belongs to their role; otherwise to their dashboard.
-    const wantedPage = location.state?.from;
-    const home = HOME_PAGE_FOR_ROLE[user.role];
-    navigate(wantedPage && wantedPage.startsWith(home) ? wantedPage : home);
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    if (form.validateForm()) tryLogIn(form.values.email);
+    if (form.validateForm()) tryLogIn(form.values.email, form.values.password);
   }
-
-  function logInAsDemo(account) {
-    form.setValues({ email: account.email, password: DEMO_PASSWORD });
-    tryLogIn(account.email);
-  }
-
-  const forgotLink = (
-    <Link to="/guide#contact" className="text-xs link">
-      Forgot password?
-    </Link>
-  );
 
   return (
     <>
       <h1 className="mt-8 text-3xl font-bold tracking-tight sm:text-4xl">Welcome back</h1>
-      <p className="mt-2 text-ink/60">Log in to your shop, recycler or admin workspace.</p>
+      <p className="mt-2 text-ink/60">Log in to your Scrapify workspace.</p>
 
       <form className="mt-8 grid gap-5" onSubmit={handleSubmit} noValidate>
         <FormInput form={form} name="email" label="Email" type="email" autoComplete="email" placeholder="you@shop.com" />
 
-        <FormField id="password" label="Password" problem={form.problems.password} aside={forgotLink}>
+        <FormField id="password" label="Password" problem={serverProblem || form.problems.password}>
           <div className="relative">
             <input
               id="password"
@@ -98,7 +79,7 @@ export default function LoginForm({ onSwitch }) {
               type={showPassword ? "text" : "password"}
               className="input pr-12"
               autoComplete="current-password"
-              placeholder="At least 6 characters"
+              placeholder="Your password"
               value={form.values.password}
               onChange={form.handleChange}
               onBlur={form.handleBlur}
@@ -124,28 +105,12 @@ export default function LoginForm({ onSwitch }) {
           </div>
         )}
 
-        <Button type="submit" variant="primary" size="lg" className="w-full">
-          Log in
+        <Button type="submit" variant="primary" size="lg" className="w-full" disabled={submitting}>
+          {submitting ? "Logging in…" : "Log in"}
         </Button>
       </form>
 
-      <div className="mt-7 rounded-2xl border border-dashed border-ink/15 p-4">
-        <p className="kicker">Demo · one click, no password</p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          {DEMO_ACCOUNTS.map((account) => (
-            <button key={account.role} type="button" className="btn btn-sm h-auto flex-col gap-1 px-1 py-3" onClick={() => logInAsDemo(account)}>
-              <Icon name={account.icon} className="text-forest" />
-              {ROLE_LABELS[account.role]}
-            </button>
-          ))}
-        </div>
-        <p className="text-xs text-ink/60 mt-3">
-          Simulated login: there is no server, so passwords are not checked. Any demo email (see README) works with any
-          6+ character password.
-        </p>
-      </div>
-
-      <p className="mt-2 text-center text-sm text-ink/60">
+      <p className="mt-6 text-center text-sm text-ink/60">
         New to Scrapify?{" "}
         <button type="button" className="link text-[length:inherit]" onClick={onSwitch}>
           Create an account

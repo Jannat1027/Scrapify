@@ -4,7 +4,6 @@ import { ROLE_LABELS } from "../services/marketplace.js";
 import Brand from "./Brand.jsx";
 import Button from "./Button.jsx";
 import Icon from "./Icon.jsx";
-import ResetDemoButton from "./ResetDemoButton.jsx";
 
 // The menu for each role. This is what makes the workspace look different for operator, recycler and admin.
 const MENUS = {
@@ -60,10 +59,6 @@ export default function Sidebar({ isOpen, onNavigate }) {
           {item.label}
         </NavLink>
       ))}
-      <NavLink to="/guide" className={linkClass}>
-        <Icon name="book-open" />
-        Plastic guide
-      </NavLink>
 
       <div className="rounded-xl border border-ink/10 bg-white/60 p-3 mt-auto grid gap-2">
         <p className="truncate font-semibold text-sm">{user.org}</p>
@@ -71,7 +66,6 @@ export default function Sidebar({ isOpen, onNavigate }) {
         <Button size="sm" icon="log-out" className="w-full" onClick={handleLogOut}>
           Log out
         </Button>
-        <ResetDemoButton className="w-full btn-ghost" />
       </div>
     </aside>
   );

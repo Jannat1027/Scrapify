@@ -11,9 +11,8 @@ export default function ReportProblemDialog({ listingId, onClose }) {
   const { insertRow } = useData();
   const showToast = useToast();
 
-  function sendReport(reason) {
-    insertRow("reports", createReport(listingId, user.id, reason));
-    showToast("Report sent. An admin will look into it.");
+  async function sendReport(reason) {
+    if (await insertRow("reports", createReport(listingId, user.id, reason))) showToast("Report sent. An admin will look into it.");
   }
 
   return (

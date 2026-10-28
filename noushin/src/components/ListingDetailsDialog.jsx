@@ -1,5 +1,5 @@
 import { useData } from "../context/DataContext.jsx";
-import { conditionName, findCategory, findUser, operatorRating } from "../services/marketplace.js";
+import { conditionName, findCategory, findUser } from "../services/marketplace.js";
 import { formatDate, formatTaka } from "../utils/format.js";
 import Button from "./Button.jsx";
 import CompositionBars from "./CompositionBars.jsx";
@@ -26,7 +26,7 @@ export default function ListingDetailsDialog({ listing, onClaim, onClose }) {
             <p className="text-sm text-ink/60">{`${listing.weight} kg · ${conditionName(data, listing.condition)} · ${perKg}/kg`}</p>
             <div className="rounded-xl border border-ink/10 bg-white/60 p-3 mt-5 text-sm">
               <p className="font-semibold">{operator.org}</p>
-              <p className="text-ink/60">{`${listing.location} · ★ ${operatorRating(data.listings, listing.operatorId)}`}</p>
+              <p className="text-ink/60">{`${listing.location} · ★ ${listing.operator?.rating ?? "New"}`}</p>
             </div>
           </div>
         </div>

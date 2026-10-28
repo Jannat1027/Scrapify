@@ -1,13 +1,26 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
+import { toJSONPlugin } from "./toJSON.js";
 
-const userSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true, trim: true, minlength: 2, maxlength: 80 },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
-    passwordHash: { type: String, required: true, select: false },
-    role: { type: String, enum: ['user', 'admin'], default: 'user' }
-  },
-  { timestamps: true }
-);
+export const ROLES = ["operator", "recycler", "admin"];
 
-module.exports = mongoose.model('User', userSchema);
+
+export const USER_STATUSES = ["pending", "approved", "flagged", "suspended"];
+export const CAN_LOG_IN = ["approved", "flagged"];
+
+const userSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  role: { type: String, enum: ROLES, required: true },
+  name: { type: String, required: true, trim: true },
+  org: { type: String, required: true, trim: true },
+  location: { type: String, required: true },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  passwordHash: { type: String, required: true },
+  status: { type: String, enum: USER_STATUSES, default: "pending" },
+  note: { type: String, default: "" }, 
+  joined: { type: Date, default: Date.now },
+});
+
+
+userSchema.plugin(toJSONPlugin, { hide: ["passwordHash"] });
+
+export default mongoose.model("User", userSchema);

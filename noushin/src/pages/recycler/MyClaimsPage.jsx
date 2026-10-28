@@ -14,7 +14,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useData } from "../../context/DataContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
 import { findCategory } from "../../services/marketplace.js";
-import { formatTaka, nowIso } from "../../utils/format.js";
+import { formatTaka } from "../../utils/format.js";
 
 const TABS = [
   { value: "claimed", label: "Active" },
@@ -42,20 +42,21 @@ export default function MyClaimsPage() {
   const kgSourced = sumOf(completed, "weight");
   const spent = sumOf(completed, "price");
 
-  function completeClaim(listingId) {
-    updateRow("listings", listingId, { status: "completed", completedAt: nowIso() });
+  // Each change is sent to the server first. A failed one has already shown the server's reason in a toast.
+  async function completeClaim(listingId) {
+    if (!(await updateRow("listings", listingId, { status: "completed" }))) return;
     showToast("Marked as completed.");
     setDialog({ type: "rate", listingId }); // ask for a rating straight after
   }
 
-  function cancelClaim(listingId, reason) {
-    updateRow("listings", listingId, { status: "cancelled", cancelReason: reason });
-    showToast("Claim cancelled. The operator has been told why.");
+  async function cancelClaim(listingId, reason) {
+    if (await updateRow("listings", listingId, { status: "cancelled", cancelReason: reason })) {
+      showToast("Claim cancelled. The operator has been told why.");
+    }
   }
 
-  function rateOperator(listingId, stars) {
-    updateRow("listings", listingId, { rating: Number(stars) });
-    showToast("Thanks for rating.");
+  async function rateOperator(listingId, stars) {
+    if (await updateRow("listings", listingId, { rating: Number(stars) })) showToast("Thanks for rating.");
   }
 
   const openDialog = (type, listingId) => setDialog({ type, listingId });
