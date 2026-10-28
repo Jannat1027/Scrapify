@@ -14,7 +14,7 @@ const ROLE_CHOICES = [
   { role: "recycler", label: "Recycler", hint: "Bulk buyer", icon: "factory" },
 ];
 
-// Sign-up. New accounts start as "pending": an admin must approve them before they can log in.
+// Sign-up. New accounts must confirm their email (link sent by the API) before they can log in.
 export default function RegisterForm({ onSwitch }) {
   const { register } = useAuth();
   const [newUser, setNewUser] = useState(null); // set after a successful sign-up
@@ -82,11 +82,11 @@ export default function RegisterForm({ onSwitch }) {
     return (
       <div className="animate-rise py-10 text-center">
         <span className="icon-tile mx-auto h-16 w-16 text-[1.875rem]">
-          <Icon name="clock" />
+          <Icon name="mail" />
         </span>
         <h2 className="mt-6 text-2xl font-bold">Account created</h2>
         <p className="mt-3 text-ink/60">
-          An admin checks every new account, usually within a day. You can log in as soon as yours is approved.
+          We emailed you a link. Open it to confirm your email, then you can log in. Check spam if it isn't there.
         </p>
         <p className="mt-4 text-sm text-ink/60">
           Then log in with <b>{newUser.email}</b>.

@@ -35,12 +35,12 @@ JSON shapes, so any frontend can talk to any backend. Errors are always `{ "mess
 
 | Endpoint | Who | Answer |
 | --- | --- | --- |
-| `POST /api/auth/register` `{role,name,org,location,email,password}` | public (operator or recycler) | `201 { user }` with `status: "pending"` |
-| `POST /api/auth/login` `{email,password}` | public | `{ token, user }`; `403` while pending/suspended |
+| `POST /api/auth/register` `{role,name,org,location,email,password}` | public (operator or recycler) | `201 { user }`; emails a confirm link |
+| `POST /api/auth/login` `{email,password}` | public | `{ token, user }`; `403` until the email is confirmed (`code: "EMAIL_NOT_VERIFIED"`) or while suspended |
 | `GET /api/auth/me` | any logged-in user | `{ user }` |
 | `GET /api/locations` | public | `{ locations: [name] }` |
 
-Send the token as `Authorization: Bearer <token>`. New accounts are `pending` until an admin approves them.
+Send the token as `Authorization: Bearer <token>`. New accounts must open the confirm link sent to their email (`GET /api/auth/verify-email`, which redirects to the app's `/login?verified=ok`) before logging in; `POST /api/auth/resend-verification {email}` sends a new link. Set the `SMTP_*` settings in `.env` to send real emails; without them the link is printed in the server console.
 Passwords: at least 6 characters, with a number. The first admin is created with `npm run create-admin`.
 
 ## Operator endpoints (this folder)

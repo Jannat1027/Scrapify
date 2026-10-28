@@ -20,6 +20,10 @@ export const registerSchema = z.object({
     .regex(/\d/, "Add at least one number, for example greenbin24."),
 });
 
+export const resendVerificationSchema = z.object({
+  email: z.string().trim().toLowerCase().pipe(z.email("Enter the email you signed up with.")),
+});
+
 export const loginSchema = z.object({
   email: z.string().trim().toLowerCase().pipe(z.email("Enter the email you signed up with.")),
   password: z.string().min(1, "Enter your password."),
