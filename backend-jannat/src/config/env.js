@@ -26,8 +26,14 @@ export const env = {
   mongoUri: process.env.MONGO_URI,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
-  bkashMerchantNumber: process.env.BKASH_MERCHANT_NUMBER?.trim() || "",
-  nagadMerchantNumber: process.env.NAGAD_MERCHANT_NUMBER?.trim() || "",
+  sslcommerz: {
+    storeId: process.env.SSLCOMMERZ_STORE_ID?.trim() || "",
+    storePassword: process.env.SSLCOMMERZ_STORE_PASSWORD?.trim() || "",
+    live: process.env.SSLCOMMERZ_LIVE === "true",
+  },
   clientUrls: (process.env.CLIENT_URL || "http://localhost:5173").split(",").map((url) => url.trim()),
   isProduction,
 };
+
+env.serverUrl = (process.env.SERVER_URL || process.env.RENDER_EXTERNAL_URL || `http://localhost:${env.port}`).replace(/\/$/, "");
+env.frontendUrl = (process.env.FRONTEND_URL || env.clientUrls[0]).replace(/\/$/, "");

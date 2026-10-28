@@ -27,8 +27,8 @@ export const locations = [
 
 
 export const users = [
-  { id: "u1", role: "operator", name: "Rahima Begum", org: "Green Bin Scrap Shop", location: "Mirpur, Dhaka", email: "rahima@greenbin.bd", status: "approved", joined: daysAgo(120) },
-  { id: "u2", role: "operator", name: "Karim Uddin", org: "BRAC Collection Point 4", location: "Bayezid, Chattogram", email: "karim@cp4.org", status: "approved", joined: daysAgo(90) },
+  { id: "u1", role: "operator", name: "Rahima Begum", org: "Green Bin Scrap Shop", location: "Mirpur, Dhaka", email: "rahima@greenbin.bd", bkashNumber: "01712345678", nagadNumber: "01812345678", status: "approved", joined: daysAgo(120) },
+  { id: "u2", role: "operator", name: "Karim Uddin", org: "BRAC Collection Point 4", location: "Bayezid, Chattogram", email: "karim@cp4.org", bkashNumber: "01911223344", status: "approved", joined: daysAgo(90) },
   { id: "u3", role: "operator", name: "Shapla Akter", org: "Sonadanga Bhangari", location: "Sonadanga, Khulna", email: "shapla@bhangari.bd", status: "pending", joined: daysAgo(2) },
   { id: "u4", role: "operator", name: "Jamal Hossain", org: "City Scrap House", location: "Shaheb Bazar, Rajshahi", email: "jamal@cityscrap.bd", status: "flagged", joined: daysAgo(60) },
   { id: "u5", role: "recycler", name: "Tanvir Ahmed", org: "Polymer Loop Ltd.", location: "Kamrangirchar, Dhaka", email: "tanvir@polymerloop.com", status: "approved", joined: daysAgo(150) },
@@ -74,4 +74,12 @@ export const reports = [
   { id: "RP-31", listingId: "LS-2196", by: "u5", status: "open", date: daysAgo(13), reason: "Weight on pickup was about 15 kg less than listed." },
   { id: "RP-29", listingId: "LS-2207", by: "u1", status: "open", date: daysAgo(1), reason: "Recycler has not collected the batch for 2 days." },
   { id: "RP-24", listingId: "LS-2201", by: "u5", status: "resolved", date: daysAgo(8), reason: "Photo did not match the colour of the bottles." },
+];
+
+
+export const payments = [
+  {
+    id: "PM-1001", listingId: "LS-2201", operatorId: "u1", recyclerId: "u5", method: "bkash", amount: 1850, status: "paid", active: true,
+    senderNumber: "01555123456", recipientNumber: "01712345678", transactionId: "BKA7X2M9QP", createdAt: daysAgo(8), paidAt: daysAgo(8),
+  },
 ];

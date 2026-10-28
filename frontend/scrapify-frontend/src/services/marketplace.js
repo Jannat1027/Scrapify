@@ -76,3 +76,13 @@ export function describeGrading(data, { composition, condition }) {
 export function createReport(listingId, reporterId, reason) {
   return { id: makeId("RP"), listingId, by: reporterId, reason, status: "open", date: nowIso() };
 }
+
+export const PAYMENT_STATUS_LABELS = {
+  initiated: "Checkout open",
+  pending: "Waiting for you",
+  paid: "Paid",
+  failed: "Failed",
+  rejected: "Not received",
+};
+export const PAYMENT_STATUS_TONES = { initiated: "blue", pending: "amber", paid: "green", failed: "red", rejected: "red" };
+export const PAYMENT_METHOD_LABELS = { online: "Online (SSLCommerz)", bkash: "bKash", nagad: "Nagad" };

@@ -8,7 +8,6 @@ import ListingCard from "../../components/ListingCard.jsx";
 import PillTabs from "../../components/PillTabs.jsx";
 import ReportProblemDialog from "../../components/ReportProblemDialog.jsx";
 import Stars from "../../components/Stars.jsx";
-import PaymentDialog from "../../components/PaymentDialog.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useData } from "../../context/DataContext.jsx";
 import { useToast } from "../../context/ToastContext.jsx";
@@ -57,11 +56,6 @@ export default function MyListingsPage() {
                 Cancel
               </Button>
             )}
-            {listing.status === "claimed" && (
-              <Button size="sm" variant="primary" icon="BadgeDollarSign" onClick={() => setDialog({ type: "payment", listing })}>
-                Pay
-              </Button>
-            )}
             {(listing.status === "completed" || listing.status === "cancelled") && (
               <Button size="sm" icon="flag" onClick={() => setDialog({ type: "report", listingId: listing.id })}>
                 Report a problem
@@ -83,7 +77,6 @@ export default function MyListingsPage() {
         />
       )}
       {dialog?.type === "report" && <ReportProblemDialog listingId={dialog.listingId} onClose={() => setDialog(null)} />}
-      {dialog?.type === "payment" && <PaymentDialog listing={dialog.listing} onClose={() => setDialog(null)} onSuccess={() => setDialog(null)} />}
     </>
   );
 }

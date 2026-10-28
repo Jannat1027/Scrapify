@@ -54,8 +54,24 @@ so it alone serves every frontend.
 
 * **Backend (Render / Railway):** root directory `backend-jannat`, build `npm install`, start `npm start`.
   Set `MONGO_URI`, `JWT_SECRET` (24+ random characters), `NODE_ENV=production`, `CLIENT_URL` (the deployed
-  frontend address(es), comma separated), and `BKASH_MERCHANT_NUMBER` / `NAGAD_MERCHANT_NUMBER` for payments.
+  frontend address(es), comma separated), `SSLCOMMERZ_STORE_ID` / `SSLCOMMERZ_STORE_PASSWORD` / `SSLCOMMERZ_LIVE` for
+  online payments (`testbox` / `qwerty` / `false` is the SSLCommerz sandbox). After paying, the recycler is sent back
+  to the app they paid from; `FRONTEND_URL` is only the fallback when that address is unknown.
   Then run `npm run create-admin` once (with `ADMIN_EMAIL` and `ADMIN_PASSWORD` set) to make the first admin.
   `npm run seed` empties the database; it refuses to run when `NODE_ENV=production`.
 * **Frontend (Vercel / Netlify):** root directory `frontend/scrapify-frontend`, build `npm run build`, output `dist`.
   Set `VITE_API_URL` to `https://<your-backend>/api`. `vercel.json` makes page refreshes work.
+
+## Payments
+
+The recycler pays for a claimed batch from **My claims → Pay** in the recycler app (`noushin/`):
+
+* **Pay online (SSLCommerz):** the recycler goes to the SSLCommerz checkout (bKash, Nagad, Rocket, cards) and comes
+  back to My claims. The API marks the payment paid only after checking it with SSLCommerz's validation API.
+* **bKash / Nagad by hand:** the recycler sends money to the operator's wallet number and enters the TrxID. The
+  operator then marks it **Received** or **Not received** on the Payments page of the operator app, where they also
+  set their bKash and Nagad numbers.
+
+`.env.example` uses SSLCommerz's public sandbox store (`testbox` / `qwerty`): the checkout works but no real money
+moves. For real money, register a merchant store at https://sslcommerz.com and set your own store ID, password and
+`SSLCOMMERZ_LIVE=true`.

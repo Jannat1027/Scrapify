@@ -57,14 +57,31 @@ export const resolveReportSchema = z.object({
   resolution: z.string().trim().default(""),
 });
 
-export const createPaymentSchema = z.object({
-  listingId: text(1, "Choose a listing."),
-  method: z.enum(["bkash", "nagad"]),
-  phoneNumber: z.string().trim().regex(/^01[3-9]\d{8}$/, "Enter a valid Bangladesh mobile number."),
+const mobileNumber = z.string().trim().regex(/^01[3-9]\d{8}$/, "Enter a valid Bangladesh mobile number, like 01712345678.");
+
+export const walletSchema = z.object({
+  bkashNumber: z.union([mobileNumber, z.literal("")]).optional(),
+  nagadNumber: z.union([mobileNumber, z.literal("")]).optional(),
 });
 
-export const verifyPaymentSchema = z.object({
-  transactionId: z.string().trim().min(3, "Enter the transaction ID.").max(64, "Transaction ID is too long."),
+export const manualPaymentSchema = z.object({
+  listingId: text(1, "Choose a listing."),
+  method: z.enum(["bkash", "nagad"], { message: "Choose bKash or Nagad." }),
+  senderNumber: mobileNumber,
+  transactionId: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[A-Z0-9]{8,20}$/, "Enter the transaction ID (TrxID) from your payment SMS: 8 to 20 letters and numbers."),
+});
+
+export const onlinePaymentSchema = z.object({
+  listingId: text(1, "Choose a listing."),
+  phone: mobileNumber,
+});
+
+export const rejectPaymentSchema = z.object({
+  reason: z.string().trim().max(200).default(""),
 });
 
 export const userStatusSchema = z.object({
