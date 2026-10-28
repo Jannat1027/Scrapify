@@ -59,7 +59,7 @@ _backup-original-backend/  Your original starter backend, kept in case you want 
 ```
 
 The old backend was a generic starter (users with role `user/admin`, `{success,data}` answers). It did not match the
-Scrapify frontend, so it was replaced by the shared contract below.
+Scrapify frontend, so it was replaced by the shared contract above.
 
 ## Run it locally
 
