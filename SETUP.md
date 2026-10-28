@@ -4,7 +4,6 @@
 backend/            Express + MongoDB API: auth, locations/categories, admin (users, rates, locations, reports, stats).
 scrapify_admin/     React + Vite admin app: log in, dashboard, users, price rates, reports.
 frontend/           The static landing site (unchanged).
-_backup-original-backend/  Your original backend, kept in case you want it. Delete it when you don't.
 ```
 
 The old backend had only auth and admin and used its own `{success,message,data}` answers. It was replaced by the
@@ -55,7 +54,6 @@ mern-listings-backend/   Express + MongoDB API: auth, locations/categories, brow
 noushin/                 React + Vite app: AuthPage (log in / sign up), Browse listings, My claims.
 scrapify-frontend/       The same three pages, copied here so they drop into a shared frontend when branches merge.
 frontend/                The static landing site (unchanged).
-_backup-original-backend/  Your original starter backend, kept in case you want it. Delete it when you don't.
 ```
 
 The old backend was a generic starter (users with role `user/admin`, `{success,data}` answers). It did not match the
