@@ -1,0 +1,26 @@
+import { useAuth } from "../context/AuthContext.jsx";
+import { useData } from "../context/DataContext.jsx";
+import { useToast } from "../context/ToastContext.jsx";
+import { createReport } from "../services/marketplace.js";
+import ConfirmDialog from "./ConfirmDialog.jsx";
+
+export default function ReportProblemDialog({ listingId, onClose }) {
+  const { user } = useAuth();
+  const { insertRow } = useData();
+  const showToast = useToast();
+
+  async function sendReport(reason) {
+    if (await insertRow("reports", createReport(listingId, user.id, reason))) showToast("Report sent. An admin will look into it.");
+  }
+
+  return (
+    <ConfirmDialog
+      title="Report a problem"
+      text={`Listing ${listingId}`}
+      reasonPlaceholder="What went wrong?"
+      confirmLabel="Send report"
+      onConfirm={sendReport}
+      onClose={onClose}
+    />
+  );
+}
