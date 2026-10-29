@@ -11,22 +11,22 @@ Backend (needs Node 20+ and a MongoDB, local or Atlas):
 
 ```
 cd backend-jannat
-cp .env.example .env        # fill in MONGO_URI and JWT_SECRET
+cp .env.example .env        # fill in MONGO_URI, JWT_SECRET and GEMINI_API_KEY (SMTP_* optional, see below)
 npm install
 npm run seed                # demo data; every demo account has the password demo1234
 npm run dev                 # http://localhost:5050
 ```
 
-Frontend:
+The three apps, each in its own terminal (`cp .env.example .env` once in each; it points at the backend above):
 
 ```
-cd frontend/scrapify-frontend
-cp .env.example .env        # VITE_API_URL=http://localhost:5050/api
-npm install
-npm run dev                 # http://localhost:5173
+cd frontend/scrapify-frontend && npm install && npm run dev   # operator  http://localhost:5173
+cd noushin && npm install && npm run dev                      # recycler  http://localhost:5174
+cd scrapify_admin && npm install && npm run dev               # admin     http://localhost:5175
 ```
 
-Demo operator: `rahima@greenbin.bd` / `demo1234`.
+Demo logins (password `demo1234`): operator `rahima@greenbin.bd`, recycler `tanvir@polymerloop.com`, admin `admin@scrapify.app`.
+Without `GEMINI_API_KEY` photo grading answers "GEMINI_API_KEY is missing"; without `SMTP_*` the sign-up confirm link is printed in the backend terminal instead of emailed.
 
 ## The shared API contract
 
