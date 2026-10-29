@@ -25,7 +25,7 @@ async function scanDetails(scan) {
 export async function grade(req, res) {
   if (!req.file) throw new HttpError(400, "Attach a photo in the \"photo\" field.");
 
-  const result = await gradePhoto(req.file.buffer);
+  const result = await gradePhoto(req.file.buffer, req.file.mimetype);
   const grading = await Grading.create({
     ...result,
     id: makeId("GR"),
