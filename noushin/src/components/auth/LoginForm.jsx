@@ -23,6 +23,9 @@ const RULES = {
 function blockedMessageFor(error) {
   if (error.response?.status !== 403) return null;
   const reason = error.response.data?.message || "";
+  if (error.response.data?.code === "EMAIL_NOT_VERIFIED") {
+    return { icon: "mail", title: "Confirm your email first", text: "Open the link we emailed you when you signed up. Check spam if it isn't in your inbox.", resend: true };
+  }
   if (/suspend/i.test(reason)) {
     return { icon: "ban", title: "This account is suspended", text: "Email hello@scrapify.app with your shop name and we'll look into it." };
   }
@@ -31,7 +34,7 @@ function blockedMessageFor(error) {
 
 // Real login: the backend checks the password and answers with a token.
 export default function LoginForm({ onSwitch }) {
-  const { logIn } = useAuth();
+  const { logIn, resendVerification } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const form = useFormValidation(RULES, { email: "", password: "" });
@@ -39,10 +42,21 @@ export default function LoginForm({ onSwitch }) {
   const [blockedMessage, setBlockedMessage] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [serverProblem, setServerProblem] = useState("");
+  const [resendNote, setResendNote] = useState("");
+
+  async function handleResend() {
+    setResendNote("Sending…");
+    try {
+      setResendNote(await resendVerification(form.values.email.trim().toLowerCase()));
+    } catch (error) {
+      setResendNote(apiErrorMessage(error));
+    }
+  }
 
   async function tryLogIn(email, password) {
     setBlockedMessage(null);
     setServerProblem("");
+    setResendNote("");
     setSubmitting(true);
     try {
       const user = await logIn(email.trim().toLowerCase(), password);
@@ -101,6 +115,14 @@ export default function LoginForm({ onSwitch }) {
             <div>
               <p className="font-semibold">{blockedMessage.title}</p>
               <p>{blockedMessage.text}</p>
+              {blockedMessage.resend && (
+                <p className="mt-2">
+                  <button type="button" className="link text-[length:inherit]" onClick={handleResend}>
+                    Send a new link
+                  </button>
+                  {resendNote && <span className="mt-1 block">{resendNote}</span>}
+                </p>
+              )}
             </div>
           </div>
         )}
