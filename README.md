@@ -35,8 +35,8 @@ JSON shapes, so any frontend can talk to any backend. Errors are always `{ "mess
 
 | Endpoint | Who | Answer |
 | --- | --- | --- |
-| `POST /api/auth/register` `{role,name,org,location,email,password}` | public (operator or recycler) | `201 { user }`; emails a confirm link |
-| `POST /api/auth/login` `{email,password}` | public | `{ token, user }`; `403` until the email is confirmed (`code: "EMAIL_NOT_VERIFIED"`) or while suspended |
+| `POST /api/auth/register` `{role,name,org,location,email,password}` | public (operator or recycler) | `201 { user }`; emails a confirm link. Recyclers start `pending` until an admin approves them |
+| `POST /api/auth/login` `{email,password}` | public | `{ token, user }`; `403` until the email is confirmed (`code: "EMAIL_NOT_VERIFIED"`), while a recycler is pending, or while suspended |
 | `GET /api/auth/me` | any logged-in user | `{ user }` |
 | `GET /api/locations` | public | `{ locations: [name] }` |
 
@@ -64,6 +64,8 @@ One backend (`backend-jannat`) serves all three apps. Deploy it once, then each 
      (`testbox` / `qwerty` / `false` is the SSLCommerz sandbox). `SERVER_URL` is the backend's public address, where
      SSLCommerz sends payment results; Render fills it in by itself. After paying, the recycler is sent back to the
      app they paid from; `FRONTEND_URL` is only the fallback.
+   * Email for sign-up confirmation links: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` (see
+     `.env.example`; Gmail works with an app password). Without them nobody new can confirm their email.
    * Once, from the backend's shell: `npm run setup-db` (adds the plastic categories and areas; safe to run again),
      then `npm run create-admin` with `ADMIN_EMAIL` and `ADMIN_PASSWORD` set.
    * `npm run seed` empties the database for demo data; it refuses to run when `NODE_ENV=production`.

@@ -49,10 +49,11 @@ export async function register(req, res) {
     ...details,
     id: makeId("u"),
     passwordHash: await bcrypt.hash(password, SALT_ROUNDS),
-    status: "approved",
+    // Recyclers pay money on the marketplace, so an admin checks each one first. Operators can start right away.
+    status: details.role === "recycler" ? "pending" : "approved",
     emailVerified: false,
   });
-  // The account works once the email link is clicked; admins can still flag or suspend it later.
+  // Nobody can log in until the email link is clicked.
   await sendVerification(user, req.get("origin"));
   res.status(201).json({ user });
 }

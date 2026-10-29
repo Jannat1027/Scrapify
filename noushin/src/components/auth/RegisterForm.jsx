@@ -15,6 +15,7 @@ const ROLE_CHOICES = [
 ];
 
 // Sign-up. New accounts must confirm their email (link sent by the API) before they can log in.
+// Recyclers also wait as "pending" until an admin approves them.
 export default function RegisterForm({ onSwitch }) {
   const { register } = useAuth();
   const [newUser, setNewUser] = useState(null); // set after a successful sign-up
@@ -86,7 +87,9 @@ export default function RegisterForm({ onSwitch }) {
         </span>
         <h2 className="mt-6 text-2xl font-bold">Account created</h2>
         <p className="mt-3 text-ink/60">
-          We emailed you a link. Open it to confirm your email, then you can log in. Check spam if it isn't there.
+          {newUser.status === "pending"
+            ? "We emailed you a link. Open it to confirm your email. An admin then checks your account, usually within a day, and you can log in as soon as it's approved."
+            : "We emailed you a link. Open it to confirm your email, then you can log in. Check spam if it isn't there."}
         </p>
         <p className="mt-4 text-sm text-ink/60">
           Then log in with <b>{newUser.email}</b>.

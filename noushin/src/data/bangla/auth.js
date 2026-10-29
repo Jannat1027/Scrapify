@@ -26,6 +26,12 @@ const phrases = {
   "Create account": "অ্যাকাউন্ট খুলুন",
   "I agree to the terms of use and the privacy policy.": "আমি ব্যবহারের শর্ত ও গোপনীয়তা নীতিতে সম্মত।",
   "Account created": "অ্যাকাউন্ট তৈরি হয়েছে",
+  "Confirm your email first": "আগে আপনার ইমেইল নিশ্চিত করুন",
+  "Open the link we emailed you when you signed up. Check spam if it isn't in your inbox.":
+    "সাইন আপের সময় আমরা যে লিংকটি ইমেইল করেছি সেটি খুলুন। ইনবক্সে না পেলে স্প্যাম ফোল্ডার দেখুন।",
+  "Send a new link": "নতুন লিংক পাঠান",
+  "We emailed you a link. Open it to confirm your email. An admin then checks your account, usually within a day, and you can log in as soon as it's approved.":
+    "আমরা আপনাকে একটি লিংক ইমেইল করেছি। ইমেইল নিশ্চিত করতে লিংকটি খুলুন। এরপর অ্যাডমিন আপনার অ্যাকাউন্ট যাচাই করবেন, সাধারণত এক দিনের মধ্যে। অনুমোদন হলেই আপনি লগইন করতে পারবেন।",
   "We emailed you a link. Open it to confirm your email, then you can log in. Check spam if it isn't there.":
     "আমরা আপনাকে একটি লিংক ইমেইল করেছি। ইমেইল নিশ্চিত করতে লিংকটি খুলুন, তারপর লগইন করতে পারবেন। না পেলে স্প্যাম ফোল্ডার দেখুন।",
   "Demo: log in as Admin, approve the account on the dashboard or under Users, then log in with":
