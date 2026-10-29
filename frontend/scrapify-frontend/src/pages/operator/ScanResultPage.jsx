@@ -63,10 +63,23 @@ export default function ScanResultPage() {
 
   const unsure = scan.confidence < LOW_CONFIDENCE || scan.quality !== "good";
   const needsReview = isDraft && unsure && !scan.corrected && !reviewed;
-  const canSaveDraft = weight > 0 && !needsReview;
 
   function scrollToReview() {
     document.getElementById("check-ai")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  // The buttons stay clickable and explain what's missing, instead of looking dead.
+  function readyToSave() {
+    if (needsReview) {
+      scrollToReview();
+      showToast("First check the AI result: tap \"Looks right\" or \"Choose manually\".", "red");
+      return false;
+    }
+    if (isDraft && !(weight > 0)) {
+      showToast("Enter the weight in kg with the number pad first.", "red");
+      return false;
+    }
+    return true;
   }
 
   function applyManualChoice(categoryId, condition) {
@@ -193,22 +206,26 @@ export default function ScanResultPage() {
                   size="lg"
                   icon="tag"
                   className="w-full mt-5"
-                  disabled={isDraft && !canSaveDraft}
-                  onClick={() => setShowListDialog(true)}
+                  onClick={() => readyToSave() && setShowListDialog(true)}
                 >
                   List for sale
                 </Button>
                 {isDraft && (
-                  <Button icon="save" className="w-full mt-2" disabled={!canSaveDraft} onClick={saveWithoutListing}>
+                  <Button icon="save" className="w-full mt-2" onClick={() => readyToSave() && saveWithoutListing()}>
                     Save to history without listing
                   </Button>
                 )}
-                {needsReview && (
+                {needsReview ? (
                   <p className="text-xs text-ink/60 text-center mt-2">
                     <button type="button" className="link text-[length:inherit]" onClick={scrollToReview}>
                       Check the AI result above first.
                     </button>
                   </p>
+                ) : (
+                  isDraft &&
+                  !(weight > 0) && (
+                    <p className="text-xs text-ink/60 text-center mt-2">Enter the weight in kg with the number pad first.</p>
+                  )
                 )}
               </>
             )}

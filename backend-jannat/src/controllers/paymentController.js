@@ -2,6 +2,7 @@ import { env } from "../config/env.js";
 import Listing from "../models/Listing.js";
 import Payment from "../models/Payment.js";
 import User from "../models/User.js";
+import { appAddress } from "../utils/appAddress.js";
 import { HttpError } from "../utils/httpError.js";
 import { makeId } from "../utils/ids.js";
 import { onlinePaymentsEnabled, startSession, validatePayment } from "../utils/sslcommerz.js";
@@ -150,13 +151,6 @@ async function settleOnlinePayment(tranId, valId) {
     }
     throw error;
   }
-}
-
-// The recycler app the payer started from, if it's one this API serves. Otherwise FRONTEND_URL.
-function appAddress(origin) {
-  const address = (origin || "").replace(/\/$/, "");
-  const localDev = !env.isProduction && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(address);
-  return localDev || env.clientUrls.includes(address) ? address : env.frontendUrl;
 }
 
 function backToClaims(res, outcome, listingId = "", returnTo = "") {
