@@ -1,107 +1,175 @@
-import { HttpError } from "./httpError.js";
+import { GoogleGenAI } from "@google/genai";
+import { z } from "zod";
 
-const MODEL = "Xenova/clip-vit-base-patch32";
+// Initialize the Google Gen AI client with the key from backend/.env
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-const TYPE_LABELS = [
-  { text: "a pile of clear plastic water bottles", id: "pet" },
-  { text: "plastic detergent, oil or milk jugs", id: "hdpe" },
-  { text: "plastic food containers, caps and buckets", id: "pp" },
-  { text: "plastic bags and plastic film", id: "film" },
-  { text: "mixed colorful plastic waste", id: "mixed" },
-  { text: "a photo with no plastic, such as an animal, a person, food or scenery", id: "none" },
-];
+// The 5 official categories tracked across Scrapify's DB, UI, and price tables
+export const ALLOWED_CATEGORIES = ["pet", "hdpe", "film", "pp", "mixed"];
 
-const CONDITION_LABELS = [
-  { text: "clean washed plastic", id: "clean" },
-  { text: "slightly dirty plastic", id: "light" },
-  { text: "very dirty, muddy, greasy plastic", id: "heavy" },
-];
+// Zod schema enforcing data types expected by scanController.js and the frontend
+const AIResponseSchema = z.object({
+  isPlastic: z.boolean(),
+  rejectReason: z.string().optional().default("No recyclable plastic scrap detected."),
+  composition: z.record(z.string(), z.number()),
+  condition: z.enum(["clean", "light", "heavy"]).default("clean"),
+  quality: z.enum(["good", "blurry", "dark"]).default("good"),
+  confidence: z.number().min(0).max(1).default(0.9),
+});
 
-const QUALITY_LABELS = [
-  { text: "a sharp, well lit photo", id: "good" },
-  { text: "a dark photo", id: "dark" },
-  { text: "a blurry photo", id: "blurry" },
-];
+/**
+ * Normalizes raw composition percentages across all 5 categories.
+ * Guarantees the integer percentages sum to exactly 100.
+ */
+function normalizeComposition(rawComposition) {
+  const sanitized = {};
+  let total = 0;
 
-const PLASTIC_IDS = TYPE_LABELS.map((label) => label.id).filter((id) => id !== "none");
+  for (const key of ALLOWED_CATEGORIES) {
+    const val = Math.max(0, Number(rawComposition?.[key]) || 0);
+    sanitized[key] = val;
+    total += val;
+  }
 
-let tools = null;
+  // Reject invalid responses rather than guessing PET
+  if (total <= 0) {
+    const error = new Error(
+      "Unable to identify plastic resin composition. Please upload a clearer photo."
+    );
+    error.statusCode = 400;
+    throw error;
+  }
 
-function loadTools() {
-  tools ??= import("@huggingface/transformers")
-    .then(async ({ pipeline, RawImage }) => ({
-      RawImage,
-      // 8-bit weights: about 40% less memory than the full model, with the same answers on our test photos.
-      classify: await pipeline("zero-shot-image-classification", MODEL, { dtype: "q8" }),
-    }))
-    .catch((error) => {
-      tools = null;
-      console.error("AI grading model could not load:", error.message);
-      throw error;
+  const normalized = {};
+  let runningSum = 0;
+
+  for (const key of ALLOWED_CATEGORIES) {
+    const rounded = Math.round((sanitized[key] / total) * 100);
+    normalized[key] = rounded;
+    runningSum += rounded;
+  }
+
+  // Compensate for rounding drift (e.g. 99% or 101%) on the largest category
+  const diff = 100 - runningSum;
+
+  if (diff !== 0) {
+    const highestKey = ALLOWED_CATEGORIES.reduce((a, b) =>
+      normalized[a] > normalized[b] ? a : b
+    );
+
+    normalized[highestKey] += diff;
+  }
+
+  // Leave out 0% types so the app shows only the plastics actually in the photo, as before.
+  return Object.fromEntries(Object.entries(normalized).filter(([, pct]) => pct > 0));
+}
+
+/**
+ * Primary grading function invoked by backend/src/controllers/scanController.js
+ * @param {Buffer} imageBuffer - Raw image buffer from Multer (req.file.buffer)
+ * @param {string} mimeType - Image MIME type (e.g. "image/jpeg", "image/png")
+ */
+export async function gradePhoto(imageBuffer, mimeType = "image/jpeg") {
+  if (!process.env.GEMINI_API_KEY) {
+    const err = new Error("GEMINI_API_KEY is missing in backend/.env");
+    err.statusCode = 500;
+    throw err;
+  }
+
+  try {
+    const prompt = `
+      You are an expert industrial plastic recycling grader for scrap collection centers in Bangladesh.
+      Inspect this scrap plastic image and return ONLY a valid JSON object matching this schema:
+      {
+        "isPlastic": boolean,
+        "rejectReason": "string (empty if plastic)",
+        "composition": {
+          "pet": integer percentage,
+          "hdpe": integer percentage,
+          "film": integer percentage,
+          "pp": integer percentage,
+          "mixed": integer percentage
+        },
+        "condition": "clean" | "light" | "heavy",
+        "quality": "good" | "blurry" | "dark",
+        "confidence": number between 0.50 and 0.98
+      }
+
+      Grading Rules:
+      1. Non-Plastic Rejection: If the image shows items that are NOT plastic scrap (e.g. human face, shoes, paper, cardboard, metal, food, clothing), set "isPlastic": false and explain why in rejectReason.
+      2. Categories:
+         - "pet": clear/blue-tinted water and soda beverage bottles.
+         - "hdpe": opaque milk jugs, shampoo bottles, detergent cans, engine oil containers.
+         - "film": LDPE polythene shopping bags, packaging wrap, plastic sheets.
+         - "pp": bottle caps, rigid food containers, plastic tubs, buckets.
+         - "mixed": crushed or unsorted composite plastics that cannot be cleanly separated.
+      3. Condition:
+         - "clean": dry and largely free of dirt or chemicals.
+         - "light": slight dust, paper labels still attached.
+         - "heavy": soiled with mud, grease, chemical residue, or beverage dregs.
+      4. Quality:
+         - "good", "blurry", or "dark".
+      5. Output ONLY raw JSON. Do not include markdown codeblocks, backticks, or preamble text.
+    `;
+
+    const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
+    const response = await ai.models.generateContent({
+      model: modelName,
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: prompt },
+            {
+              inlineData: {
+                data: imageBuffer.toString("base64"),
+                mimeType: mimeType || "image/jpeg",
+              },
+            },
+          ],
+        },
+      ],
+      config: {
+        responseMimeType: "application/json",
+      },
     });
-  return tools;
+
+    const parsed = AIResponseSchema.parse(JSON.parse(response.text));
+
+    if (!parsed.isPlastic) {
+      const err = new Error(
+        parsed.rejectReason ||
+          "No plastic detected in this photo. Please upload a clear photo of plastic scrap."
+      );
+      err.statusCode = 400;
+      throw err;
+    }
+
+    return {
+      composition: normalizeComposition(parsed.composition),
+      condition: parsed.condition,
+      quality: parsed.quality,
+      confidence: parsed.confidence,
+    };
+  } catch (error) {
+    if (error.statusCode === 400) throw error;
+
+    console.error("Gemini Vision Error:", error);
+
+    const err = new Error(
+      "AI grading service failed to process the image. Please retry."
+    );
+    err.statusCode = 503;
+    throw err;
+  }
 }
 
-export function warmUpGrader() {
-  loadTools().then(
-    () => console.log("AI grading model is ready."),
-    () => {},
-  );
-}
-
-async function score(image, classify, labels) {
-  const results = await classify(image, labels.map((label) => label.text));
-  const scores = {};
-  for (const result of results) {
-    const match = labels.find((label) => label.text === result.label);
-    if (match) scores[match.id] = result.score;
-  }
-  return scores;
-}
-
-function best(scores) {
-  return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-}
-
-export async function gradePhoto(photoBuffer) {
-  let loaded;
-  try {
-    loaded = await loadTools();
-  } catch {
-    throw new HttpError(503, "The AI model could not start. Check the internet connection and try again.");
-  }
-  const { RawImage, classify } = loaded;
-
-  let image;
-  try {
-    image = await RawImage.fromBlob(new Blob([photoBuffer]));
-  } catch {
-    throw new HttpError(400, "That file could not be read as a photo.");
-  }
-
-  const types = await score(image, classify, TYPE_LABELS);
-  if (best(types) === "none" || (types.none ?? 0) > 0.4) {
-    throw new HttpError(422, "No plastic found in this photo. Please upload a photo of plastic scrap.");
-  }
-
-  const plasticTotal = PLASTIC_IDS.reduce((sum, id) => sum + (types[id] ?? 0), 0);
-  let shares = PLASTIC_IDS
-    .map((id) => ({ id, pct: Math.round(((types[id] ?? 0) / plasticTotal) * 100) }))
-    .filter((share) => share.pct >= 5)
-    .sort((a, b) => b.pct - a.pct);
-  const kept = shares.reduce((sum, share) => sum + share.pct, 0);
-  shares = shares.map((share) => ({ ...share, pct: Math.round((share.pct / kept) * 100) }));
-  const rest = 100 - shares.reduce((sum, share) => sum + share.pct, 0);
-  shares[0].pct += rest;
-
-  const composition = {};
-  for (const share of shares) composition[share.id] = share.pct;
-
-  const condition = best(await score(image, classify, CONDITION_LABELS));
-  const quality = best(await score(image, classify, QUALITY_LABELS));
-
-  const topScore = Math.max(...PLASTIC_IDS.map((id) => types[id] ?? 0));
-  const confidence = Math.round(Math.min(0.95, Math.max(0.3, topScore)) * 100) / 100;
-
-  return { composition, condition, quality, confidence };
+/**
+ * Kept so backend/src/server.js does not crash when invoking warmUpGrader()
+ * on startup.
+ */
+export async function warmUpGrader() {
+  console.log("AI grading service ready (Google Gemini Vision configured).");
+  return true;
 }
