@@ -6,12 +6,21 @@ import { makeId } from "../utils/ids.js";
 import { canMove, operatorRating } from "../utils/listingRules.js";
 import { mainCategoryOf } from "../utils/pricing.js";
 
+// Listing cards show the operator's photo of the batch. The operator app shrinks photos to about 20 KB;
+// a much larger one (uploaded some other way) is left out so browsing stays fast.
+const MAX_CARD_PHOTO_CHARS = 400_000;
+
 
 async function withParties(listings) {
   const userIds = [...new Set(listings.flatMap((listing) => [listing.operatorId, listing.recyclerId]).filter(Boolean))];
   const users = await User.find({ id: { $in: userIds } });
   const operatorIds = [...new Set(listings.map((listing) => listing.operatorId))];
   const rated = await Listing.find({ operatorId: { $in: operatorIds }, rating: { $exists: true } }).select("operatorId rating");
+  const scans = await Scan.find({ id: { $in: listings.map((listing) => listing.scanId) }, image: { $exists: true } }).select("id image");
+  const photoOf = (scanId) => {
+    const image = scans.find((scan) => scan.id === scanId)?.image;
+    return image && image.length <= MAX_CARD_PHOTO_CHARS ? image : null;
+  };
 
   const profileOf = (userId) => {
     const user = users.find((person) => person.id === userId);
@@ -20,6 +29,7 @@ async function withParties(listings) {
 
   return listings.map((listing) => ({
     ...listing.toJSON(),
+    photo: photoOf(listing.scanId),
     operator: { ...profileOf(listing.operatorId), rating: operatorRating(rated, listing.operatorId) },
     recycler: listing.recyclerId ? profileOf(listing.recyclerId) : null,
   }));

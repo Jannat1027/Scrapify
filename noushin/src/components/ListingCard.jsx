@@ -15,7 +15,7 @@ export default function ListingCard({ listing, children }) {
 
   return (
     <article className="glass lift flex flex-col gap-4 p-4">
-      <PlasticThumb categoryId={listing.category} photo={scan?.image} />
+      <PlasticThumb categoryId={listing.category} photo={listing.photo || scan?.image} />
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="font-semibold">{category.name}</h3>
