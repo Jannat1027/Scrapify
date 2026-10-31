@@ -18,7 +18,7 @@ export default function ListingDetailsDialog({ listing, onClaim, onClose }) {
     <Modal onClose={onClose} wide>
       <div className="grid gap-4">
         <div className="grid gap-6 sm:grid-cols-2">
-          <PlasticThumb categoryId={listing.category} height="100%" photo={scan?.image} className="min-h-48" />
+          <PlasticThumb categoryId={listing.category} height="100%" photo={listing.photo || scan?.image} className="min-h-48" />
           <div>
             <p className="text-xs text-ink/60">{`${listing.id} · ${formatDate(listing.created)}`}</p>
             <h2 className="text-[1.5rem] font-bold">{findCategory(data, listing.category).name}</h2>

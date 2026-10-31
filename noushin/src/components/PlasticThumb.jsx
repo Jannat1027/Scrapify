@@ -3,7 +3,7 @@ import { categoryColor, findCategory } from "../services/marketplace.js";
 import Icon from "./Icon.jsx";
 
 // The photo of a batch when there is one, otherwise a soft coloured tile with the plastic type's icon.
-//   photo: a saved scan's image (optional; the sample data has none)
+//   photo: the batch photo sent with the listing (optional; the sample data has none)
 //   className: extra classes, e.g. a minimum height
 export default function PlasticThumb({ categoryId, height = 144, photo = "", className = "" }) {
   const { data } = useData(); // hooks must run before any early return
