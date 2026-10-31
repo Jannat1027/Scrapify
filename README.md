@@ -35,8 +35,8 @@ JSON shapes, so any frontend can talk to any backend. Errors are always `{ "mess
 
 | Endpoint | Who | Answer |
 | --- | --- | --- |
-| `POST /api/auth/register` `{role,name,org,location,email,password}` | public (operator or recycler) | `201 { user }`; emails a confirm link. Recyclers start `pending` until an admin approves them |
-| `POST /api/auth/login` `{email,password}` | public | `{ token, user }`; `403` until the email is confirmed (`code: "EMAIL_NOT_VERIFIED"`), while a recycler is pending, or while suspended |
+| `POST /api/auth/register` `{role,name,org,location,email,password}` | public (operator or recycler) | `201 { user }`; emails a confirm link. Every new operator and recycler starts `pending` until an admin approves them |
+| `POST /api/auth/login` `{email,password}` | public | `{ token, user }`; `403` until the email is confirmed (`code: "EMAIL_NOT_VERIFIED"`), while pending, or while suspended |
 | `GET /api/auth/me` | any logged-in user | `{ user }` |
 | `GET /api/locations` | public | `{ locations: [name] }` |
 

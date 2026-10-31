@@ -24,8 +24,8 @@ const phrases = {
   "Create account": "অ্যাকাউন্ট খুলুন",
   "I agree to the terms of use and the privacy policy.": "আমি ব্যবহারের শর্ত ও গোপনীয়তা নীতিতে সম্মত।",
   "Account created": "অ্যাকাউন্ট তৈরি হয়েছে",
-  "An admin checks every new account, usually within a day. You can log in as soon as yours is approved.":
-    "অ্যাডমিন প্রতিটি নতুন অ্যাকাউন্ট যাচাই করেন, সাধারণত এক দিনের মধ্যে। অনুমোদন হলেই আপনি লগইন করতে পারবেন।",
+  "We emailed you a link. Open it to confirm your email. An admin then checks your account, usually within a day, and you can log in as soon as it's approved.":
+    "আমরা আপনাকে একটি লিংক ইমেইল করেছি। ইমেইল নিশ্চিত করতে লিংকটি খুলুন। এরপর অ্যাডমিন আপনার অ্যাকাউন্ট যাচাই করবেন, সাধারণত এক দিনের মধ্যে। অনুমোদন হলেই আপনি লগইন করতে পারবেন।",
   "Demo: log in as Admin, approve the account on the dashboard or under Users, then log in with":
     "ডেমো: অ্যাডমিন হিসেবে লগইন করুন, ড্যাশবোর্ড বা ব্যবহারকারী পাতায় অ্যাকাউন্টটি অনুমোদন করুন, তারপর লগইন করুন এই ইমেইলে:",
   "Go to log in": "লগইনে যান",

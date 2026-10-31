@@ -49,8 +49,8 @@ export async function register(req, res) {
     ...details,
     id: makeId("u"),
     passwordHash: await bcrypt.hash(password, SALT_ROUNDS),
-    // Recyclers pay money on the marketplace, so an admin checks each one first. Operators can start right away.
-    status: details.role === "recycler" ? "pending" : "approved",
+    // An admin checks every new operator and recycler before they can start trading.
+    status: "pending",
     emailVerified: false,
   });
   // Nobody can log in until the email link is clicked.
