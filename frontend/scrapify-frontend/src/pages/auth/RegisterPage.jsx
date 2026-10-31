@@ -71,7 +71,7 @@ export default function RegisterPage() {
             <Icon name="mail" size={40} className="text-forest" />
             <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
             <p className="text-ink/60">
-              We sent a link to <b className="text-ink">{sentTo}</b>. Open it to confirm your email, then log in.
+              We sent a link to <b className="text-ink">{sentTo}</b>. Open it to confirm your email. An admin then checks your account, usually within a day, and you can log in as soon as it's approved.
             </p>
             <p className="text-sm text-ink/60">
               Nothing there? Check spam, or{" "}

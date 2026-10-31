@@ -15,7 +15,7 @@ const ROLE_CHOICES = [
 ];
 
 // Sign-up. New accounts must confirm their email (link sent by the API) before they can log in.
-// Recyclers also wait as "pending" until an admin approves them.
+// New accounts also wait as "pending" until an admin approves them.
 export default function RegisterForm({ onSwitch }) {
   const { register } = useAuth();
   const [newUser, setNewUser] = useState(null); // set after a successful sign-up
