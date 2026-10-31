@@ -1,5 +1,3 @@
-// scripts/seed.js: fills the database with demo data matching the frontend's seed.js.
-// Run: npm run seed
 require("dotenv").config();
 const connectDB = require("../config/db");
 const User = require("../models/User");
@@ -25,7 +23,6 @@ const RATES = [
   { id: "mixed", clean: 12, light: 8, heavy: 5, source: "Admin estimate" },
 ];
 
-// Three demo logins, one per role. Password for all: demo1234
 const USERS = [
   { id: "u1", name: "Rahima Begum", email: "operator@demo.com", password: "demo1234", role: "operator", org: "Green Bin Scrap Shop", location: "Mirpur, Dhaka", status: "approved" },
   { id: "u5", name: "Tanvir Ahmed", email: "recycler@demo.com", password: "demo1234", role: "recycler", org: "Polymer Loop Ltd.", location: "Tejgaon, Dhaka", status: "approved" },
@@ -40,7 +37,6 @@ async function seed() {
   await Rate.insertMany(RATES);
   await User.insertMany(USERS);
 
-  // Two scans, one listing built from the first scan, one open report — enough to try every screen.
   const scan1 = await Scan.create({
     id: "SC-1042", operatorId: "u1", location: "Mirpur, Dhaka", weight: 62,
     condition: "clean", confidence: 0.91, quality: "good",

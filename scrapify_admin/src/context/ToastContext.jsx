@@ -1,5 +1,3 @@
-// ToastContext: the small messages that pop up in the bottom-right corner ("Batch claimed.").
-// Any component can call showToast("message") or showToast("message", "red").
 import { createContext, useContext, useState } from "react";
 import Icon from "../components/Icon.jsx";
 
@@ -12,7 +10,6 @@ export function ToastProvider({ children }) {
   function showToast(message, tone = "green") {
     const id = Date.now() + Math.random();
     setToasts((oldToasts) => [...oldToasts, { id, message, tone }]);
-    // Remove this toast again after a few seconds.
     setTimeout(() => {
       setToasts((oldToasts) => oldToasts.filter((toast) => toast.id !== id));
     }, TOAST_DURATION_MS);

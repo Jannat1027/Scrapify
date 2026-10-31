@@ -1,4 +1,3 @@
-// /api/auth: public sign-up and login, plus "who am I?" for a logged-in user.
 import { Router } from "express";
 import { login, me, register } from "../controllers/authController.js";
 import { requireAuth } from "../middleware/auth.js";

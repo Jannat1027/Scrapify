@@ -3,14 +3,12 @@ import { ROLE_CARDS } from "../../data/content.js";
 import Icon from "../Icon.jsx";
 import Reveal from "../Reveal.jsx";
 
-// Each card's soft colour wash, from the tint in data/content.js.
 const TINTS = {
   mint: "from-mint/25",
   sky: "from-sky-300/30",
   violet: "from-violet-300/30",
 };
 
-// "Who it's for": one card each for operators, recyclers and admins.
 export default function RoleCards() {
   return (
     <section id="roles" className="mx-auto w-[min(1180px,calc(100%-2rem))] scroll-mt-28 py-20">

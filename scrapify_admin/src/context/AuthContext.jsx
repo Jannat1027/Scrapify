@@ -1,10 +1,3 @@
-// ---------------------------------------------------------------------------
-// AuthContext: who is logged in.
-// Logging in sends the email and password to the backend, which checks the
-// password and answers with a JWT. The token is kept in localStorage and
-// sent with every request (see services/api.js). When the app opens, the
-// saved token is checked with /auth/me, so a refresh keeps the user logged in.
-// ---------------------------------------------------------------------------
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { ENABLED_ROLES, ROLE_LABELS } from "../services/marketplace.js";
 import api, { apiErrorMessage, clearToken, getToken, saveToken } from "../services/api.js";
@@ -15,9 +8,7 @@ const WRONG_APP = `This app is only for ${ENABLED_ROLES.map((role) => ROLE_LABEL
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  // True while a saved token is being checked, so pages don't send the user to /login too early.
   const [checking, setChecking] = useState(() => Boolean(getToken()));
-  // Set when the server couldn't be reached to check the token. The token is kept for a retry.
   const [sessionError, setSessionError] = useState(null);
 
   const restoreSession = useCallback(async () => {
@@ -33,8 +24,6 @@ export function AuthProvider({ children }) {
         setUser(response.data.user);
       }
     } catch (error) {
-      // Only a 401 means the token is bad (expired, or the account was blocked): start logged out.
-      // Anything else (server down, no internet) keeps the token, so "Try again" can log back in.
       if (error.response?.status === 401) clearToken();
       else setSessionError(apiErrorMessage(error));
     } finally {
@@ -46,7 +35,6 @@ export function AuthProvider({ children }) {
     restoreSession();
   }, [restoreSession]);
 
-  // Returns the user. Throws the Axios error when the backend refuses (401 wrong password, 403 blocked).
   async function logIn(email, password) {
     const response = await api.post("/auth/login", { email, password });
     if (!ENABLED_ROLES.includes(response.data.user.role)) throw new Error(WRONG_APP);
@@ -56,7 +44,6 @@ export function AuthProvider({ children }) {
     return response.data.user;
   }
 
-  // Creates an account. It starts as "pending": an admin must approve it before it can log in.
   async function register(details) {
     const response = await api.post("/auth/register", details);
     return response.data.user;

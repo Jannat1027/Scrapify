@@ -4,7 +4,6 @@ import { useData } from "../../context/DataContext.jsx";
 import { COMPANY_PAGES, SORTING_TIPS } from "../../data/content.js";
 import { formatTaka } from "../../utils/format.js";
 
-// Plastic guide: the plastic categories with today's clean rate, photo tips, and the company pages.
 export default function GuidePage() {
   const { data } = useData();
 

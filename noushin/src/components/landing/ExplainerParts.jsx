@@ -1,11 +1,6 @@
-// Small building blocks used by both sides of the animated hero card.
 import { useEffect, useState } from "react";
 import Icon from "../Icon.jsx";
 
-// The step tabs at the top of a card side, each with a progress bar.
-// Earlier steps are full, the current one fills over STEP_MS, later ones are empty.
-// runKey changes every time a step (re)starts, which restarts the fill animation.
-// Hovering the hero card (data-paused on group/explainer) pauses the filling bar.
 export function StepTabs({ steps, activeStep, runKey, onPick }) {
   return (
     <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
@@ -36,8 +31,6 @@ export function StepTabs({ steps, activeStep, runKey, onPick }) {
   );
 }
 
-// A bar that grows from 0 to `size` (a CSS length such as "60%") shortly after it appears.
-//   direction: "width" (horizontal) or "height" (vertical column)
 export function GrowBar({ size, direction = "width", className = "", style = {} }) {
   const [grown, setGrown] = useState(false);
 
@@ -49,7 +42,6 @@ export function GrowBar({ size, direction = "width", className = "", style = {} 
   return <i className={className} style={{ ...style, [direction]: grown ? size : 0 }} />;
 }
 
-// Types `text` one letter at a time, like someone entering it on a keypad.
 export function TypeOut({ text }) {
   const [letterCount, setLetterCount] = useState(0);
 
@@ -63,7 +55,6 @@ export function TypeOut({ text }) {
   return <>{text.slice(0, letterCount)}</>;
 }
 
-// SVG shapes for a bottle, a jug and a bag. Defined once, reused with <use href="#bottle" />.
 export function PlasticShapeDefs() {
   return (
     <defs>
@@ -94,7 +85,6 @@ export function PlasticShapeDefs() {
   );
 }
 
-// One plastic piece placed in the SVG at x, y, with a size, a tilt and a colour.
 export function PlasticPiece({ shape, x, y, width, height, rotate, color }) {
   return (
     <use

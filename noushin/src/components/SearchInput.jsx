@@ -1,6 +1,5 @@
 import Icon from "./Icon.jsx";
 
-// A text box with a magnifying-glass icon. value/onChange work like a normal controlled <input>.
 export default function SearchInput({ value, onChange, placeholder, className = "" }) {
   return (
     <div className={`relative ${className}`}>

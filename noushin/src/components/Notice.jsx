@@ -1,6 +1,5 @@
 import Icon from "./Icon.jsx";
 
-// Amber banner for things that need attention, such as out-of-date price rates.
 export default function Notice({ title, text }) {
   return (
     <div className="glass flex items-center gap-4 border-amber-400/30 bg-amber-400/5 p-4 text-[0.875rem]">

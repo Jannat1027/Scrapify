@@ -9,14 +9,12 @@ import RoleCards from "../../components/landing/RoleCards.jsx";
 import WhyScrapify from "../../components/landing/WhyScrapify.jsx";
 import { TRUST_POINTS } from "../../data/content.js";
 
-// The home page. Each section is its own small component in src/components/landing/.
 export default function LandingPage() {
   const [replayRequest, setReplayRequest] = useState(null);
   const heroCardRef = useRef(null);
 
-  // A click on a "How it works" step replays that step in the hero card and scrolls up to it.
   function replayStep(step) {
-    setReplayRequest({ step }); // a new object each time, so even the same step replays
+    setReplayRequest({ step });
     heroCardRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 

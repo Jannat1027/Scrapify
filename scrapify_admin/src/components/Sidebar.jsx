@@ -5,7 +5,6 @@ import Brand from "./Brand.jsx";
 import Button from "./Button.jsx";
 import Icon from "./Icon.jsx";
 
-// The menu for each role. This is what makes the workspace look different for operator, recycler and admin.
 const MENUS = {
   operator: [
     { to: "/operator", label: "Dashboard", icon: "layout-dashboard" },
@@ -25,7 +24,6 @@ const MENUS = {
   ],
 };
 
-// isOpen only matters on phones, where the sidebar slides in from the left.
 export default function Sidebar({ isOpen, onNavigate }) {
   const { user, logOut } = useAuth();
   const navigate = useNavigate();
@@ -35,8 +33,6 @@ export default function Sidebar({ isOpen, onNavigate }) {
     navigate("/login");
   }
 
-  // NavLink tells us whether a link points at the page we are on, so it can be highlighted.
-  // "end" means /operator is only active on exactly /operator, not on /operator/history.
   function linkClass({ isActive }) {
     const look = isActive
       ? "bg-white font-semibold text-forest shadow-[inset_3px_0_0_#3f9e74]"

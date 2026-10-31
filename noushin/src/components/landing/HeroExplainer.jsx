@@ -1,6 +1,3 @@
-// The animated card in the landing page hero.
-// The front plays one trade step by step, then the card flips and the back shows what that trade changes.
-// Click a tab to jump to a step; hover the card to pause it.
 import { useEffect, useRef, useState } from "react";
 import ExplainerBack, { BACK_STEPS } from "./ExplainerBack.jsx";
 import ExplainerFront, { FRONT_STEPS } from "./ExplainerFront.jsx";
@@ -9,18 +6,16 @@ const STEP_MS = 4200;
 const FLIP_MS = 900;
 const STEP_COUNTS = [FRONT_STEPS.length, BACK_STEPS.length];
 
-// replayRequest: { step } set by the landing page when a "How it works" step is clicked.
 export default function HeroExplainer({ replayRequest }) {
-  const [side, setSide] = useState(0); // 0 = front, 1 = back
+  const [side, setSide] = useState(0);
   const [frontStep, setFrontStep] = useState(0);
-  const [backStep, setBackStep] = useState(null); // null until the card first flips, so nothing plays unseen
-  const [runKey, setRunKey] = useState(0); // goes up every time a step starts
+  const [backStep, setBackStep] = useState(null);
+  const [runKey, setRunKey] = useState(0);
   const [paused, setPaused] = useState(false);
   const flipTimer = useRef(null);
 
   const currentStep = side === 0 ? frontStep : backStep ?? 0;
 
-  // Shows a step. When the card has to flip first, the new step starts halfway through the flip.
   function goTo(newSide, newStep) {
     clearTimeout(flipTimer.current);
     const flipping = newSide !== side;
@@ -36,7 +31,6 @@ export default function HeroExplainer({ replayRequest }) {
     else showStep();
   }
 
-  // After STEP_MS, move on: the next step on this side, or flip to the first step of the other side.
   useEffect(() => {
     if (paused) return;
     const timer = setTimeout(() => {
@@ -44,20 +38,17 @@ export default function HeroExplainer({ replayRequest }) {
       else goTo(1 - side, 0);
     }, STEP_MS);
     return () => clearTimeout(timer);
-    // Only restart the timer when a step starts or the pause changes.
   }, [runKey, paused]);
 
-  // The landing page asked to replay a step of the front side.
   useEffect(() => {
     if (replayRequest) goTo(0, replayRequest.step);
   }, [replayRequest]);
 
-  // Stop the timer when the page closes.
   useEffect(() => () => clearTimeout(flipTimer.current), []);
 
   function handleMouseLeave() {
     setPaused(false);
-    setRunKey((key) => key + 1); // restart the current step's progress bar
+    setRunKey((key) => key + 1);
   }
 
   return (

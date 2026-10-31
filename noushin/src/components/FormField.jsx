@@ -1,12 +1,9 @@
 import Icon from "./Icon.jsx";
 
-// A label, the input (passed as children) and one hint line underneath.
-//   problem: undefined = not checked yet, ""  = checked and fine ("Looks good"), "text" = what to fix
-//   aside:   something shown at the right of the label, like a "Forgot password?" link
 export default function FormField({ id, label, problem, aside = null, className = "", children }) {
   const checked = problem !== undefined;
   const hasProblem = Boolean(problem);
-  const state = !checked ? undefined : hasProblem ? "error" : "ok"; // data-state colours the input's border
+  const state = !checked ? undefined : hasProblem ? "error" : "ok";
 
   return (
     <div className={`group/field ${className}`} data-state={state}>

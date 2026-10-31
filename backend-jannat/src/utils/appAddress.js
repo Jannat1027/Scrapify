@@ -1,6 +1,5 @@
 import { env } from "../config/env.js";
 
-// The frontend a request came from, if it's one this API serves. Otherwise FRONTEND_URL.
 export function appAddress(origin) {
   const address = (origin || "").replace(/\/$/, "");
   const localDev = !env.isProduction && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(address);

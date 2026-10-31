@@ -1,11 +1,10 @@
-// controllers/recyclerController.js: browsing listings, claiming them, and my claims.
 const asyncHandler = require("../utils/asyncHandler");
 const Listing = require("../models/Listing");
 const Report = require("../models/Report");
 const { claimListing } = require("../services/listingService");
 
 exports.browseListings = asyncHandler(async (req, res) => {
-  const { category, condition } = req.query; // optional filters: ?category=pet
+  const { category, condition } = req.query;
   const filter = { status: "available" };
   if (category) filter.category = category;
   if (condition) filter.condition = condition;
@@ -26,7 +25,6 @@ exports.claim = asyncHandler(async (req, res) => {
   res.json(listing);
 });
 
-// Any logged-in user can report a problem on a listing.
 exports.report = asyncHandler(async (req, res) => {
   const { listingId, reason } = req.body;
   if (!listingId) return res.status(400).json({ message: "listingId is required" });

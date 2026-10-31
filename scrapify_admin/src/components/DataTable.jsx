@@ -1,8 +1,5 @@
 import EmptyState from "./EmptyState.jsx";
 
-// A table built from a list of columns and a list of rows.
-//   columns: [{ label: "Scan", render: (row) => <b>{row.id}</b> }, ...]
-//   rows:    any array of objects with an id
 export default function DataTable({ columns, rows, emptyText = "Nothing here yet." }) {
   if (rows.length === 0) return <EmptyState icon="inbox" text={emptyText} />;
 

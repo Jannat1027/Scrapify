@@ -10,7 +10,6 @@ import FormField from "../FormField.jsx";
 import FormInput from "../FormInput.jsx";
 import Icon from "../Icon.jsx";
 
-// Each rule says exactly what to fix.
 const RULES = {
   email: [
     [(value) => value.length > 0, "Enter the email you signed up with."],
@@ -19,7 +18,6 @@ const RULES = {
   password: [[(value) => value.length > 0, "Enter your password."]],
 };
 
-// The backend answers 403 for accounts that can't log in yet; show a clear next step instead of a generic error.
 function blockedMessageFor(error) {
   if (error.response?.status !== 403) return null;
   const reason = error.response.data?.message || "";
@@ -29,7 +27,6 @@ function blockedMessageFor(error) {
   return { icon: "clock", title: "Your account is waiting for approval", text: "An admin checks every new account, usually within a day. You can log in as soon as it is approved." };
 }
 
-// Real login: the backend checks the password and answers with a token.
 export default function LoginForm({ onSwitch }) {
   const { logIn } = useAuth();
   const navigate = useNavigate();
@@ -46,7 +43,6 @@ export default function LoginForm({ onSwitch }) {
     setSubmitting(true);
     try {
       const user = await logIn(email.trim().toLowerCase(), password);
-      // Go back to the page the user tried to open, if it belongs to their role; otherwise to their dashboard.
       const wantedPage = location.state?.from;
       const home = HOME_PAGE_FOR_ROLE[user.role];
       navigate(wantedPage && wantedPage.startsWith(home) ? wantedPage : home, { replace: true });

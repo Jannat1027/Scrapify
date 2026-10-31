@@ -1,9 +1,5 @@
-// Drawing helpers shared by the login and sign-up stories (LitterStory.jsx, ShopStory.jsx).
-// Motions are the animate-move-* animations in tailwind.config.js. dx/dy feed the --x/--y variables
-// some motions use (how far a piece travels), and delay staggers them.
 import logoUrl from "../../assets/logo.svg";
 
-// Tailwind class for each motion name. Listed in full so Tailwind can find them in this file.
 const MOVES = {
   throw: "animate-move-throw",
   fly: "animate-move-fly",
@@ -21,7 +17,6 @@ const MOVES = {
   wave: "animate-move-wave",
 };
 
-// Places a shape at x, y and gives it a motion, e.g. <Place x={10} y={20} move="pop" delay={300}>.
 export function Place({ x, y, move = "", dx = 0, dy = 0, delay = 0, children }) {
   const motionStyle = { "--x": `${dx}px`, "--y": `${dy}px`, animationDelay: `${delay}ms` };
   return (
@@ -33,7 +28,6 @@ export function Place({ x, y, move = "", dx = 0, dy = 0, delay = 0, children }) 
   );
 }
 
-// A rounded label centred on x, y that pops in after `delay` ms.
 export function Pill({ x, y, width, text, fill = "#2c7a57", color = "#fff", delay = 0, size = 11 }) {
   return (
     <Place x={x} y={y} move="pop" delay={delay}>
@@ -45,7 +39,6 @@ export function Pill({ x, y, width, text, fill = "#2c7a57", color = "#fff", dela
   );
 }
 
-// A gold taka coin that pops in after `delay` ms.
 export function Coin({ x, y, delay }) {
   return (
     <Place x={x} y={y} move="pop" delay={delay}>
@@ -57,7 +50,6 @@ export function Coin({ x, y, delay }) {
   );
 }
 
-// A phone showing the Scrapify logo, optionally with a scan line sweeping over the screen.
 export function Phone({ scanning = false }) {
   return (
     <>
@@ -69,7 +61,6 @@ export function Phone({ scanning = false }) {
   );
 }
 
-// A vertical sky gradient from `top` to `bottom`, used as a story's backdrop.
 export function SkyGradient({ id, top, bottom }) {
   return (
     <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">

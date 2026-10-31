@@ -14,9 +14,6 @@ const RULES = {
   source: [[(value) => value.length > 0, "Say where these rates come from."]],
 };
 
-// Admin: the form for adding a plastic category, or editing one, with its three rates.
-//   category, rate: the category being edited and its rate row (leave both out to add a new category)
-//   onSave:         receives the form values when they are valid
 export default function CategoryDialog({ category = null, rate = null, onSave, onClose }) {
   const { data } = useData();
   const form = useFormValidation(RULES, {

@@ -1,16 +1,15 @@
-// models/Listing.js: a batch of scrap an operator put up for sale; a recycler can claim it.
 const mongoose = require("mongoose");
 const { nextId } = require("../utils/id");
 
 const listingSchema = new mongoose.Schema(
   {
-    id: { type: String, unique: true }, // "LS-2210" style
+    id: { type: String, unique: true },
     scanId: { type: String, default: null },
     operatorId: { type: String, required: true },
-    category: { type: String, required: true }, // pet | hdpe | pp | film | mixed
+    category: { type: String, required: true },
     condition: { type: String, enum: ["clean", "light", "heavy"], required: true },
     weight: { type: Number, required: true, min: 0.1 },
-    price: { type: Number, default: 0 }, // taka, computed from the rates
+    price: { type: Number, default: 0 },
     status: { type: String, enum: ["available", "claimed"], default: "available" },
     recyclerId: { type: String, default: null },
     claimedAt: { type: String, default: null },

@@ -1,7 +1,3 @@
-// Icons come from the lucide-react package (the same Lucide icon set the original site used).
-// Pages and data refer to icons by name, e.g. <Icon name="camera" /> or { icon: "cup-soda" },
-// and this list turns each name into the matching icon component.
-// To use a new icon: import it below and add it to ICONS.
 import {
   ArrowLeft, ArrowRight, BadgeCheck, BadgeDollarSign, Ban, BookOpen, Box, Calculator, Camera, ChartPie, Check,
   CircleAlert, CircleCheck, CircleCheckBig, CircleHelp, Clock, CupSoda, Droplets, Eye, EyeOff, Factory, Flag, Focus,
@@ -96,9 +92,8 @@ const ICONS = {
   x: X,
 };
 
-// size: a number in pixels. Without it, the icon is sized to match the text around it.
 export default function Icon({ name, size, className = "" }) {
-  const IconComponent = ICONS[name] || Recycle; // unknown names (e.g. a new category) show a recycle sign
+  const IconComponent = ICONS[name] || Recycle;
   const sizeProps = size ? { width: size, height: size } : {};
   return <IconComponent className={`h-[1.15em] w-[1.15em] shrink-0 ${className}`} aria-hidden="true" {...sizeProps} />;
 }

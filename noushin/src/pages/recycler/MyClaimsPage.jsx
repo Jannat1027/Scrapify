@@ -25,7 +25,6 @@ const TABS = [
 ];
 const GREEN_FADE = "linear-gradient(90deg, #3f9e74, #a7d7b8)";
 
-// What to say when SSLCommerz sends the recycler back here (?payment=success|failed|cancelled).
 const RETURN_MESSAGES = {
   success: ["Payment received. The operator can see it's paid.", "green"],
   failed: ["The payment didn't go through. No money was taken; you can try again.", "red"],
@@ -36,17 +35,14 @@ function sumOf(items, key) {
   return items.reduce((total, item) => total + item[key], 0);
 }
 
-// Recycler: batches this buyer has claimed, plus where their plastic comes from.
 export default function MyClaimsPage() {
   const { user } = useAuth();
   const { data, updateRow, refresh } = useData();
   const showToast = useToast();
   const [currentTab, setCurrentTab] = useState("claimed");
-  // Which dialog is open: null or { type: "complete" | "cancel" | "rate" | "report" | "pay", listingId }
   const [dialog, setDialog] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Coming back from the SSLCommerz page: say how it went once, reload, and tidy the address bar.
   const handledReturn = useRef(false);
   useEffect(() => {
     const outcome = searchParams.get("payment");
@@ -64,11 +60,10 @@ export default function MyClaimsPage() {
   const kgSourced = sumOf(completed, "weight");
   const spent = sumOf(completed, "price");
 
-  // Each change is sent to the server first. A failed one has already shown the server's reason in a toast.
   async function completeClaim(listingId) {
     if (!(await updateRow("listings", listingId, { status: "completed" }))) return;
     showToast("Marked as completed.");
-    setDialog({ type: "rate", listingId }); // ask for a rating straight after
+    setDialog({ type: "rate", listingId });
   }
 
   async function cancelClaim(listingId, reason) {
@@ -188,7 +183,6 @@ function needsPayment(listing, payment) {
   return ["claimed", "completed"].includes(listing.status) && !["paid", "pending"].includes(payment?.status);
 }
 
-// The buttons under a claim card change with its status. Pay shows until the batch is paid for.
 function ClaimActions({ listing, payment, onAction }) {
   const payButton = needsPayment(listing, payment) && (
     <Button size="sm" variant="primary" icon="wallet" onClick={() => onAction("pay", listing.id)}>
@@ -232,7 +226,6 @@ function ClaimActions({ listing, payment, onAction }) {
   return null;
 }
 
-// Kilograms bought, grouped by plastic type or by location.
 function SourcingBars({ listings, groupBy, nameOf }) {
   const totalKg = sumOf(listings, "weight");
   const kgByGroup = {};

@@ -15,13 +15,11 @@ async function findCategoryOr404(categoryId) {
 }
 
 
-// GET /api/categories
 export async function listCategories(req, res) {
   const categories = await Category.find().sort({ _id: 1 });
   res.json({ categories });
 }
 
-// GET /api/conditions
 export function listConditions(req, res) {
   res.json({ conditions: CONDITIONS });
 }
@@ -64,14 +62,12 @@ export async function deleteCategory(req, res) {
   res.json({ message: `${category.name} deleted.` });
 }
 
-// POST /api/admin/locations
 export async function createLocation(req, res) {
   if (await Location.exists({ name: req.body.name })) throw new HttpError(409, "That area is already on the list.");
   const location = await Location.create(req.body);
   res.status(201).json({ location: location.name });
 }
 
-// DELETE /api/admin/locations/:name  
 export async function deleteLocation(req, res) {
   const { deletedCount } = await Location.deleteOne({ name: req.params.name });
   if (deletedCount === 0) throw new HttpError(404, `No area called ${req.params.name}.`);

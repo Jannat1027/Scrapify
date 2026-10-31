@@ -1,15 +1,14 @@
-// routes/operator.routes.js: only role "operator" gets in (middleware first, controller second).
 const router = require("express").Router();
 const { requireRole } = require("../middleware/auth");
 const ctrl = require("../controllers/operatorController");
 
 router.use(requireRole("operator"));
 
-router.get("/scans", ctrl.myScans); // GET /api/operator/scans
-router.post("/scans", ctrl.createScan); // POST /api/operator/scans
-router.get("/scans/:scanId", ctrl.getScan); // GET /api/operator/scans/:scanId
-router.get("/listings", ctrl.myListings); // GET /api/operator/listings
-router.post("/listings", ctrl.createListing); // POST /api/operator/listings
-router.delete("/listings/:id", ctrl.removeListing); // DELETE /api/operator/listings/:id
+router.get("/scans", ctrl.myScans);
+router.post("/scans", ctrl.createScan);
+router.get("/scans/:scanId", ctrl.getScan);
+router.get("/listings", ctrl.myListings);
+router.post("/listings", ctrl.createListing);
+router.delete("/listings/:id", ctrl.removeListing);
 
 module.exports = router;

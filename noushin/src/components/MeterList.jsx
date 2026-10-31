@@ -1,5 +1,3 @@
-// Labelled horizontal bars.
-//   rows: [{ label, valueText, percent, color }]  (label can be text or a badge)
 export default function MeterList({ rows }) {
   return (
     <div className="grid gap-4">

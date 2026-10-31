@@ -3,7 +3,6 @@ import CountUp from "../CountUp.jsx";
 import Icon from "../Icon.jsx";
 import Reveal from "../Reveal.jsx";
 
-// One column of the before/after comparison. isNew = the "With Scrapify" column.
 function CompareColumn({ title, icon, items, isNew }) {
   return (
     <Reveal from={isNew ? "right" : "left"} delay={isNew ? 240 : 0} className={`glass p-7 sm:p-8 ${isNew ? "bg-white/50 shadow-glass-ring" : ""}`}>
@@ -27,7 +26,6 @@ function CompareColumn({ title, icon, items, isNew }) {
   );
 }
 
-// "Why Scrapify": the old way vs. the Scrapify way, and four key numbers.
 export default function WhyScrapify() {
   return (
     <section id="why" className="mx-auto w-[min(1180px,calc(100%-2rem))] scroll-mt-28 py-20">

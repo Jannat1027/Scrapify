@@ -6,8 +6,6 @@ import { formatDate, formatPriceRange } from "../utils/format.js";
 import ConfidenceBadge from "./ConfidenceBadge.jsx";
 import DataTable from "./DataTable.jsx";
 
-// A table of scans, shared by the operator dashboard (short version) and scan history (full version).
-//   showDetails: also show the date and condition columns
 export default function ScanTable({ scans, showDetails = false, emptyText }) {
   const { data } = useData();
 
@@ -30,7 +28,7 @@ export default function ScanTable({ scans, showDetails = false, emptyText }) {
       label: "Estimate",
       render: (scan) => <b>{formatPriceRange(calculatePrice(scan, data.rates))}</b>,
     },
-  ].filter(Boolean); // removes the columns switched off above
+  ].filter(Boolean);
 
   return <DataTable columns={columns} rows={scans} emptyText={emptyText} />;
 }

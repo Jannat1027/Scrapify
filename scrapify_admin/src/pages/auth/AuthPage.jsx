@@ -8,10 +8,6 @@ import LanguageButton from "../../components/LanguageButton.jsx";
 
 const DEFAULT_TITLE = "Scrapify · Fair prices for plastic";
 
-// Login (/login) and sign-up (/register) on one page.
-// Both routes render this same component, so React keeps it on screen when you switch,
-// and the story panel can slide from one side to the other instead of the page reloading.
-//   mode: "login" or "register" (comes from the route in App.jsx)
 export default function AuthPage({ mode }) {
   const navigate = useNavigate();
 
@@ -35,8 +31,6 @@ export default function AuthPage({ mode }) {
   );
 }
 
-// One half of the page. The inactive half fades out (large screens) or is hidden (phones),
-// and "inert" stops keyboard users from tabbing into it.
 function AuthSide({ active, children }) {
   return (
     <section

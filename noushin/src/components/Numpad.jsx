@@ -1,5 +1,3 @@
-// A big touch keypad for typing a weight: up to six characters and one decimal point.
-// It does not keep the text itself; the parent passes `text` and gets the new text from onChange.
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "⌫"];
 
 export default function Numpad({ text, onChange }) {

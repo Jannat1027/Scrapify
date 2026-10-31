@@ -1,4 +1,3 @@
-// Back of the hero card: what one trade changes for the shop, the recycler and the river.
 import { useEffect, useRef } from "react";
 import CountUp from "../CountUp.jsx";
 import { GrowBar, StepTabs } from "./ExplainerParts.jsx";
@@ -30,14 +29,12 @@ const GLYPHS = {
   shop: "M-7 -1h14v8h-14z M-8 -1l2-6h12l2 6 M-2 7v-4h4v4",
   plant: "M-8 7v-8l5 3v-3l5 3v-3l4 2v-6h2v12z",
 };
-// Bottles floating on the river: [x, y, tilt, colour, distance to the bin x, y, delay ms]
 const FLOATERS = [
   [60, 112, -30, "#38bdf8", 195, -82, 800],
   [120, 118, 25, "#0ea5e9", 140, -88, 1200],
   [180, 110, -10, "#7dd3fc", 80, -80, 1600],
 ];
 
-// One price column that grows from zero.
 function PriceColumn({ label, amount, height, color, delay }) {
   return (
     <div className="flex h-full flex-col items-center justify-end gap-2 text-center">
@@ -50,7 +47,6 @@ function PriceColumn({ label, amount, height, color, delay }) {
   );
 }
 
-// A map pin with a small glyph and a label underneath.
 function MapPin({ x, y, glyph, label }) {
   return (
     <>
@@ -63,8 +59,6 @@ function MapPin({ x, y, glyph, label }) {
   );
 }
 
-// The recycler's truck driving along the route. SVG's <animateMotion> moves it along the path;
-// we start it from useEffect because the scene is newly added to the page each time.
 function RouteScene() {
   const motionRef = useRef(null);
   useEffect(() => {
@@ -115,7 +109,7 @@ function RiverScene() {
 }
 
 export default function ExplainerBack({ step, runKey, onPick }) {
-  const caption = CAPTIONS[step]; // undefined before the card has flipped for the first time
+  const caption = CAPTIONS[step];
 
   return (
     <>

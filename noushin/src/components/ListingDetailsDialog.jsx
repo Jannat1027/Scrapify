@@ -7,7 +7,6 @@ import ConfidenceBadge from "./ConfidenceBadge.jsx";
 import Modal from "./Modal.jsx";
 import PlasticThumb from "./PlasticThumb.jsx";
 
-// Everything a recycler wants to know about one batch before claiming it.
 export default function ListingDetailsDialog({ listing, onClaim, onClose }) {
   const { data } = useData();
   const scan = data.scans.find((item) => item.id === listing.scanId);

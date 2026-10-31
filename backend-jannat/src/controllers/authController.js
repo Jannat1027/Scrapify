@@ -14,7 +14,6 @@ const VERIFY_LINK_HOURS = 24;
 
 const hashToken = (token) => crypto.createHash("sha256").update(token).digest("hex");
 
-// Stores a fresh one-time token on the user and emails the link. Only the token's hash is kept.
 async function sendVerification(user, origin) {
   const token = crypto.randomBytes(32).toString("hex");
   user.verifyTokenHash = hashToken(token);
@@ -40,7 +39,6 @@ export async function register(req, res) {
     throw new HttpError(409, "This email already has an account. Log in instead, or use a different email.");
   }
 
-  // Any area is allowed. A known one keeps its spelling; a new one is added to the list.
   const existing = await Location.findOne({ name: new RegExp(`^${escapeRegExp(details.location)}$`, "i") });
   if (existing) details.location = existing.name;
   else await Location.create({ name: details.location });
@@ -49,11 +47,9 @@ export async function register(req, res) {
     ...details,
     id: makeId("u"),
     passwordHash: await bcrypt.hash(password, SALT_ROUNDS),
-    // An admin checks every new operator and recycler before they can start trading.
     status: "pending",
     emailVerified: false,
   });
-  // Nobody can log in until the email link is clicked.
   await sendVerification(user, req.get("origin"));
   res.status(201).json({ user });
 }
@@ -75,7 +71,6 @@ export async function login(req, res) {
   res.json({ token: signToken(user), user });
 }
 
-// Opened from the email link, so it answers with a redirect back to the app's login page.
 export async function verifyEmail(req, res) {
   const token = String(req.query.token || "");
   const user = token && (await User.findOne({ verifyTokenHash: hashToken(token) }));
@@ -93,7 +88,6 @@ export async function verifyEmail(req, res) {
   res.redirect(303, `${appAddress(String(req.query.app || ""))}/login?verified=${outcome}`);
 }
 
-// Same answer whether or not the email exists, so it can't be used to discover accounts.
 export async function resendVerification(req, res) {
   const user = await User.findOne({ email: req.body.email });
   if (user && !user.emailVerified) await sendVerification(user, req.get("origin"));

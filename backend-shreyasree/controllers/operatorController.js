@@ -1,4 +1,3 @@
-// controllers/operatorController.js: scans and listings owned by the logged-in operator.
 const asyncHandler = require("../utils/asyncHandler");
 const Scan = require("../models/Scan");
 const Listing = require("../models/Listing");
@@ -38,7 +37,6 @@ exports.myListings = asyncHandler(async (req, res) => {
   res.json(listings);
 });
 
-// Creates a listing from a scan (or raw values), priced automatically from today's rates.
 exports.createListing = asyncHandler(async (req, res) => {
   let { scanId, category, condition, weight } = req.body;
   if (scanId) {

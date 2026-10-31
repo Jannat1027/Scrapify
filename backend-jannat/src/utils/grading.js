@@ -1,13 +1,10 @@
 import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 
-// Initialize the Google Gen AI client with the key from backend/.env
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-// The 5 official categories tracked across Scrapify's DB, UI, and price tables
 export const ALLOWED_CATEGORIES = ["pet", "hdpe", "film", "pp", "mixed"];
 
-// Zod schema enforcing data types expected by scanController.js and the frontend
 const AIResponseSchema = z.object({
   isPlastic: z.boolean(),
   rejectReason: z.string().optional().default("No recyclable plastic scrap detected."),
@@ -17,10 +14,6 @@ const AIResponseSchema = z.object({
   confidence: z.number().min(0).max(1).default(0.9),
 });
 
-/**
- * Normalizes raw composition percentages across all 5 categories.
- * Guarantees the integer percentages sum to exactly 100.
- */
 function normalizeComposition(rawComposition) {
   const sanitized = {};
   let total = 0;
@@ -31,7 +24,6 @@ function normalizeComposition(rawComposition) {
     total += val;
   }
 
-  // Reject invalid responses rather than guessing PET
   if (total <= 0) {
     const error = new Error(
       "Unable to identify plastic resin composition. Please upload a clearer photo."
@@ -49,7 +41,6 @@ function normalizeComposition(rawComposition) {
     runningSum += rounded;
   }
 
-  // Compensate for rounding drift (e.g. 99% or 101%) on the largest category
   const diff = 100 - runningSum;
 
   if (diff !== 0) {
@@ -60,15 +51,9 @@ function normalizeComposition(rawComposition) {
     normalized[highestKey] += diff;
   }
 
-  // Leave out 0% types so the app shows only the plastics actually in the photo, as before.
   return Object.fromEntries(Object.entries(normalized).filter(([, pct]) => pct > 0));
 }
 
-/**
- * Primary grading function invoked by backend/src/controllers/scanController.js
- * @param {Buffer} imageBuffer - Raw image buffer from Multer (req.file.buffer)
- * @param {string} mimeType - Image MIME type (e.g. "image/jpeg", "image/png")
- */
 export async function gradePhoto(imageBuffer, mimeType = "image/jpeg") {
   if (!process.env.GEMINI_API_KEY) {
     const err = new Error("GEMINI_API_KEY is missing in backend/.env");
@@ -165,10 +150,6 @@ export async function gradePhoto(imageBuffer, mimeType = "image/jpeg") {
   }
 }
 
-/**
- * Kept so backend/src/server.js does not crash when invoking warmUpGrader()
- * on startup.
- */
 export async function warmUpGrader() {
   console.log("AI grading service ready (Google Gemini Vision configured).");
   return true;

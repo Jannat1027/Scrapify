@@ -2,7 +2,6 @@ import { FEATURES } from "../../data/content.js";
 import Icon from "../Icon.jsx";
 import Reveal from "../Reveal.jsx";
 
-// Where each feature card starts (x px, y px, tilt degrees) before it flies into the grid.
 const SCATTER_START = [
   [-260, -140, -14],
   [0, -220, 9],

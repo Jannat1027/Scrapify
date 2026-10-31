@@ -15,7 +15,6 @@ const userSchema = new mongoose.Schema({
   location: { type: String, required: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   passwordHash: { type: String, required: true },
-  // Accounts made before email checks (seed data, admins) count as verified; register sets false.
   emailVerified: { type: Boolean, default: true },
   verifyTokenHash: { type: String, default: "" },
   verifyTokenExpires: { type: Date },

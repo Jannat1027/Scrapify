@@ -3,10 +3,6 @@ import Button from "./Button.jsx";
 import ChoiceTile from "./ChoiceTile.jsx";
 import Modal from "./Modal.jsx";
 
-// One dialog for every "are you sure?" question in the app.
-//   reasonPlaceholder: when set, the user must type a reason (5+ characters), e.g. why they cancel
-//   options:           when set, the user picks one, e.g. ["1", "2", "3", "4", "5"] stars
-// onConfirm receives the typed reason, the picked option, or true for a plain yes.
 export default function ConfirmDialog({
   title,
   text = "",
@@ -27,7 +23,6 @@ export default function ConfirmDialog({
       setProblem("Add a few words so the other side understands.");
       return;
     }
-    // Close first, so onConfirm is free to open a follow-up dialog (e.g. "rate the operator").
     onClose();
     if (reasonPlaceholder) onConfirm(reason.trim());
     else if (options) onConfirm(picked);

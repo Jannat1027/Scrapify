@@ -6,8 +6,6 @@ import { makeId } from "../utils/ids.js";
 import { canMove, operatorRating } from "../utils/listingRules.js";
 import { mainCategoryOf } from "../utils/pricing.js";
 
-// Listing cards show the operator's photo of the batch. The operator app shrinks photos to about 20 KB;
-// a much larger one (uploaded some other way) is left out so browsing stays fast.
 const MAX_CARD_PHOTO_CHARS = 400_000;
 
 

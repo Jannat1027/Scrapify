@@ -14,7 +14,7 @@ const aiResultSchema = new mongoose.Schema(
 );
 
 const scanSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true }, // "SC-1042"
+  id: { type: String, required: true, unique: true },
   operatorId: { type: String, required: true, index: true },
   location: { type: String, required: true },
   date: { type: Date, default: Date.now },

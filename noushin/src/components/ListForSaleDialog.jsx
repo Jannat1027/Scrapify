@@ -4,8 +4,6 @@ import FormField from "./FormField.jsx";
 import Modal from "./Modal.jsx";
 import { formatPriceRange } from "../utils/format.js";
 
-// Asks the operator for the fixed price of a batch before it goes on the market.
-// The price box starts at the middle of the estimate, which the operator can change.
 export default function ListForSaleDialog({ weight, typeName, price, onPublish, onClose }) {
   const [fixedPrice, setFixedPrice] = useState(String(Math.round(price.total)));
   const [problem, setProblem] = useState(undefined);

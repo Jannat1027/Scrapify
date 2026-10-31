@@ -30,7 +30,6 @@ export const env = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
   bkashMerchantNumber: process.env.BKASH_MERCHANT_NUMBER?.trim() || "",
   nagadMerchantNumber: process.env.NAGAD_MERCHANT_NUMBER?.trim() || "",
-  // "http://localhost:5173, https://scrapify.vercel.app" -> ["http://localhost:5173", "https://scrapify.vercel.app"]
   clientUrls: (process.env.CLIENT_URL || "http://localhost:5173").split(",").map((url) => url.trim()),
   isProduction,
 };

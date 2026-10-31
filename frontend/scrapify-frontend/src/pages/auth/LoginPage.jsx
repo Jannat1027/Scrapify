@@ -8,7 +8,6 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { apiErrorMessage } from "../../services/api.js";
 import { HOME_PAGE_FOR_ROLE } from "../../services/marketplace.js";
 
-// Shown after the confirm-email link in the sign-up email sends the person back here.
 const VERIFIED_MESSAGES = {
   ok: { tone: "text-forest", text: "Your email is confirmed. You can log in as soon as an admin has approved your account." },
   expired: { tone: "text-red-600", text: "That link has expired. Log in below and we'll offer to send a new one." },

@@ -3,10 +3,8 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar.jsx";
 import Topbar from "../components/Topbar.jsx";
 
-// The frame around every operator, recycler and admin page: sidebar on the left, top bar above the page.
-// The sidebar shows the menu for the logged-in user's role.
 export default function WorkspaceLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false); // only used on phones
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="grid min-h-screen gap-4 p-4 lg:grid-cols-[250px_minmax(0,1fr)]">

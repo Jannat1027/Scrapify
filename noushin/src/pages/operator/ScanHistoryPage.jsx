@@ -15,13 +15,12 @@ const CONFIDENCE_FILTERS = [
   { id: "corrected", name: "Corrected by me" },
 ];
 
-// Operator: every scan at this collection point, with filters and a price-per-kg chart.
 export default function ScanHistoryPage() {
   const { user } = useAuth();
   const { data } = useData();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
-  const [showFilter, setShowFilter] = useState(""); // "", "low" or "corrected"
+  const [showFilter, setShowFilter] = useState("");
 
   const myScans = data.scans.filter((scan) => scan.operatorId === user.id);
 
@@ -34,7 +33,6 @@ export default function ScanHistoryPage() {
     return true;
   }
 
-  // Estimated ৳ per kg for each scan, oldest first.
   const oldestFirst = [...myScans].sort((a, b) => new Date(a.date) - new Date(b.date));
   const chartLabels = oldestFirst.map((scan) => formatShortDate(scan.date));
   const chartValues = oldestFirst.map((scan) => Math.round(calculatePrice(scan, data.rates).total / scan.weight));

@@ -1,14 +1,13 @@
-// models/User.js: accounts for operators, recyclers and the admin.
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { nextId } = require("../utils/id");
 
 const userSchema = new mongoose.Schema(
   {
-    id: { type: String, unique: true }, // "u10" style, matches the frontend data
+    id: { type: String, unique: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true },
-    password: { type: String, required: true, select: false }, // never sent to the client
+    password: { type: String, required: true, select: false },
     role: { type: String, enum: ["operator", "recycler", "admin"], required: true },
     org: { type: String, default: "" },
     location: { type: String, default: "" },
@@ -17,12 +16,10 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Generates the next id (u1, u2, ...) before the first save.
 userSchema.pre("save", async function () {
   if (this.isNew && !this.id) this.id = await nextId(User, "U");
 });
 
-// DRY: hashing lives inside the model, so every route hashes the same way.
 userSchema.pre("save", async function () {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);

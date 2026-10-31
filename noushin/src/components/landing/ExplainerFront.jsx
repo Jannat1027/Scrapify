@@ -1,5 +1,3 @@
-// Front of the hero card: one trade, from photo to sale, in four steps.
-// Each layer is only rendered on its step(s), so its CSS animations restart every time it appears.
 import CountUp from "../CountUp.jsx";
 import Icon from "../Icon.jsx";
 import { GrowBar, PlasticPiece, PlasticShapeDefs, StepTabs, TypeOut } from "./ExplainerParts.jsx";
@@ -11,7 +9,6 @@ export const FRONT_STEPS = [
   { icon: "handshake", label: "Sell" },
 ];
 
-// A box the "AI" draws around one plastic type. Shown on steps 1 and 2.
 function DetectionBox({ left, top, width, height, label, delay }) {
   return (
     <div className="absolute rounded-lg border-2 border-white bg-white/10 animate-pop" style={{ left: `${left}%`, top: `${top}%`, width: `${width}%`, height: `${height}%`, animationDelay: `${delay}ms` }}>

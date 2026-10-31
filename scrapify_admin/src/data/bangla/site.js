@@ -1,6 +1,4 @@
-// Bangla phrases: public pages and browser tab titles.
 const phrases = {
-  // Features, roles and closing call to action
   "Built for the counter": "দোকানের কাউন্টারের জন্য তৈরি",
   "Small details that protect every trade": "ছোট ছোট বিষয় যা প্রতিটি লেনদেন সুরক্ষিত রাখে",
   "Prices that show their working": "দামের পুরো হিসাব দেখা যায়",
@@ -44,7 +42,6 @@ const phrases = {
   "Create a free account": "বিনামূল্যে অ্যাকাউন্ট খুলুন",
   "Read the plastic guide": "প্লাস্টিক গাইড পড়ুন",
 
-  // Footer
   "Fair, explainable prices for the plastic Bangladesh collects every day.":
     "বাংলাদেশে প্রতিদিন সংগ্রহ হওয়া প্লাস্টিকের ন্যায্য ও ব্যাখ্যাযোগ্য দাম।",
   "Product": "পণ্য",
@@ -62,7 +59,6 @@ const phrases = {
   "AI grades are estimates. Operators confirm every batch before it's listed.":
     "এআই গ্রেড একটি অনুমান। তালিকাভুক্তির আগে অপারেটর প্রতিটি ব্যাচ নিশ্চিত করেন।",
 
-  // Plastic guide and 404
   "Know what you're": "জানুন আপনি কী",
   "selling.": "বিক্রি করছেন।",
   "The five categories Scrapify grades, and how to sort a batch so the AI and the buyer both see it clearly.":
@@ -97,7 +93,6 @@ const phrases = {
     "লিংকটি পুরনো হতে পারে, অথবা পেজটি সরানো হয়েছে। চলুন আপনাকে সঠিক জায়গায় নিয়ে যাই।",
   "Go home": "হোমে যান",
 
-  // Page titles
   "Scrapify · Fair prices for plastic": "Scrapify · প্লাস্টিকের ন্যায্য দাম",
   "Log in · Scrapify": "লগইন · Scrapify",
   "Create account · Scrapify": "অ্যাকাউন্ট খুলুন · Scrapify",

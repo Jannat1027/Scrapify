@@ -10,7 +10,6 @@ import { calculatePrice, LOW_CONFIDENCE } from "../utils/pricing.js";
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const CHART_DAYS = 14;
 
-// "2026-10-23T08:15:00Z" -> "2026-10-23", used to group scans by day.
 const dayKey = (date) => new Date(date).toISOString().slice(0, 10);
 
 export async function getStats(req, res) {
@@ -32,7 +31,6 @@ export async function getStats(req, res) {
     scanVolume.push({ date: day, count: scans.filter((scan) => dayKey(scan.date) === day).length });
   }
 
-  // Kilograms graded per plastic type, across every scan.
   const kgByType = {};
   scans.forEach((scan) => {
     Object.entries(scan.composition).forEach(([categoryId, percent]) => {
@@ -41,7 +39,6 @@ export async function getStats(req, res) {
   });
   const categoryMix = Object.entries(kgByType).map(([categoryId, kg]) => ({ categoryId, kg: Math.round(kg) }));
 
-  // Average estimated ৳ per kg of the scans on each day.
   const valuesByDay = {};
   scans.forEach((scan) => {
     const perKg = calculatePrice(scan, categories).total / scan.weight;
@@ -72,7 +69,6 @@ export async function getStats(req, res) {
   });
 }
 
-// GET /api/admin/users?role=operator&status=pending   
 export async function listUsers(req, res) {
   const { role, status } = req.query;
   const filter = {};
@@ -121,7 +117,6 @@ export async function listReports(req, res) {
   });
 }
 
-// PATCH /api/admin/reports/:id/resolve 
 export async function resolveReport(req, res) {
   const report = await Report.findOneAndUpdate(
     { id: req.params.id, status: "open" },

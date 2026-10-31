@@ -1,6 +1,4 @@
-// Bangla phrases: operator workspace.
 const phrases = {
-  // Shell and shared table words
   "Workspace": "কাজের জায়গা",
   "Dashboard": "ড্যাশবোর্ড",
   "New scan": "নতুন স্ক্যান",
@@ -31,7 +29,6 @@ const phrases = {
   "Corrected": "সংশোধিত",
   "Corrected by you": "আপনার সংশোধিত",
 
-  // Operator dashboard
   "Some prices may be out of date.": "কিছু দাম পুরনো হতে পারে।",
   "Scans": "স্ক্যান",
   "All time": "এ পর্যন্ত",
@@ -46,7 +43,6 @@ const phrases = {
   "Manage listings": "তালিকা পরিচালনা করুন",
   "No scans yet. Start with a photo of your first batch.": "এখনো কোনো স্ক্যান নেই। প্রথম ব্যাচের ছবি দিয়ে শুরু করুন।",
 
-  // New scan
   "Take one clear photo of the batch. We'll grade it and estimate a price.":
     "ব্যাচের একটি পরিষ্কার ছবি তুলুন। আমরা গ্রেড করে দাম অনুমান করব।",
   "Upload photo": "ছবি আপলোড",
@@ -71,7 +67,6 @@ const phrases = {
   "Checking plastic types, contamination and photo quality.": "প্লাস্টিকের ধরন, ময়লা ও ছবির মান যাচাই করা হচ্ছে।",
   "Please choose an image file.": "অনুগ্রহ করে একটি ছবির ফাইল বেছে নিন।",
 
-  // Scan result
   "← Scan history": "← স্ক্যান ইতিহাস",
   "We're not sure about this batch": "এই ব্যাচ নিয়ে আমরা নিশ্চিত নই",
   "Looks right": "ঠিক আছে",
