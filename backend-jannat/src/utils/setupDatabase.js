@@ -1,5 +1,3 @@
-// Fills a new (production) database with the plastic categories and areas the app needs.
-// It only adds what is missing and never deletes anything, so it is safe to run again.
 import { pathToFileURL } from "node:url";
 import { connectDatabase, disconnectDatabase } from "../config/db.js";
 import { categories, locations } from "../data/seed.js";

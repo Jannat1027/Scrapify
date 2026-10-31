@@ -16,8 +16,6 @@ import { formatDate, formatTaka } from "../../utils/format.js";
 const STATUS_TABS = ["all", "pending", "paid", "rejected"];
 const MOBILE_NUMBER = /^01[3-9]\d{8}$/;
 
-// Operator: money recyclers paid for claimed batches. Online (SSLCommerz) payments arrive already checked;
-// bKash/Nagad transfers wait here until the operator confirms the money reached their wallet.
 export default function PaymentsPage() {
   const showToast = useToast();
   const [payments, setPayments] = useState([]);
@@ -129,7 +127,6 @@ export default function PaymentsPage() {
   );
 }
 
-// The bKash/Nagad numbers recyclers send money to when they pay by hand.
 function WalletSettings() {
   const { user, saveWallets } = useAuth();
   const showToast = useToast();

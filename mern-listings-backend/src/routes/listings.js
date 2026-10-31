@@ -18,7 +18,6 @@ router.use(requireAuth);
 
 const recycler = requireRole("recycler");
 
-// Fixed paths come before "/:id/..." so "mine" and "claims" are never read as ids.
 router.get("/", requireRole("recycler", "admin"), browseListings);
 router.get("/claims", recycler, listMyClaims);
 

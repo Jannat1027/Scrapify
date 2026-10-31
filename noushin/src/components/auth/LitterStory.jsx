@@ -1,5 +1,3 @@
-// Login story: a person and a robot litter, the river suffers, Scrapify collects it, and everyone gets paid.
-// `beat` (0 to 3) decides which layer is shown; each layer's CSS motions play when it appears.
 import { Coin, logoUrl, Phone, Pill, Place, SkyGradient } from "./storyParts.jsx";
 
 export const LITTER_STORY = {
@@ -13,7 +11,6 @@ export const LITTER_STORY = {
 };
 
 const HANDS = { person: [115, 124], robot: [215, 126] };
-// [shape, thrown by, lands at x, y, colour]
 const LITTER = [
   ["bottle", "person", 55, 196, "#38bdf8"],
   ["bag", "person", 150, 204, "#84cc16"],

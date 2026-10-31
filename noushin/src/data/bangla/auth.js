@@ -1,6 +1,4 @@
-// Bangla phrases: login, sign-up and form validation.
 const phrases = {
-  // Login and sign-up
   "Welcome back": "আবার স্বাগতম",
   "Log in to your shop, recycler or admin workspace.": "আপনার দোকান, রিসাইক্লার বা অ্যাডমিন অ্যাকাউন্টে লগইন করুন।",
   "Email": "ইমেইল",
@@ -40,7 +38,6 @@ const phrases = {
   "Looks good": "ঠিক আছে",
   "Demo · one click, no password": "ডেমো · এক ক্লিকে, পাসওয়ার্ড লাগবে না",
 
-  // Login story
   "Why Scrapify exists": "Scrapify কেন",
   "River blocked": "নদী আটকে গেছে",
   "+৳2,300 for 62 kg": "৬২ কেজিতে +৳২,৩০০",
@@ -57,7 +54,6 @@ const phrases = {
   "The people collecting earn a fair price, and the river stays clean.":
     "যারা সংগ্রহ করেন তারা ন্যায্য দাম পান, আর নদী পরিষ্কার থাকে।",
 
-  // Sign-up story
   "What happens after you sign up": "নিবন্ধনের পর যা হয়",
   "GREEN BIN": "GREEN BIN",
   "Verified by Scrapify": "Scrapify দ্বারা যাচাইকৃত",
@@ -75,7 +71,6 @@ const phrases = {
   "Verified recyclers see your graded batches and collect at a fixed price.":
     "যাচাইকৃত রিসাইক্লাররা আপনার গ্রেড করা ব্যাচ দেখে নির্ধারিত দামে নিয়ে যান।",
 
-  // Form validation
   "Enter the email you signed up with.": "যে ইমেইল দিয়ে নিবন্ধন করেছিলেন সেটি লিখুন।",
   "Enter your password.": "আপনার পাসওয়ার্ড লিখুন।",
   "That doesn't look like an email yet. It should look like name@shop.com.":

@@ -13,12 +13,10 @@ const NAV_LINKS = [
   { to: "/guide", label: "Plastic guide" },
 ];
 
-// The floating navigation bar on public pages. On phones the links move into a drop-down menu.
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useAuth();
 
-  // A logged-in visitor gets a shortcut back to their workspace instead of "Log in".
   const accountLink = user
     ? { to: HOME_PAGE_FOR_ROLE[user.role], label: "My workspace" }
     : { to: "/login", label: "Log in" };

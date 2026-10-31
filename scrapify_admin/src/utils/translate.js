@@ -1,10 +1,3 @@
-// ---------------------------------------------------------------------------
-// Bangla mode (kept from the original Scrapify site).
-// The app is written in English. When বাংলা is chosen, startBanglaMode() walks
-// the page and swaps every English phrase it knows for the Bangla one from
-// src/data/bangla/. A MutationObserver repeats this for anything React adds or
-// changes later (new pages, dialogs, toasts), so components need no changes.
-// ---------------------------------------------------------------------------
 import { loadFromStorage, saveToStorage, STORAGE_KEYS } from "../services/storage.js";
 import admin from "../data/bangla/admin.js";
 import auth from "../data/bangla/auth.js";
@@ -25,19 +18,16 @@ export function isBanglaMode() {
   return loadFromStorage(STORAGE_KEYS.language, "en") === "bn";
 }
 
-// Switches language and reloads, so the whole page starts fresh in the new language.
 export function toggleLanguage() {
   saveToStorage(STORAGE_KEYS.language, isBanglaMode() ? "en" : "bn");
   window.location.reload();
 }
 
-// A known phrase, or a list like "LDPE film, Mixed / other" translated item by item.
 function translateWord(text) {
   if (PHRASES[text]) return PHRASES[text];
   return text.split(", ").map((part) => PHRASES[part] ?? part).join(", ");
 }
 
-// Sentences with live values, e.g. "Good morning, Rahima" -> "শুভ সকাল, Rahima".
 function translateWithPattern(text) {
   const rule = rules.PATTERNS.find(([pattern]) => pattern.test(text));
   if (!rule) return null;
@@ -53,14 +43,12 @@ function translatePhrase(text) {
   return translateWithPattern(text) ?? text;
 }
 
-// Digits become Bangla numerals, except inside emails and record IDs such as SC-1042.
 function toBanglaDigits(text) {
   return text.replace(/\S+/g, (token) =>
     /@|^[A-Z]{2}-\w+/.test(token) ? token : token.replace(/\d/g, (digit) => BANGLA_DIGITS[digit]),
   );
 }
 
-// Translates one piece of text. In English mode it returns the text unchanged.
 export function translateText(text) {
   if (!isBanglaMode() || typeof text !== "string") return text;
   const clean = text.replace(/\s+/g, " ").trim();

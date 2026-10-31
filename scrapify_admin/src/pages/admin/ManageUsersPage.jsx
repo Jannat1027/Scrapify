@@ -17,7 +17,6 @@ const TABS = [
   { value: "recycler", label: "Recyclers", test: (user) => user.role === "recycler" },
 ];
 
-// Which status changes make sense from each status.
 const NEXT_STATUSES = {
   pending: ["approved", "suspended"],
   approved: ["flagged", "suspended"],
@@ -25,20 +24,18 @@ const NEXT_STATUSES = {
   suspended: ["approved"],
 };
 
-// How each action button looks. Actions with a note ask the admin to write a reason first.
 const ACTIONS = {
   approved: { label: "Approve", icon: "check", variant: "primary" },
   flagged: { label: "Flag", icon: "flag", variant: "", note: "The account stays active but is marked for review." },
   suspended: { label: "Suspend", icon: "ban", variant: "danger", note: "They won't be able to log in until approved again." },
 };
 
-// Admin: approve, flag or suspend operator and recycler accounts.
 export default function ManageUsersPage() {
   const { data, send } = useData();
   const showToast = useToast();
   const [currentTab, setCurrentTab] = useState("pending");
   const [search, setSearch] = useState("");
-  const [pendingChange, setPendingChange] = useState(null); // { user, newStatus } waiting for a note
+  const [pendingChange, setPendingChange] = useState(null);
 
   const traders = data.users.filter((user) => user.role !== "admin");
   const inTab = (tabValue) => traders.filter(TABS.find((tab) => tab.value === tabValue).test);
@@ -54,7 +51,6 @@ export default function ManageUsersPage() {
     }
   }
 
-  // Approving happens at once; flagging and suspending first ask for a note for the audit log.
   function handleActionClick(user, newStatus) {
     if (ACTIONS[newStatus].note) setPendingChange({ user, newStatus });
     else changeStatus(user, newStatus);

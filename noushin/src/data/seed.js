@@ -1,18 +1,8 @@
-// ---------------------------------------------------------------------------
-// DEMO DATA
-// Everything the app shows comes from this file the first time it runs.
-// After that, changes are saved in the browser's localStorage, so a page
-// refresh keeps them. Use "Reset demo data" in the footer or sidebar to
-// go back to exactly what is written here.
-// ---------------------------------------------------------------------------
 import { ONE_DAY_MS } from "../utils/format.js";
 
-// Returns a date `days` days before today, as an ISO string.
 function daysAgo(days) {
   return new Date(Date.now() - days * ONE_DAY_MS).toISOString();
 }
-
-// ---------- Plastic categories, conditions and locations ----------
 
 const categories = [
   { id: "pet", name: "Clear PET", note: "Water and soft-drink bottles", icon: "cup-soda" },
@@ -36,9 +26,6 @@ const locations = [
   "Shaheb Bazar, Rajshahi",
 ];
 
-// ---------- Price rates (৳ per kg) set by the admin ----------
-// Each plastic type has one rate per condition.
-
 const rates = [
   { id: "pet", clean: 42, light: 34, heavy: 22, source: "Dhaka wholesale survey", updated: daysAgo(4) },
   { id: "hdpe", clean: 48, light: 38, heavy: 25, source: "Kamrangirchar recycler quotes", updated: daysAgo(6) },
@@ -46,10 +33,6 @@ const rates = [
   { id: "film", clean: 18, light: 12, heavy: 7, source: "NGO collection partners", updated: daysAgo(21) },
   { id: "mixed", clean: 12, light: 8, heavy: 5, source: "Admin estimate", updated: daysAgo(17) },
 ];
-
-// ---------- Users ----------
-// status: "approved" can log in, "pending" waits for an admin,
-// "flagged" can log in but is marked for review, "suspended" cannot log in.
 
 const users = [
   {
@@ -86,12 +69,6 @@ const users = [
   },
 ];
 
-// ---------- Scans (one photo of one batch, graded by the simulated AI) ----------
-// composition: percent of each plastic type. confidence: 0 to 1.
-// quality: "good", "dark" or "blurry". corrected: the operator changed the AI result.
-// aiResult: what the AI first said, kept when the operator corrects it (the correction log).
-// image: a small copy of the photo (scans made in the app have one; this sample data doesn't).
-
 const scans = [
   {
     id: "SC-1042", operatorId: "u1", location: "Mirpur, Dhaka", date: daysAgo(0), weight: 62,
@@ -126,10 +103,6 @@ const scans = [
   },
 ];
 
-// ---------- Listings (a scanned batch put on the market at a fixed price) ----------
-// status flow: available -> claimed -> completed, or cancelled.
-// category is the plastic type with the biggest share in the scan.
-
 const listings = [
   {
     id: "LS-2210", scanId: "SC-1042", operatorId: "u1", category: "pet", condition: "clean", weight: 62,
@@ -158,8 +131,6 @@ const listings = [
   },
 ];
 
-// ---------- Reported problems (sent to the admin) ----------
-
 const reports = [
   {
     id: "RP-31", listingId: "LS-2196", by: "u5", status: "open", date: daysAgo(13),
@@ -175,7 +146,6 @@ const reports = [
   },
 ];
 
-// Demo accounts shown on the login page. Any password with 6+ characters works.
 export const DEMO_ACCOUNTS = [
   { role: "operator", email: "rahima@greenbin.bd", icon: "store" },
   { role: "recycler", email: "tanvir@polymerloop.com", icon: "factory" },
@@ -183,7 +153,6 @@ export const DEMO_ACCOUNTS = [
 ];
 export const DEMO_PASSWORD = "demo1234";
 
-// A fresh copy of all the demo data, used on first run and after a reset.
 export function createSeedData() {
   return structuredClone({ categories, conditions, locations, rates, users, scans, listings, reports });
 }

@@ -2,7 +2,6 @@ import { HOW_IT_WORKS_STEPS } from "../../data/content.js";
 import Icon from "../Icon.jsx";
 import Reveal from "../Reveal.jsx";
 
-// "How it works": four steps on a timeline. Clicking a step replays it in the hero card.
 export default function HowItWorks({ onReplayStep }) {
   return (
     <section id="how" className="mx-auto w-[min(1180px,calc(100%-2rem))] scroll-mt-28 py-20">

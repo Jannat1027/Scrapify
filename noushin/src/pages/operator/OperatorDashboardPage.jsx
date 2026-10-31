@@ -19,7 +19,6 @@ function greetingFor(name) {
   return `Good ${partOfDay}, ${name.split(" ")[0]}`;
 }
 
-// Operator home: today's overview for one collection point.
 export default function OperatorDashboardPage() {
   const { user } = useAuth();
   const { data } = useData();

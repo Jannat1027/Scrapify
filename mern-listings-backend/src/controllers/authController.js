@@ -47,7 +47,6 @@ export async function login(req, res) {
   res.json({ token: signToken(user), user });
 }
 
-// GET /api/auth/me
 export function me(req, res) {
   res.json({ user: req.user });
 }

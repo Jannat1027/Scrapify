@@ -1,5 +1,3 @@
-// Bangla rules for text that mixes fixed words with live values.
-// "$1", "$2" … become the matching captured value, translated too when the catalogs know it.
 const rules = (() => {
   const zip = (english, bangla) => english.split(" ").map((word, i) => [word, bangla.split(" ")[i]]);
 
@@ -50,7 +48,6 @@ const rules = (() => {
       [/^(.+)\/kg$/, "$1/কেজি"],
     ],
 
-    // Words translated wherever they appear inside a longer string, such as dates.
     WORDS: Object.fromEntries([
       ...MONTHS,
       ...SHORT_MONTHS,

@@ -68,7 +68,6 @@ export default function ScanResultPage() {
     document.getElementById("check-ai")?.scrollIntoView({ behavior: "smooth" });
   }
 
-  // The buttons stay clickable and explain what's missing, instead of looking dead.
   function readyToSave() {
     if (needsReview) {
       scrollToReview();

@@ -1,8 +1,3 @@
-// Text shown on the public pages (landing page and plastic guide) and the operator pages.
-// Pages turn these lists into cards with .map(), so changing copy never means touching JSX.
-
-// ---------- Landing page ----------
-
 export const TRUST_POINTS = [
   { icon: "badge-check", text: "Verified buyers only" },
   { icon: "timer", text: "Photo to price in a minute" },
@@ -28,7 +23,6 @@ export const HOW_IT_WORKS_STEPS = [
   },
 ];
 
-// Each pair is [the old way, with Scrapify].
 export const BEFORE_AND_AFTER = [
   ["The price is a guess made by eye at the counter.", "The price comes from the photo, the weight and today's rate."],
   ["Middlemen set the rate and keep the difference.", "Verified recyclers buy direct, at a price both sides can see."],
@@ -86,8 +80,6 @@ export const ROLE_CARDS = [
   },
 ];
 
-// ---------- Plastic guide ----------
-
 export const SORTING_TIPS = [
   { icon: "layers", title: "One layer, from above", text: "Spread the batch flat so every piece is visible to the camera." },
   { icon: "sun", title: "Use good light", text: "Daylight or a bright bulb. Dark photos lower confidence." },
@@ -113,8 +105,6 @@ export const COMPANY_PAGES = [
     text: "AI grades are estimates. Operators confirm every result before listing. Claims are fixed-price and binding once accepted, and disputes go through the report system.",
   },
 ];
-
-// ---------- New scan page ----------
 
 export const PHOTO_CHECKLIST = [
   { icon: "layers", text: "Single layer, shot from above" },

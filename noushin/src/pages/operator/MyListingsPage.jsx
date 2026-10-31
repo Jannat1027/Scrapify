@@ -15,13 +15,11 @@ import { findUser, STATUS_LABELS } from "../../services/marketplace.js";
 
 const STATUSES = ["all", "available", "claimed", "completed", "cancelled"];
 
-// Operator: every batch this shop has listed, filtered by status.
 export default function MyListingsPage() {
   const { user } = useAuth();
   const { data, updateRow } = useData();
   const showToast = useToast();
   const [currentTab, setCurrentTab] = useState("all");
-  // Which dialog is open: null, { type: "cancel", listingId } or { type: "report", listingId }
   const [dialog, setDialog] = useState(null);
 
   const myListings = data.listings.filter((listing) => listing.operatorId === user.id);
@@ -83,7 +81,6 @@ export default function MyListingsPage() {
   );
 }
 
-// The line under each card that says what happened to the batch.
 function ListingNote({ listing }) {
   const { data } = useData();
   const buyer = listing.recyclerId ? findUser(data, listing.recyclerId).org : "";

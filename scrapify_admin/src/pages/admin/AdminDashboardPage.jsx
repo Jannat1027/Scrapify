@@ -12,10 +12,8 @@ import api from "../../services/api.js";
 import { categoryColor, describeGrading, findCategory, findUser, ROLE_LABELS } from "../../services/marketplace.js";
 import { formatShortDate } from "../../utils/format.js";
 
-// Admin home: platform-wide numbers, charts, approvals waiting and scans the AI wasn't sure about.
 export default function AdminDashboardPage() {
   const { data } = useData();
-  // The server adds everything up (see GET /api/admin/stats), so the page only shows the numbers.
   const { totals } = data.stats;
 
   return (
@@ -80,7 +78,7 @@ export default function AdminDashboardPage() {
 
 function ScanVolumeChart() {
   const { data } = useData();
-  const days = data.stats.scanVolume; // [{ date: "2026-10-23", count: 3 }, ...] for the last 14 days, oldest first
+  const days = data.stats.scanVolume;
 
   const datasets = [{ label: "Scans", data: days.map((day) => day.count), backgroundColor: "rgba(63,158,116,.55)", borderRadius: 8 }];
   const options = { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } };
@@ -97,7 +95,7 @@ function ScanVolumeChart() {
 
 function CategoryMixChart() {
   const { data } = useData();
-  const mix = data.stats.categoryMix; // [{ categoryId, kg }]: kilograms graded per plastic type
+  const mix = data.stats.categoryMix;
 
   const datasets = [
     {
@@ -120,7 +118,7 @@ function CategoryMixChart() {
 
 function PriceTrendChart() {
   const { data } = useData();
-  const trend = data.stats.priceTrend; // [{ date, perKg }]: average estimated ৳ per kg of the scans on each day
+  const trend = data.stats.priceTrend;
 
   return (
     <LineChart
@@ -164,7 +162,7 @@ function PendingApprovals() {
 
 function LowConfidenceTable() {
   const { data } = useData();
-  const flaggedScans = data.stats.lowConfidenceScans; // scans the AI was unsure about, or the operator corrected
+  const flaggedScans = data.stats.lowConfidenceScans;
   const columns = [
     { label: "Scan", render: (scan) => <b>{scan.id}</b> },
     { label: "Operator", render: (scan) => findUser(data, scan.operatorId).org },
@@ -175,7 +173,6 @@ function LowConfidenceTable() {
       render: (scan) =>
         scan.corrected ? <span className="badge tone-violet">Operator corrected</span> : <span className="badge tone-green">Accepted</span>,
     },
-    // The correction log: what the AI said, and what the operator changed it to.
     {
       label: "AI said → operator chose",
       render: (scan) =>

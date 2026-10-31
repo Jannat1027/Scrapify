@@ -1,6 +1,4 @@
-// Bangla phrases: listings, recycler pages and demo data.
 const phrases = {
-  // Scan history and listings
   "Every batch graded at your collection point.": "আপনার সংগ্রহকেন্দ্রে গ্রেড করা সব ব্যাচ।",
   "Price history": "দামের ইতিহাস",
   "Estimated value per kg at": "প্রতি কেজির আনুমানিক মূল্য,",
@@ -32,7 +30,6 @@ const phrases = {
   "Send report": "অভিযোগ পাঠান",
   "Report sent. An admin will look into it.": "অভিযোগ পাঠানো হয়েছে। একজন অ্যাডমিন দেখবেন।",
 
-  // Recycler pages
   "Graded batches from verified collection points. Fixed prices, first to claim wins.":
     "যাচাইকৃত সংগ্রহকেন্দ্রের গ্রেড করা ব্যাচ। নির্ধারিত দাম, আগে দাবি করলে আগে পাবেন।",
   "Search ID or location": "আইডি বা এলাকা খুঁজুন",
@@ -72,7 +69,6 @@ const phrases = {
   "Reason for cancelling": "বাতিলের কারণ",
   "Cancel claim": "দাবি বাতিল করুন",
 
-  // Seed data shown across pages
   "Clear PET": "স্বচ্ছ PET",
   "Hard HDPE": "শক্ত HDPE",
   "PP containers": "PP পাত্র",

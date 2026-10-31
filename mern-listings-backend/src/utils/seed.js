@@ -1,8 +1,3 @@
-// ---------------------------------------------------------------------------
-// Seed script: `npm run seed`
-// Empties every collection and loads the demo data from data/seed.js.
-// Every demo account gets the password DEMO_PASSWORD ("demo1234").
-// ---------------------------------------------------------------------------
 import bcrypt from "bcryptjs";
 import { pathToFileURL } from "node:url";
 import { connectDatabase, disconnectDatabase } from "../config/db.js";
@@ -36,10 +31,8 @@ export async function seedDatabase() {
   }
 }
 
-// Runs only when called as a script, not when imported.
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
-    // The seed empties every collection. Never let it run against a live database by accident.
     if (process.env.NODE_ENV === "production" && !process.argv.includes("--force")) {
       throw new Error("Refusing to empty the database while NODE_ENV=production. Add --force if you really mean it.");
     }

@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import Icon from "../../components/Icon.jsx";
 
-// Shown for any address that doesn't match a route.
 export default function NotFoundPage() {
   return (
     <div className="grid min-h-screen place-items-center p-4">

@@ -1,11 +1,3 @@
-// ---------------------------------------------------------------------------
-// DataContext: the admin's data, loaded from the Scrapify backend.
-//   data = { users, categories, rates, conditions, locations, reports, stats }
-// Pages call send(request) for every change. A change goes to the server, then the data is
-// loaded again, so every page shows what the server now holds. A failed request shows the
-// server's message in a red toast and send() returns null, so a page can write:
-//   if (await send(() => api.patch(...))) showToast("Saved.");
-// ---------------------------------------------------------------------------
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import api, { apiErrorMessage } from "../services/api.js";
 import { useAuth } from "./AuthContext.jsx";
@@ -23,7 +15,6 @@ const EMPTY_STATS = {
 };
 const EMPTY_DATA = { users: [], categories: [], rates: [], conditions: [], locations: [], reports: [], stats: EMPTY_STATS };
 
-// Everything the admin pages show.
 async function loadAdminData() {
   const [users, categories, conditions, locations, reports, stats] = await Promise.all([
     api.get("/admin/users"),
@@ -35,7 +26,6 @@ async function loadAdminData() {
   ]);
   return {
     users: users.data.users,
-    // Each category carries its rates, so the same rows serve as data.categories and data.rates.
     categories: categories.data.categories,
     rates: categories.data.categories,
     conditions: conditions.data.conditions,
@@ -49,10 +39,8 @@ export function DataProvider({ children }) {
   const { user } = useAuth();
   const showToast = useToast();
   const [data, setData] = useState(EMPTY_DATA);
-  // Whose data is in `data`: a user id, null when logged out, undefined before the first load.
   const [loadedFor, setLoadedFor] = useState(undefined);
-  const [error, setError] = useState(null); // the message when loading failed
-  // Numbers each load, so an older load that finishes late can't overwrite a newer one.
+  const [error, setError] = useState(null);
   const latestLoad = useRef(0);
 
   const refresh = useCallback(async () => {
@@ -74,7 +62,6 @@ export function DataProvider({ children }) {
 
   const loading = loadedFor !== (user ? user.id : null);
 
-  // Sends one change, then reloads. Returns the response, or null after showing why it failed.
   async function send(request) {
     try {
       const result = await request();

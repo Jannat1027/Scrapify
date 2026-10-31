@@ -9,19 +9,17 @@ import { blobToDataUrl, compressImage, createSamplePhoto, gradePhoto } from "../
 import { saveToStorage, STORAGE_KEYS } from "../../services/storage.js";
 import { makeId, nowIso } from "../../utils/format.js";
 
-// The two pill tabs at the top (Upload photo / Use phone).
 function tabClass(isActive) {
   const look = isActive ? "bg-white text-ink shadow-sm" : "text-ink/60";
   return `inline-flex h-9 items-center gap-1 rounded-full px-4 text-[0.875rem] font-semibold transition-all duration-150 ${look}`;
 }
 
-// Operator: choose or drop a photo, see a preview, then send it for (simulated) grading.
 export default function NewScanPage() {
   const navigate = useNavigate();
   const showToast = useToast();
 
-  const [activeTab, setActiveTab] = useState("upload"); // "upload" or "phone"
-  const [photo, setPhoto] = useState(null); // the compressed photo (a Blob), or null
+  const [activeTab, setActiveTab] = useState("upload");
+  const [photo, setPhoto] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [fileInfo, setFileInfo] = useState("No photo selected");
   const [isDragging, setIsDragging] = useState(false);
@@ -29,7 +27,6 @@ export default function NewScanPage() {
   const [sampleCount, setSampleCount] = useState(0);
   const [phoneSessionId] = useState(() => makeId("QR"));
 
-  // Whenever the photo changes, make a temporary URL so <img> can show it, and free the old one.
   useEffect(() => {
     if (!photo) {
       setPreviewUrl("");
@@ -71,12 +68,9 @@ export default function NewScanPage() {
   async function analyse() {
     setIsAnalysing(true);
     const grading = await gradePhoto(photo);
-    // A smaller copy (640px) is kept with the scan, so many scans still fit in the browser's storage.
     const image = await blobToDataUrl(await compressImage(photo, 640, 0.7));
     const draftScan = { ...grading, image, date: nowIso(), corrected: false };
 
-    // Keep the draft so the result page still works after a refresh. If the photo is too big
-    // to store, the result page gets the draft through the router's navigation state instead.
     saveToStorage(STORAGE_KEYS.draftScan, draftScan);
     navigate("/operator/scans/new", { state: { draftScan } });
   }
@@ -119,7 +113,7 @@ export default function NewScanPage() {
                   className="sr-only"
                   onChange={(event) => {
                     choosePhoto(event.target.files[0]);
-                    event.target.value = ""; // so picking the same file again still triggers onChange
+                    event.target.value = "";
                   }}
                 />
                 {previewUrl ? (

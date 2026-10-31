@@ -1,4 +1,3 @@
-// The starting point of the app. Vite loads this file from index.html.
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -10,9 +9,6 @@ import { startGlassSpotlight } from "./utils/glassSpotlight.js";
 import { isBanglaMode, startBanglaMode } from "./utils/translate.js";
 import "./index.css";
 
-// The providers wrap the whole app, so every page can use the data, the login session and toasts.
-// AuthProvider comes before DataProvider because the data loaded depends on who is logged in,
-// and ToastProvider comes first so DataProvider can show an error toast when a request fails.
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>

@@ -12,7 +12,6 @@ const transport = mailConfigured
     })
   : null;
 
-// Without SMTP settings the email is printed to the server console instead, so local sign-ups still work.
 export async function sendMail({ to, subject, text, html }) {
   if (!transport) {
     console.log(`\n[email not sent: SMTP_HOST is empty] To: ${to}\nSubject: ${subject}\n${text}\n`);

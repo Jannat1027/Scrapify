@@ -1,5 +1,3 @@
-// The illustrated panel beside the login and sign-up forms (large screens only).
-// It slides over whichever form is not in use and tells a short story in four beats.
 import { useEffect, useState } from "react";
 import Brand from "../Brand.jsx";
 import LanguageButton from "../LanguageButton.jsx";
@@ -7,14 +5,13 @@ import LitterStory, { LITTER_STORY } from "./LitterStory.jsx";
 import ShopStory, { SHOP_STORY } from "./ShopStory.jsx";
 
 const BEAT_MS = 4000;
-const STORY_SWAP_DELAY_MS = 450; // swap the story while the panel is sliding
+const STORY_SWAP_DELAY_MS = 450;
 
 export default function AuthStoryPanel({ mode }) {
-  const [storyName, setStoryName] = useState(mode); // "login" or "register"
+  const [storyName, setStoryName] = useState(mode);
   const [beat, setBeat] = useState(0);
   const story = storyName === "register" ? SHOP_STORY : LITTER_STORY;
 
-  // The form changed: start the matching story once the panel is halfway across.
   useEffect(() => {
     if (mode === storyName) return;
     const timer = setTimeout(() => {
@@ -24,7 +21,6 @@ export default function AuthStoryPanel({ mode }) {
     return () => clearTimeout(timer);
   }, [mode, storyName]);
 
-  // Move to the next beat every BEAT_MS, looping back to the first.
   useEffect(() => {
     const timer = setTimeout(() => setBeat((beat + 1) % story.beats.length), BEAT_MS);
     return () => clearTimeout(timer);

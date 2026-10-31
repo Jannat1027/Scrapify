@@ -1,5 +1,3 @@
-// test/smoke.js: end-to-end check with an in-memory MongoDB (no Atlas needed).
-// Run: node test/smoke.js
 process.env.JWT_SECRET = "testsecret";
 
 const http = require("http");
@@ -11,7 +9,6 @@ async function main() {
   const mongod = await MongoMemoryServer.create();
   process.env.MONGO_URI = mongod.getUri("scrapify");
 
-  // Build the same app as server.js.
   const app = express();
   app.use(express.json());
   app.use("/api/auth", require("../routes/auth.routes"));
@@ -26,7 +23,6 @@ async function main() {
 
   await mongoose.connect(process.env.MONGO_URI);
 
-  // Seed minimal data directly.
   const User = require("../models/User");
   const Category = require("../models/Category");
   const Rate = require("../models/Rate");
@@ -46,10 +42,8 @@ async function main() {
     console.log(`${ok ? "PASS" : "FAIL"}  ${name}  -> ${res.status}${ok ? "" : ` (expected ${expect}) ${extra || ""}`}`);
   }
 
-  // Health
   await check("health", await api.get("/api/health"), 200);
 
-  // Register + login
   await check("register pending user", await api.post("/api/auth/register", { name: "New Op", email: "new@demo.com", password: "demo1234", role: "operator" }), 201);
   let res = await api.post("/api/auth/login", { email: "new@demo.com", password: "demo1234" });
   await check("pending user cannot log in", res, 403);
@@ -64,11 +58,9 @@ async function main() {
 
   await check("wrong password rejected", await api.post("/api/auth/login", { email: "op@demo.com", password: "wrong" }), 401);
 
-  // Public
   await check("categories", await api.get("/api/categories"), 200);
   await check("rates", await api.get("/api/rates"), 200);
 
-  // Operator
   res = await api.post("/api/operator/scans", { location: "Mirpur, Dhaka", weight: 50, condition: "clean", composition: { pet: 100 }, confidence: 0.9 }, opToken);
   await check("create scan", res, 201);
   const scan = await res.json();
@@ -84,7 +76,6 @@ async function main() {
 
   await check("recycler cannot create scans (role guard)", await api.post("/api/operator/scans", { location: "x", weight: 1, condition: "clean" }, recToken), 403);
 
-  // Recycler
   await check("browse listings", await api.get("/api/recycler/listings", recToken), 200);
   res = await api.post("/api/recycler/claims", { listingId: listing.id }, recToken);
   await check("claim listing", res, 200);
@@ -92,10 +83,8 @@ async function main() {
   await check("second claim blocked (atomic)", res, 409);
   await check("my claims", await api.get("/api/recycler/claims", recToken), 200);
 
-  // Report
   await check("report a problem", await api.post("/api/reports", { listingId: listing.id, reason: "test" }, recToken), 201);
 
-  // Admin (none seeded as admin here, so expect 403 for operator token)
   await check("operator blocked from admin", await api.get("/api/admin/users", opToken), 403);
 
   console.log(`\n${pass} passed, ${fail} failed`);

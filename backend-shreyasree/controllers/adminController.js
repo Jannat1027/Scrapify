@@ -1,4 +1,3 @@
-// controllers/adminController.js: user approval, reports, price rates.
 const asyncHandler = require("../utils/asyncHandler");
 const User = require("../models/User");
 const Report = require("../models/Report");
@@ -42,7 +41,6 @@ exports.listRates = asyncHandler(async (req, res) => {
   res.json(await Rate.find().sort({ id: 1 }));
 });
 
-// Upsert: creates the rate row if it does not exist yet.
 exports.updateRate = asyncHandler(async (req, res) => {
   const { clean, light, heavy, source } = req.body;
   if (clean == null || light == null || heavy == null) {

@@ -5,14 +5,6 @@ import { HOME_PAGE_FOR_ROLE } from "../services/marketplace.js";
 import Button from "./Button.jsx";
 import Icon from "./Icon.jsx";
 
-// Guards the pages of one role. The user comes from the backend (/auth/login or /auth/me).
-//   - saved token still being checked -> wait
-//   - the server couldn't be reached  -> say so and offer to try again (the login is kept)
-//   - nobody logged in                -> go to /login (and come back here after logging in)
-//   - logged in as another role       -> go to that role's own dashboard
-//   - this user's data still loading  -> wait; if it failed, say why and offer to try again
-//   - otherwise                       -> show the page (<Outlet /> is where the child route appears)
-// Suspended or pending accounts never get here: the backend refuses their login and their token.
 export default function ProtectedRoute({ role }) {
   const { user, checking, sessionError, restoreSession } = useAuth();
   const { loading, error, refresh } = useData();

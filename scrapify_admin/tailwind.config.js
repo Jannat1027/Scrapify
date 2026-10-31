@@ -1,5 +1,3 @@
-// Tailwind theme for Scrapify: brand colours, fonts, shadows and every animation the app uses.
-/** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
@@ -15,7 +13,6 @@ export default {
         forest: "#2c7a57",
         mint: "#3f9e74",
       },
-      // Plain CSS borders default to the text colour; keep that instead of Tailwind's grey.
       borderColor: { DEFAULT: "currentColor" },
       boxShadow: {
         glass: [
@@ -24,7 +21,6 @@ export default {
           "inset 0 -1px 0 rgba(255,255,255,.35)",
         ].join(", "),
         glow: "0 8px 22px -10px rgba(44,122,87,.55)",
-        // The glass shadow plus a green ring, for the highlighted "With Scrapify" column.
         "glass-ring": [
           "0 18px 40px -18px rgba(31,45,39,.28)",
           "inset 0 1px 0 rgba(255,255,255,.95)",
@@ -33,7 +29,6 @@ export default {
         ].join(", "),
       },
       backgroundImage: {
-        // Two drifting colour fields behind every page give the frosted panels something to blur.
         "glow-top": [
           "radial-gradient(30rem 30rem at 12% 8%, rgba(95,190,145,.55), transparent 65%)",
           "radial-gradient(26rem 26rem at 92% 22%, rgba(120,185,235,.5), transparent 65%)",
@@ -42,7 +37,6 @@ export default {
           "radial-gradient(30rem 30rem at 70% 95%, rgba(250,205,150,.45), transparent 65%)",
           "radial-gradient(22rem 22rem at 30% 70%, rgba(180,160,235,.32), transparent 65%)",
         ].join(", "),
-        // Diagonal sheen plus a spotlight that follows the mouse (--mx/--my come from utils/glassSpotlight.js).
         sheen: [
           "radial-gradient(320px circle at var(--mx, -999px) var(--my, -999px), rgba(255,255,255,.55), transparent 65%)",
           "linear-gradient(135deg, rgba(255,255,255,.6), rgba(255,255,255,.12) 45%, rgba(255,255,255,.28))",
@@ -57,7 +51,6 @@ export default {
         "scan-down": { from: { top: "0%" }, to: { top: "100%" } },
         "fill-bar": { from: { width: "0" }, to: { width: "100%" } },
 
-        // SVG motions for the stories and the hero card. --x/--y say how far a piece travels.
         "move-throw": {
           "0%": { transform: "none" },
           "50%": { transform: "translate(calc(var(--x) / 2), calc(min(var(--y), 0px) - 60px)) rotate(200deg)" },

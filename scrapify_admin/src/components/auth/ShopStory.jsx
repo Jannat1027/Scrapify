@@ -1,4 +1,3 @@
-// Sign-up story: your shop goes up, gets verified, the approval email lands, and the first buyer arrives.
 import { Coin, Phone, Pill, Place, SkyGradient } from "./storyParts.jsx";
 
 export const SHOP_STORY = {
@@ -40,7 +39,6 @@ function Awning() {
   );
 }
 
-// A sign-up form whose three fields fill in one after another, then the button appears.
 function SignUpCard() {
   return (
     <>
@@ -114,7 +112,6 @@ export default function ShopStory({ beat }) {
       <path d="M0 214h400v24H0z" fill="#d6dde3" />
       <path d="M0 226h400" stroke="#fff" strokeWidth="2" strokeDasharray="14 12" />
 
-      {/* The shop is there in every beat */}
       <g transform="translate(130 200)">
         <g className="animate-move-rise">
           <Shop />

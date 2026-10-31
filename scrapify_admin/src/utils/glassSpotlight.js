@@ -1,5 +1,3 @@
-// A soft light that follows the mouse across whichever .glass panel it is over.
-// It sets two CSS variables (--mx, --my) that the .glass background gradient reads.
 export function startGlassSpotlight() {
   let litPanel = null;
 

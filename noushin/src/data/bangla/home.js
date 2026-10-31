@@ -1,6 +1,4 @@
-// Bangla phrases: home page.
 const phrases = {
-  // Navigation and hero
   "How it works": "কীভাবে কাজ করে",
   "Why Scrapify": "কেন Scrapify",
   "Who it's for": "কাদের জন্য",
@@ -21,7 +19,6 @@ const phrases = {
   "বাংলা & English": "বাংলা ও English",
   "How Scrapify works, animated": "Scrapify কীভাবে কাজ করে, অ্যানিমেশনে",
 
-  // Hero demo, front of the card
   "Snap": "ছবি",
   "Grade": "গ্রেড",
   "Price": "দাম",
@@ -46,7 +43,6 @@ const phrases = {
   "62 kg mixed bottles · fixed price": "৬২ কেজি মিশ্র বোতল · নির্ধারিত দাম",
   "Claimed": "দাবিকৃত",
 
-  // Hero demo, back of the card
   "Guessed at the counter": "কাউন্টারে অনুমান করা দাম",
   "Priced by Scrapify": "Scrapify-এর দাম",
   "+৳600 on one batch": "এক ব্যাচেই +৳৬০০",
@@ -64,7 +60,6 @@ const phrases = {
   "When collecting pays fairly, more people collect. Every graded batch goes back into new products.":
     "সংগ্রহে ন্যায্য দাম মিললে আরও মানুষ সংগ্রহ করেন। প্রতিটি গ্রেড করা ব্যাচ নতুন পণ্যে ফিরে যায়।",
 
-  // How it works and why
   "From the scale to a buyer in under a minute": "দাঁড়িপাল্লা থেকে ক্রেতা, এক মিনিটেরও কম সময়ে",
   "No forms to fill and no app to install. The operator takes a photo, and Scrapify handles the rest.":
     "কোনো ফর্ম পূরণ বা অ্যাপ ইনস্টল নয়। অপারেটর ছবি তোলেন, বাকিটা Scrapify সামলায়।",

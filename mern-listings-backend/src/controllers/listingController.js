@@ -72,7 +72,6 @@ export async function createListing(req, res) {
   await sendListing(res, listing, 201);
 }
 
-// GET /api/listings/mine
 export async function listMyListings(req, res) {
   const listings = await Listing.find({ operatorId: req.user.id }).sort({ created: -1 });
   res.json({ listings: await withParties(listings) });
@@ -88,7 +87,6 @@ export async function browseListings(req, res) {
   res.json({ listings: await withParties(listings) });
 }
 
-// GET /api/listings/claims
 export async function listMyClaims(req, res) {
   const listings = await Listing.find({ recyclerId: req.user.id }).sort({ claimedAt: -1 });
   res.json({ listings: await withParties(listings) });

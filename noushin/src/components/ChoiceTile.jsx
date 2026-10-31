@@ -1,6 +1,5 @@
 import Icon from "./Icon.jsx";
 
-// A big tappable radio button, used for picking a role, a plastic type, a condition or a rating.
 export default function ChoiceTile({ name, value, checked, onChange, label, icon = "", hint = "" }) {
   return (
     <label className="block">

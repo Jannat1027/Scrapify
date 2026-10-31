@@ -1,4 +1,3 @@
-// controllers/publicController.js: open data the landing and guide pages need. No login required.
 const asyncHandler = require("../utils/asyncHandler");
 const Category = require("../models/Category");
 const Rate = require("../models/Rate");

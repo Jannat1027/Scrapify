@@ -1,6 +1,4 @@
-// Bangla phrases: admin pages.
 const phrases = {
-  // Admin pages
   "Platform overview": "প্ল্যাটফর্মের সারসংক্ষেপ",
   "Scans, trading activity and anything waiting on you.": "স্ক্যান, লেনদেন আর আপনার অপেক্ষায় থাকা কাজ।",
   "Total scans": "মোট স্ক্যান",

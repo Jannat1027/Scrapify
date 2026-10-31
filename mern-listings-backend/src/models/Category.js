@@ -11,7 +11,7 @@ export const CONDITION_IDS = CONDITIONS.map((condition) => condition.id);
 
 
 const categorySchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true }, // "pet", "hdpe", ...
+  id: { type: String, required: true, unique: true },
   name: { type: String, required: true, trim: true },
   note: { type: String, default: "" },
   icon: { type: String, default: "recycle" },
@@ -19,7 +19,7 @@ const categorySchema = new mongoose.Schema({
   light: { type: Number, required: true, min: 0 },
   heavy: { type: Number, required: true, min: 0 },
   source: { type: String, default: "Admin estimate" },
-  updated: { type: Date, default: Date.now }, // when the rates last changed
+  updated: { type: Date, default: Date.now },
 });
 
 categorySchema.plugin(toJSONPlugin);

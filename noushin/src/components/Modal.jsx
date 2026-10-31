@@ -1,19 +1,15 @@
 import { useEffect, useRef } from "react";
 
-// A pop-up window built on the browser's <dialog> element.
-// The parent decides when it is shown: render <Modal> to open it, stop rendering it to close it.
-// onClose runs when the user presses Escape or clicks the dark backdrop.
 export default function Modal({ onClose, wide = false, children }) {
   const dialogRef = useRef(null);
 
-  // useRef gives us the real <dialog> element; once it is on the page we open it as a modal.
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog.open) dialog.showModal();
   }, []);
 
   function handleCancel(event) {
-    event.preventDefault(); // let React remove the dialog instead of the browser closing it
+    event.preventDefault();
     onClose();
   }
 

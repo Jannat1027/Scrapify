@@ -1,4 +1,3 @@
-// /api/reports: operators and recyclers report a problem with a listing.
 import { Router } from "express";
 import { createReport } from "../controllers/reportController.js";
 import { requireAuth } from "../middleware/auth.js";

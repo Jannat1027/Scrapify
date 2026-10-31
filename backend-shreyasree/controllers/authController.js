@@ -1,9 +1,7 @@
-// controllers/authController.js: register / login / me. Thin — the rules live in the models and services.
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("../utils/asyncHandler");
 const User = require("../models/User");
 
-// Makes a token that stores only the user id and role.
 function makeToken(user) {
   return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
 }

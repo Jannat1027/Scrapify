@@ -1,4 +1,3 @@
-// A 5-star rating, e.g. count=4 shows ★★★★ in amber and one faded ★.
 export default function Stars({ count }) {
   return (
     <span className="tracking-wider" aria-label={`${count} out of 5 stars`}>

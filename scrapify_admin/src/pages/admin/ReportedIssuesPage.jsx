@@ -12,7 +12,6 @@ import { formatDate, formatTaka } from "../../utils/format.js";
 
 const EMPTY_TEXT = { open: "No open reports. All quiet.", resolved: "Nothing resolved yet." };
 
-// Admin: disputes raised about listings. Resolve them, or suspend the account at fault.
 export default function ReportedIssuesPage() {
   const { data, send } = useData();
   const showToast = useToast();
@@ -76,7 +75,6 @@ export default function ReportedIssuesPage() {
 
 function ReportCard({ report, onResolve, onSuspend }) {
   const { data } = useData();
-  // The server sends each report with its listing and the two people involved.
   const { listing, reporter, otherParty } = report;
 
   return (

@@ -12,7 +12,6 @@ import { categoryColor, findCategory } from "../../services/marketplace.js";
 import { findStaleRates, STALE_RATE_DAYS } from "../../services/pricing.js";
 import { daysSince, formatDate } from "../../utils/format.js";
 
-// The three rates from the category form, as numbers, plus the source and today's date.
 function rateFields(values) {
   return {
     clean: Number(values.clean),
@@ -22,13 +21,10 @@ function rateFields(values) {
   };
 }
 
-// Admin: the ৳/kg rate table, plastic categories and collection locations.
 export default function PriceRatesPage() {
   const { data, send } = useData();
   const showToast = useToast();
-  // Typed but not yet saved values, e.g. { "pet.clean": "45" }.
   const [edits, setEdits] = useState({});
-  // Which dialog is open: null, { type: "add" }, { type: "edit", rate } or { type: "delete", rate }
   const [dialog, setDialog] = useState(null);
 
   const staleCount = findStaleRates(data.rates).length;
@@ -48,7 +44,6 @@ export default function PriceRatesPage() {
     }
     if (!(await send(() => api.patch(`/admin/categories/${rate.id}`, newRates)))) return;
 
-    // Forget the typed values of this row; the saved ones are shown now.
     const remainingEdits = { ...edits };
     data.conditions.forEach((condition) => delete remainingEdits[`${rate.id}.${condition.id}`]);
     setEdits(remainingEdits);
@@ -57,12 +52,11 @@ export default function PriceRatesPage() {
 
   async function addCategory(values) {
     const body = { name: values.name.trim(), note: values.note.trim(), icon: "recycle", ...rateFields(values) };
-    if (!(await send(() => api.post("/admin/categories", body)))) return; // e.g. "That category already exists."
+    if (!(await send(() => api.post("/admin/categories", body)))) return;
     setDialog(null);
     showToast(`${values.name.trim()} added.`);
   }
 
-  // The category keeps its id, so scans and listings that use it keep working after a rename.
   async function editCategory(rate, values) {
     const body = { name: values.name.trim(), note: values.note.trim(), ...rateFields(values) };
     if (!(await send(() => api.patch(`/admin/categories/${rate.id}`, body)))) return;
@@ -70,7 +64,6 @@ export default function PriceRatesPage() {
     showToast(`${values.name.trim()} saved.`);
   }
 
-  // The server refuses to delete a category that scans or listings use, and says how many.
   function askToDelete(rate) {
     setDialog({ type: "delete", rate });
   }
@@ -177,7 +170,6 @@ export default function PriceRatesPage() {
   );
 }
 
-// The list of collection areas, used in sign-up and the recycler filters.
 function LocationsPanel() {
   const { data, send } = useData();
   const showToast = useToast();

@@ -14,11 +14,10 @@ const ROLE_CHOICES = [
   { role: "recycler", label: "Recycler", hint: "Bulk buyer", icon: "factory" },
 ];
 
-// Sign-up. New accounts start as "pending": an admin must approve them before they can log in.
 export default function RegisterForm({ onSwitch }) {
   const { register } = useAuth();
-  const [newUser, setNewUser] = useState(null); // set after a successful sign-up
-  const [locations, setLocations] = useState([]); // the areas an admin allows, from the backend
+  const [newUser, setNewUser] = useState(null);
+  const [locations, setLocations] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [serverProblem, setServerProblem] = useState("");
 
@@ -29,7 +28,6 @@ export default function RegisterForm({ onSwitch }) {
       .catch((error) => setServerProblem(apiErrorMessage(error)));
   }, []);
 
-  // Each rule says exactly what to change, so nobody is left guessing why the button won't work.
   const rules = {
     name: [[(value) => value.length >= 2, "Add your full name so buyers know who they're dealing with."]],
     org: [[(value) => value.length >= 2, "Add your shop or organisation name. It appears on every listing."]],
@@ -47,7 +45,6 @@ export default function RegisterForm({ onSwitch }) {
   const emptyForm = { role: "operator", name: "", org: "", location: "", email: "", password: "", terms: false };
   const form = useFormValidation(rules, emptyForm);
 
-  // Clear the form so the next visit to sign-up starts fresh, then show the login form.
   function goToLogIn() {
     setNewUser(null);
     form.resetForm();
@@ -72,7 +69,6 @@ export default function RegisterForm({ onSwitch }) {
       });
       setNewUser(user);
     } catch (error) {
-      // "This email already has an account" and other server answers appear under the button.
       setServerProblem(apiErrorMessage(error));
     }
     setSubmitting(false);

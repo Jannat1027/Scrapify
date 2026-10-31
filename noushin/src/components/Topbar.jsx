@@ -3,7 +3,6 @@ import { initialsOf } from "../utils/format.js";
 import Icon from "./Icon.jsx";
 import LanguageButton from "./LanguageButton.jsx";
 
-// The bar above every workspace page: menu button (phones), today's date and the user's initials.
 export default function Topbar({ onMenuClick }) {
   const { user } = useAuth();
   const today = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });

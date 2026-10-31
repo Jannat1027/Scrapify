@@ -1,9 +1,3 @@
-// ---------------------------------------------------------------------------
-// Admin script: `npm run create-admin`
-// Creates (or resets the password of) the admin account described by ADMIN_EMAIL, ADMIN_PASSWORD and
-// ADMIN_NAME in .env. Nothing else in the database is touched, so it is safe on a live database.
-// Sign-up can only make operators and recyclers, so this is how the first admin account is made.
-// ---------------------------------------------------------------------------
 import bcrypt from "bcryptjs";
 import { connectDatabase, disconnectDatabase } from "../config/db.js";
 import Location from "../models/Location.js";

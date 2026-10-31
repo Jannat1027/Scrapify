@@ -1,4 +1,3 @@
-// db.js: the only place that talks to MongoDB.
 const mongoose = require("mongoose");
 
 async function connectDB() {

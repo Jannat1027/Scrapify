@@ -27,9 +27,6 @@ import { calculatePrice, LOW_CONFIDENCE, mainCategoryOf } from "../../services/p
 import { loadFromStorage, removeFromStorage, STORAGE_KEYS } from "../../services/storage.js";
 import { formatDate, formatPriceRange, formatTaka } from "../../utils/format.js";
 
-// Operator: the AI result for one batch, a weight keypad, the price breakdown and "List for sale".
-//   /operator/scans/new      -> the fresh draft from New scan (can be corrected, saved and listed)
-//   /operator/scans/SC-1042  -> a saved scan from the history (can be listed if it isn't yet)
 export default function ScanResultPage() {
   const { scanId } = useParams();
   const location = useLocation();
@@ -39,7 +36,6 @@ export default function ScanResultPage() {
   const { data, insertRow } = useData();
 
   const isDraft = scanId === "new";
-  // Only the draft can change on this page (manual correction), so only the draft lives in state.
   const [draft, setDraft] = useState(
     () => location.state?.draftScan || loadFromStorage(STORAGE_KEYS.draftScan, null),
   );
@@ -65,19 +61,16 @@ export default function ScanResultPage() {
   const mainTypeName = findCategory(data, mainCategoryOf(scan.composition)).name;
   const savedListing = isDraft ? null : data.listings.find((item) => item.scanId === scan.id);
 
-  // A fresh draft the AI isn't sure about must be checked before it can be saved or listed.
   const unsure = scan.confidence < LOW_CONFIDENCE || scan.quality !== "good";
   const needsReview = isDraft && unsure && !scan.corrected && !reviewed;
   const canSaveDraft = weight > 0 && !needsReview;
 
-  // The operator's choice replaces the AI's. The AI's first answer is kept in aiResult (the correction log).
   function applyManualChoice(categoryId, condition) {
     const aiResult = draft.aiResult || { composition: draft.composition, condition: draft.condition };
     setDraft({ ...draft, composition: { [categoryId]: 100 }, condition, corrected: true, aiResult });
     setShowManualPicker(false);
   }
 
-  // Saves the draft to the scan history and returns the saved scan.
   function saveDraftScan() {
     const newScan = createScan(draft, user, weight);
     insertRow("scans", newScan);
@@ -219,7 +212,6 @@ export default function ScanResultPage() {
   );
 }
 
-// Asks the operator to confirm, retake or correct a result the AI is unsure about.
 function LowConfidencePanel({ scan, onConfirm, onChooseManually }) {
   const reason =
     scan.quality !== "good"
@@ -255,7 +247,6 @@ function LowConfidencePanel({ scan, onConfirm, onChooseManually }) {
   );
 }
 
-// Lets the operator replace the AI result with their own choice of plastic type and condition.
 function ManualPicker({ onApply }) {
   const { data } = useData();
   const showToast = useToast();
@@ -311,7 +302,6 @@ function ManualPicker({ onApply }) {
   );
 }
 
-// Line by line: how many kg of each type, at which rate, for how much.
 function PriceBreakdown({ lines }) {
   const { data } = useData();
   const columns = [
